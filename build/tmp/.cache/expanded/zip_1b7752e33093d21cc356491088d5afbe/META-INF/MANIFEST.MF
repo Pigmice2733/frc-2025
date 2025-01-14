@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Created-By: WPILib Gradle Build Script
+Implementation-Title: OpenCV
+Implementation-Version: 4.10.0-3
+Implementation-Vendor: Itseez
+Bundle-Name: opencv
+Bundle-Version: 4.10.0-3
+Bundle-License: https://opensource.org/licenses/BSD-3-Clause
+Bundle-Vendor: WPILib
+

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -19,15 +20,22 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final CommandXboxController driver = new CommandXboxController(
-      Constants.DRIVER_CONTROLLER);
-  private final CommandXboxController operator = new CommandXboxController(
-      Constants.OPERATOR_CONTROLLER);
+  private Drivetrain drivetrain;
+
+  private final CommandXboxController driver;
+  private final CommandXboxController operator;
+  private final Controls controls;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    driver = new CommandXboxController(0);
+    operator = new CommandXboxController(1);
+    controls = new Controls(driver, operator);
+
+    drivetrain = new Drivetrain();
+
     // Configure the trigger bindings
     configureBindings();
   }

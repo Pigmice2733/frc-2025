@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: quickbuf-runtime
+Automatic-Module-Name: us.hebi.quickbuf.runtime
+Implementation-Version: 1.3.3
+Specification-Vendor: HEBI Robotics
+Specification-Title: quickbuf-runtime
+Build-Jdk-Spec: 1.8
+Created-By: Maven JAR Plugin 3.3.0
+Specification-Version: 1.3
+Implementation-Vendor: HEBI Robotics
+
