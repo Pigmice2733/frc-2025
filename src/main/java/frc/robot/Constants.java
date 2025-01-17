@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -19,11 +25,22 @@ package frc.robot;
 public final class Constants {
   public static final double AXIS_THRESHOLD = 0.1;
  
+  public static class ShuffleboardConfig {
+    public static final ShuffleboardTab DRIVETRAIN_TAB = Shuffleboard.getTab("Drivetrain & Vision");
+    public static final ShuffleboardTab ARM_TAB = Shuffleboard.getTab("Arm & Elevator");
+    public static final ShuffleboardTab CLIMBER_TAB = Shuffleboard.getTab("Climber");
+  }
+
   public static class DrivetrainConfig {
     public static final double MAX_DRIVE_SPEED = 1.0;
     public static final double MAX_TURN_SPEED = 1.0;
+    public static final PIDConstants DRIVE_PID = new PIDConstants(0.5, 0, 0);
+    public static final PIDConstants TURN_PID = new PIDConstants(0.5, 0, 0);
   }
 
+  public static class AutoConfig {
+    public static final RobotConfig ROBOT_CONFIG = new RobotConfig(0, 0, null, 0);
+  }
 }
 
 
