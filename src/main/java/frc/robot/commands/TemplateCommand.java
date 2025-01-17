@@ -4,22 +4,20 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.TemplateSubsystem;
+import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class ExampleCommand extends Command {
-  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private final TemplateSubsystem m_subsystem;
+public class TemplateCommand extends Command {
+  private Drivetrain subsystem;
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new command.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExampleCommand(TemplateSubsystem subsystem) {
-    m_subsystem = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
+  public TemplateCommand(Drivetrain subsystem) {
+    this.subsystem = subsystem;
     addRequirements(subsystem);
   }
 

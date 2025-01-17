@@ -6,9 +6,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class TemplateSubsystem extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  public TemplateSubsystem() {
+public class Drivetrain extends SubsystemBase {
+  public Drivetrain() {
   }
 
   @Override
