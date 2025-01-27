@@ -32,7 +32,7 @@ public class RobotContainer {
   public RobotContainer() {
     driver = new CommandXboxController(0);
     operator = new CommandXboxController(1);
-    controls = new Controls(driver, operator);
+    controls = new Controls(driver);
 
     drivetrain = new Drivetrain();
 
@@ -55,6 +55,13 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    // DRIVER
+    driver.a().onTrue(drivetrain.reset());
+    driver.b().onTrue(Commands.none()); // need vision subsystem
+    driver.y().onTrue(controls.toggleSlowmode());
+
+    // OPERATOR
+    operator.povDown().onTrue(Commands.none()); // elevator down
   }
 
   /**

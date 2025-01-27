@@ -14,19 +14,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.DrivetrainConfig;
+import frc.robot.Constants.*;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.imu.SwerveIMU;
@@ -42,10 +38,6 @@ public class Drivetrain extends SubsystemBase {
 
   private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
   private SwerveModule[] modules = new SwerveModule[4];
-
-  private ShuffleboardTab tab = Constants.ShuffleboardConfig.DRIVETRAIN_TAB;
-  private ShuffleboardLayout drivetrainEntries, swerveEntries;
-  private GenericEntry robotX, robotY, rotation, frontLeftEntry, frontRightEntry, backLeftEntry, backRightEntry;
 
   public Drivetrain() {
     try {
@@ -63,24 +55,9 @@ public class Drivetrain extends SubsystemBase {
     robotPose = new Pose2d();
     resetPose(robotPose);
 
-    drivetrainEntries = tab.getLayout("Drivetrain", BuiltInLayouts.kList).withSize(1, 3)
-        .withPosition(0, 0);
-    robotX = drivetrainEntries.add("Robot X", 0).withPosition(0, 0).getEntry();
-    robotY = drivetrainEntries.add("Robot Y", 0).withPosition(1, 0).getEntry();
-    rotation = drivetrainEntries.add("Robot Angle", 0).withPosition(2, 0).getEntry();
-
-    swerveEntries = tab.getLayout("Swerve Modules", BuiltInLayouts.kList).withSize(1, 4)
-        .withPosition(1, 0);
-    frontLeftEntry = swerveEntries.add("Front Left Encoder Output", 0).withPosition(0, 0).getEntry();
-    frontRightEntry = swerveEntries.add("Front Right Encoder Output", 0).withPosition(1, 0).getEntry();
-    backLeftEntry = swerveEntries.add("Back Left Encoder Output", 0).withPosition(2, 0).getEntry();
-    backRightEntry = swerveEntries.add("Back Right Encoder Output", 0).withPosition(3, 0).getEntry();
-
     setUpAuto();
 
     fieldWidget = new Field2d();
-    tab.add(fieldWidget);
-
     PathPlannerLogging.setLogActivePathCallback((pose) -> fieldWidget.getObject("target pose").setPoses(pose));
   }
 
@@ -109,13 +86,13 @@ public class Drivetrain extends SubsystemBase {
       Pose2d pose = getPose();
       return new Pose2d(pose.getX(), pose.getY(), new Rotation2d(-pose.getRotation().getRadians()));
     },
-      (pose) -> swerve.resetOdometry(pose),
-      swerve::getRobotVelocity,
-      (speed) -> drive(speed.vxMetersPerSecond, speed.vyMetersPerSecond, -speed.omegaRadiansPerSecond),
-      new PPHolonomicDriveController(DrivetrainConfig.DRIVE_PID, DrivetrainConfig.TURN_PID),
-      config,
-      () -> (DriverStation.getAlliance().get() == Alliance.Red),
-      this);
+        (pose) -> swerve.resetOdometry(pose),
+        swerve::getRobotVelocity,
+        (speed) -> drive(speed.vxMetersPerSecond, speed.vyMetersPerSecond, -speed.omegaRadiansPerSecond),
+        new PPHolonomicDriveController(DrivetrainConfig.DRIVE_PID, DrivetrainConfig.TURN_PID),
+        config,
+        () -> (DriverStation.getAlliance().get() == Alliance.Red),
+        this);
 
   }
 
@@ -131,16 +108,17 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private void updateEntries() {
-    robotX.setDouble(robotPose.getX());
-    robotY.setDouble(robotPose.getY());
-    rotation.setValue(robotPose.getRotation().getDegrees());
+    SmartDashboard.putNumber("Robot X", robotPose.getX());
+    SmartDashboard.putNumber("Robot Y", robotPose.getY());
+    SmartDashboard.putNumber("Robot Angle", robotPose.getRotation().getDegrees());
 
-    frontLeftEntry.setDouble(modules[0].getAbsolutePosition());
-    frontRightEntry.setDouble(modules[1].getAbsolutePosition());
-    backLeftEntry.setDouble(modules[2].getAbsolutePosition());
-    backRightEntry.setDouble(modules[3].getAbsolutePosition());
+    SmartDashboard.putNumber("Front Left Encoder Output", modules[0].getAbsolutePosition());
+    SmartDashboard.putNumber("Front Right Encoder Output", modules[1].getAbsolutePosition());
+    SmartDashboard.putNumber("Back Left Encoder Output", modules[2].getAbsolutePosition());
+    SmartDashboard.putNumber("Back Right Encoder Output", modules[3].getAbsolutePosition());
 
     fieldWidget.setRobotPose(robotPose);
+    SmartDashboard.putData("Field", fieldWidget);
   }
 
   /** Returns the drivetrain as a SwerveDrive object. */
@@ -170,7 +148,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Command reset() {
-    return new InstantCommand(() -> resetPose(new Pose2d()));
+    return new InstantCommand(() -> resetPose(new Pose2d()), this);
   }
 
   /**
@@ -179,6 +157,7 @@ public class Drivetrain extends SubsystemBase {
    * driver's perspective.
    */
   public Command driveCommand(double driveSpeedX, double driveSpeedY, double turnSpeed) {
-    return new InstantCommand(() -> drive(driveSpeedX, driveSpeedY, turnSpeed));
+    return new InstantCommand(() -> drive(driveSpeedX, driveSpeedY, turnSpeed), this);
   }
+
 }

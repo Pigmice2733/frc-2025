@@ -1,28 +1,23 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.*;
 
 public class TemplateSubsystem extends SubsystemBase {
   private SparkMax motor = new SparkMax(0, MotorType.kBrushless);
 
-  private ShuffleboardTab tab = ShuffleboardConfig.DRIVETRAIN_TAB;
-  private ShuffleboardLayout entryList;
-  private GenericEntry entry;
-
   public TemplateSubsystem() {
-    entryList = tab.getLayout("Subsystem", BuiltInLayouts.kList).withSize(1, 4)
-        .withPosition(1, 0);
-    entry = entryList.add("Name", 0).withPosition(0, 0).getEntry();
+    motor = new SparkMax(0, MotorType.kBrushless);
+    motor.configure(new SparkMaxConfig().inverted(false),
+        ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   @Override
@@ -31,7 +26,7 @@ public class TemplateSubsystem extends SubsystemBase {
   }
 
   private void updateEntries() {
-    entry.setDouble(motor.get());
+    SmartDashboard.putNumber("Motor Speed", motor.get());
   }
 
   public void setMotorSpeed(double speed) {
@@ -39,10 +34,10 @@ public class TemplateSubsystem extends SubsystemBase {
   }
 
   public Command stopMotor() {
-    return new InstantCommand(() -> setMotorSpeed(0));
+    return new InstantCommand(() -> setMotorSpeed(0), this);
   }
 
   public Command startMotor() {
-    return new InstantCommand(() -> setMotorSpeed(1));
+    return new InstantCommand(() -> setMotorSpeed(1), this);
   }
 }

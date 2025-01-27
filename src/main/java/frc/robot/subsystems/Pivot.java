@@ -7,10 +7,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,19 +16,12 @@ import frc.robot.Constants.*;
 public class Pivot extends SubsystemBase {
   private SparkMax motor;
 
-  private ShuffleboardTab tab;
-  private ShuffleboardLayout entryList;
-  private GenericEntry entry;
-
   public Pivot() {
     motor = new SparkMax(CANConfig.PIVOT, MotorType.kBrushless);
-
-    motor.configure(new SparkMaxConfig().inverted(false).apply(new AbsoluteEncoderConfig()), ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-
-    tab = ShuffleboardConfig.ARM_TAB;
-    entryList = tab.getLayout("Elevator", BuiltInLayouts.kList).withSize(1, 3)
-        .withPosition(1, 0);
-    entry = entryList.add("Pivot", 0).withPosition(0, 2).getEntry();
+    motor.configure(
+        new SparkMaxConfig().inverted(false)
+            .apply(new AbsoluteEncoderConfig().positionConversionFactor(SystemConfig.PIVOT_CONVERSION)),
+        ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   @Override
@@ -40,7 +30,7 @@ public class Pivot extends SubsystemBase {
   }
 
   private void updateEntries() {
-    entry.setDouble(motor.get());
+    SmartDashboard.putNumber("Pivot Motor Speed", motor.get());
   }
 
   public void setSpeed(double speed) {
@@ -52,6 +42,6 @@ public class Pivot extends SubsystemBase {
   }
 
   public Command startMotor() {
-    return new InstantCommand(() -> setSpeed(SystemConfig.ELEVATOR_SPEED));
+    return new InstantCommand(() -> setSpeed(SystemConfig.PIVOT_SPEED));
   }
 }

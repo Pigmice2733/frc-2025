@@ -4,19 +4,19 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.AlgaeIntake;
+import frc.robot.subsystems.TemplateSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class TemplateCommand extends Command {
-  private AlgaeIntake subsystem;
+  private TemplateSubsystem subsystem;
 
   /**
    * Creates a new command.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public TemplateCommand(AlgaeIntake subsystem) {
+  public TemplateCommand(TemplateSubsystem subsystem) {
     this.subsystem = subsystem;
     addRequirements(subsystem);
   }
