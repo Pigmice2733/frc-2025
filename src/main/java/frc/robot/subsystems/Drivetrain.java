@@ -50,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     try {
       swerve = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
-          .createSwerveDrive(5);
+          .createSwerveDrive(DrivetrainConfig.MAX_DRIVE_SPEED);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -109,13 +109,13 @@ public class Drivetrain extends SubsystemBase {
       Pose2d pose = getPose();
       return new Pose2d(pose.getX(), pose.getY(), new Rotation2d(-pose.getRotation().getRadians()));
     },
-    (pose) -> swerve.resetOdometry(pose),
-    swerve::getRobotVelocity,
-    (speed) -> drive(speed.vxMetersPerSecond, speed.vyMetersPerSecond, -speed.omegaRadiansPerSecond),
-    new PPHolonomicDriveController(DrivetrainConfig.DRIVE_PID, DrivetrainConfig.TURN_PID),
-    config,
-    () -> (DriverStation.getAlliance().get() == Alliance.Red),
-    this);
+      (pose) -> swerve.resetOdometry(pose),
+      swerve::getRobotVelocity,
+      (speed) -> drive(speed.vxMetersPerSecond, speed.vyMetersPerSecond, -speed.omegaRadiansPerSecond),
+      new PPHolonomicDriveController(DrivetrainConfig.DRIVE_PID, DrivetrainConfig.TURN_PID),
+      config,
+      () -> (DriverStation.getAlliance().get() == Alliance.Red),
+      this);
 
   }
 

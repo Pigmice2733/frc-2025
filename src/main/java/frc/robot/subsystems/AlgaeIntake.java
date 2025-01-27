@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -12,17 +15,22 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
 
-public class TemplateSubsystem extends SubsystemBase {
-  private SparkMax motor = new SparkMax(0, MotorType.kBrushless);
+public class AlgaeIntake extends SubsystemBase {
+  private SparkMax motor;
 
-  private ShuffleboardTab tab = ShuffleboardConfig.DRIVETRAIN_TAB;
+  private ShuffleboardTab tab;
   private ShuffleboardLayout entryList;
   private GenericEntry entry;
 
-  public TemplateSubsystem() {
-    entryList = tab.getLayout("Subsystem", BuiltInLayouts.kList).withSize(1, 4)
+  public AlgaeIntake() {
+    motor = new SparkMax(CANConfig.ALGAE_INTAKE, MotorType.kBrushless);
+
+    motor.configure(new SparkMaxConfig().inverted(false), ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+
+    tab = ShuffleboardConfig.ARM_TAB;
+    entryList = tab.getLayout("Intakes", BuiltInLayouts.kList).withSize(1, 3)
         .withPosition(1, 0);
-    entry = entryList.add("Name", 0).withPosition(0, 0).getEntry();
+    entry = entryList.add("Algae", 0).withPosition(0, 0).getEntry();
   }
 
   @Override
@@ -34,15 +42,15 @@ public class TemplateSubsystem extends SubsystemBase {
     entry.setDouble(motor.get());
   }
 
-  public void setMotorSpeed(double speed) {
+  public void setSpeed(double speed) {
     motor.set(speed);
   }
 
   public Command stopMotor() {
-    return new InstantCommand(() -> setMotorSpeed(0));
+    return new InstantCommand(() -> setSpeed(0));
   }
 
   public Command startMotor() {
-    return new InstantCommand(() -> setMotorSpeed(1));
+    return new InstantCommand(() -> setSpeed(SystemConfig.ALGAE_INTAKE_SPEED));
   }
 }

@@ -24,6 +24,15 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  */
 public final class Constants {
   public static final double AXIS_THRESHOLD = 0.1;
+
+  public static class CANConfig {
+    public static final int ELEVATOR_FRONT = 0;
+    public static final int ELEVATOR_BACK = 1;
+    public static final int PIVOT = 2;
+    public static final int ALGAE_INTAKE = 3;
+    public static final int CORAL_LEFT = 4;
+    public static final int CORAL_RIGHT = 5;
+  }
  
   public static class ShuffleboardConfig {
     public static final ShuffleboardTab DRIVETRAIN_TAB = Shuffleboard.getTab("Drivetrain & Vision");
@@ -32,14 +41,21 @@ public final class Constants {
   }
 
   public static class DrivetrainConfig {
-    public static final double MAX_DRIVE_SPEED = 1.0;
-    public static final double MAX_TURN_SPEED = 1.0;
+    public static final double MAX_DRIVE_SPEED = 10.0; // m/s
+    public static final double MAX_TURN_SPEED = 200.0; // deg/s
     public static final PIDConstants DRIVE_PID = new PIDConstants(0.5, 0, 0);
     public static final PIDConstants TURN_PID = new PIDConstants(0.5, 0, 0);
   }
 
   public static class AutoConfig {
     public static final RobotConfig ROBOT_CONFIG = new RobotConfig(0, 0, null, 0);
+  }
+
+  public static class SystemConfig {
+    public static final double ELEVATOR_SPEED = 0.5;
+    public static final double PIVOT_SPEED = 0.5;
+    public static final double ALGAE_INTAKE_SPEED = 0.5;
+    public static final double CORAL_INTAKE_SPEED = 0.5;
   }
 }
 
