@@ -6,16 +6,18 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
 
-public class Shooter extends SubsystemBase {
+public class AlgaeShooter extends SubsystemBase {
   private SparkMax leftPivot, rightPivot, leftFlywheels, rightFlywheels, indexerMotor;
+  private PIDController pivotController;
 
-  public Shooter() {
+  public AlgaeShooter() {
     leftPivot = new SparkMax(CANConfig.SHOOTER_PIVOT_LEFT, MotorType.kBrushless);
     rightPivot = new SparkMax(CANConfig.SHOOTER_PIVOT_RIGHT, MotorType.kBrushless);
     leftFlywheels = new SparkMax(CANConfig.SHOOTER_FLYWHEELS_LEFT, MotorType.kBrushless);
@@ -32,6 +34,9 @@ public class Shooter extends SubsystemBase {
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     indexerMotor.configure(new SparkMaxConfig().inverted(false),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+
+    pivotController = SystemConfig.SHOOTER_PID;
+    pivotController.setTolerance(SystemConfig.SHOOTER_TOLERANCE);
   }
 
   @Override
@@ -47,16 +52,20 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Indexer Speed", indexerMotor.get());
   }
 
-  private void setPivot(double speed) {
+  public void setPivot(double speed) {
     leftPivot.set(speed);
   }
 
-  private void setFlywheels(double speed) {
+  public void setFlywheels(double speed) {
     leftFlywheels.set(speed);
   }
 
-  private void setIndexer(double speed) {
+  public void setIndexer(double speed) {
     indexerMotor.set(speed);
+  }
+
+  public PIDController getController() {
+    return pivotController;
   }
 
   public Command stopMotors() {
@@ -67,15 +76,19 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  public Command runPivot() {
-    return new InstantCommand(() -> setPivot(SystemConfig.SHOOTER_PIVOT_SPEED));
-  }
-
-  public Command runFlywheels() {
+  public Command runFlywheelsForward() {
     return new InstantCommand(() -> setFlywheels(SystemConfig.SHOOTER_FLYWHEEL_SPEED));
   }
 
-  public Command runIndexer() {
+  public Command runFlywheelsReverse() {
+    return new InstantCommand(() -> setFlywheels(-SystemConfig.SHOOTER_FLYWHEEL_SPEED));
+  }
+
+  public Command runIndexerForward() {
     return new InstantCommand(() -> setIndexer(SystemConfig.INDEXER_SPEED));
+  }
+
+  public Command runIndexerReverse() {
+    return new InstantCommand(() -> setIndexer(-SystemConfig.INDEXER_SPEED));
   }
 }

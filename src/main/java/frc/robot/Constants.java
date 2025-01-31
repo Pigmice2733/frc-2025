@@ -52,11 +52,15 @@ public final class Constants {
 
   public static class SystemConfig {
     public static final PIDController PIVOT_PID = new PIDController(0.1, 0, 0);
-    public static final double PIVOT_TOLERANCE = 2; // deg
+    public static final PIDController SHOOTER_PID = new PIDController(0.1, 0, 0);
+
+    // deg
+    public static final double PIVOT_TOLERANCE = 2;
+    public static final double SHOOTER_TOLERANCE = 2;
 
     public static final double ELEVATOR_SPEED = 0.5;
     public static final double PIVOT_SPEED = 0.5;
-    public static final double ALGAE_INTAKE_SPEED = 0.5;
+    public static final double PROCESSOR_SPEED = 0.5;
     public static final double CORAL_INTAKE_SPEED = 0.5;
     public static final double SHOOTER_PIVOT_SPEED = 0.5;
     public static final double SHOOTER_FLYWHEEL_SPEED = 0.5;
@@ -66,6 +70,7 @@ public final class Constants {
 
     public static final double SHOOTER_SPINUP_TIME = 2.0;
     public static final double SHOOTER_SHOOT_TIME = 2.0;
+    public static final double SHOOTER_INTAKE_TIME = 0.5;
     public static final double CORAL_INTAKE_TIME = 1.0;
     public static final double CORAL_OUTTAKE_TIME = 1.0;
   }
