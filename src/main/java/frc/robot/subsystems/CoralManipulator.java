@@ -12,10 +12,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
 
-public class CoralIntake extends SubsystemBase {
+public class CoralManipulator extends SubsystemBase {
   private SparkMax leftMotor, rightMotor;
 
-  public CoralIntake() {
+  public CoralManipulator() {
     leftMotor = new SparkMax(CANConfig.CORAL_LEFT, MotorType.kBrushless);
     rightMotor = new SparkMax(CANConfig.CORAL_RIGHT, MotorType.kBrushless);
 
@@ -36,16 +36,19 @@ public class CoralIntake extends SubsystemBase {
     SmartDashboard.putNumber("Coral Intake Right Motor Speed", rightMotor.get());
   }
 
-  public void setSpeed(double speed) {
+  private void setSpeed(double speed) {
     leftMotor.set(speed);
-    rightMotor.set(speed);
   }
 
   public Command stopMotor() {
     return new InstantCommand(() -> setSpeed(0));
   }
 
-  public Command startMotor() {
+  public Command outtake() {
     return new InstantCommand(() -> setSpeed(SystemConfig.CORAL_INTAKE_SPEED));
+  }
+
+  public Command intake() {
+    return new InstantCommand(() -> setSpeed(-SystemConfig.CORAL_INTAKE_SPEED));
   }
 }

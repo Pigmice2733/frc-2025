@@ -9,7 +9,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShootAlgae;
+import frc.robot.commands.coral.IntakeCoral;
+import frc.robot.commands.coral.ScoreCoralHigh;
+import frc.robot.commands.coral.ScoreCoralLow;
+import frc.robot.commands.coral.ScoreCoralMid;
+import frc.robot.subsystems.AlgaeIntake;
+import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
 
 /**
@@ -23,6 +31,10 @@ import frc.robot.subsystems.Shooter;
  */
 public class RobotContainer {
   private final Drivetrain drivetrain;
+  private final AlgaeIntake algaeIntake;
+  private final CoralManipulator coral;
+  private final Elevator elevator;
+  private final Pivot pivot;
   private final Shooter shooter;
 
   private final CommandXboxController driver;
@@ -38,6 +50,10 @@ public class RobotContainer {
     controls = new Controls(driver);
 
     drivetrain = new Drivetrain();
+    algaeIntake = new AlgaeIntake();
+    coral = new CoralManipulator();
+    elevator = new Elevator();
+    pivot = new Pivot();
     shooter = new Shooter();
 
     // Configure the trigger bindings
@@ -65,8 +81,11 @@ public class RobotContainer {
     driver.y().onTrue(controls.toggleSlowmode());
 
     // OPERATOR
-    operator.povDown().onTrue(Commands.none()); // elevator down
     operator.y().onTrue(new ShootAlgae(shooter));
+    operator.povUp().onTrue(new ScoreCoralHigh(coral, pivot));
+    operator.povLeft().onTrue(new ScoreCoralMid(coral, pivot));
+    operator.povDown().onTrue(new ScoreCoralLow(coral, pivot));
+    operator.povRight().onTrue(new IntakeCoral(coral, pivot));
   }
 
   /**

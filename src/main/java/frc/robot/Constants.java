@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
 
+import edu.wpi.first.math.controller.PIDController;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -33,6 +35,8 @@ public final class Constants {
     public static final int SHOOTER_PIVOT_LEFT = 8;
     public static final int SHOOTER_PIVOT_RIGHT = 9;
     public static final int INDEXER = 10;
+
+    public static final int LIMIT_SWITCH_CHANNEL = 0;
   }
 
   public static class DrivetrainConfig {
@@ -47,6 +51,9 @@ public final class Constants {
   }
 
   public static class SystemConfig {
+    public static final PIDController PIVOT_PID = new PIDController(0.1, 0, 0);
+    public static final double PIVOT_TOLERANCE = 2; // deg
+
     public static final double ELEVATOR_SPEED = 0.5;
     public static final double PIVOT_SPEED = 0.5;
     public static final double ALGAE_INTAKE_SPEED = 0.5;
@@ -59,5 +66,21 @@ public final class Constants {
 
     public static final double SHOOTER_SPINUP_TIME = 2.0;
     public static final double SHOOTER_SHOOT_TIME = 2.0;
+    public static final double CORAL_INTAKE_TIME = 1.0;
+    public static final double CORAL_OUTTAKE_TIME = 1.0;
+  }
+
+  public static enum PivotPosition {
+    INITIAL(0), HUMAN_PLAYER(-30), SCORE_L4(20), SCORE_L3(30), SCORE_L1(80), PROCESSOR(120), REEF(45);
+
+    private double angle;
+
+    private PivotPosition(double angle) {
+      this.angle = angle;
+    }
+
+    public double getAngle() {
+      return angle;
+    }
   }
 }

@@ -17,7 +17,8 @@ public class AlgaeIntake extends SubsystemBase {
 
   public AlgaeIntake() {
     motor = new SparkMax(CANConfig.ALGAE_INTAKE, MotorType.kBrushless);
-    motor.configure(new SparkMaxConfig().inverted(false), ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    motor.configure(new SparkMaxConfig().inverted(false), ResetMode.kNoResetSafeParameters,
+        PersistMode.kNoPersistParameters);
   }
 
   @Override
@@ -29,7 +30,7 @@ public class AlgaeIntake extends SubsystemBase {
     SmartDashboard.putNumber("Algae Intake Motor", motor.get());
   }
 
-  public void setSpeed(double speed) {
+  private void setSpeed(double speed) {
     motor.set(speed);
   }
 

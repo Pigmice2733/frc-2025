@@ -6,6 +6,7 @@ import frc.robot.Constants.SystemConfig;
 import frc.robot.subsystems.Shooter;
 
 public class ShootAlgae extends SequentialCommandGroup {
+  /** Shoots an algae. */
   public ShootAlgae(Shooter shooter) {
     addCommands(
         shooter.runFlywheels(),
@@ -13,6 +14,6 @@ public class ShootAlgae extends SequentialCommandGroup {
         shooter.runIndexer(),
         new WaitCommand(SystemConfig.SHOOTER_SHOOT_TIME),
         shooter.stopMotors());
+    addRequirements(shooter);
   }
-
 }
