@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.PivotPosition;
+import frc.robot.commands.SetPivotPosition;
 import frc.robot.commands.ShootAlgae;
 import frc.robot.commands.coral.IntakeCoral;
 import frc.robot.commands.coral.ScoreCoralHigh;
@@ -82,10 +84,10 @@ public class RobotContainer {
 
     // OPERATOR
     operator.y().onTrue(new ShootAlgae(shooter));
-    operator.povUp().onTrue(new ScoreCoralHigh(coral, pivot));
-    operator.povLeft().onTrue(new ScoreCoralMid(coral, pivot));
-    operator.povDown().onTrue(new ScoreCoralLow(coral, pivot));
-    operator.povRight().onTrue(new IntakeCoral(coral, pivot));
+    operator.povUp().onTrue(new SetPivotPosition(pivot, PivotPosition.SCORE_L4));
+    operator.povLeft().onTrue(new SetPivotPosition(pivot, PivotPosition.SCORE_L3));
+    operator.povDown().onTrue(new SetPivotPosition(pivot, PivotPosition.SCORE_L1));
+    operator.povRight().onTrue(new SetPivotPosition(pivot, PivotPosition.HUMAN_PLAYER));
   }
 
   /**
