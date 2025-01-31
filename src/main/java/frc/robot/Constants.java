@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -29,6 +28,11 @@ public final class Constants {
     public static final int ALGAE_INTAKE = 3;
     public static final int CORAL_LEFT = 4;
     public static final int CORAL_RIGHT = 5;
+    public static final int SHOOTER_FLYWHEELS_LEFT = 6;
+    public static final int SHOOTER_FLYWHEELS_RIGHT = 7;
+    public static final int SHOOTER_PIVOT_LEFT = 8;
+    public static final int SHOOTER_PIVOT_RIGHT = 9;
+    public static final int INDEXER = 10;
   }
 
   public static class DrivetrainConfig {
@@ -40,7 +44,6 @@ public final class Constants {
   }
 
   public static class AutoConfig {
-    public static final RobotConfig ROBOT_CONFIG = new RobotConfig(0, 0, null, 0);
   }
 
   public static class SystemConfig {
@@ -48,7 +51,13 @@ public final class Constants {
     public static final double PIVOT_SPEED = 0.5;
     public static final double ALGAE_INTAKE_SPEED = 0.5;
     public static final double CORAL_INTAKE_SPEED = 0.5;
+    public static final double SHOOTER_PIVOT_SPEED = 0.5;
+    public static final double SHOOTER_FLYWHEEL_SPEED = 0.5;
+    public static final double INDEXER_SPEED = 0.5;
 
     public static final double PIVOT_CONVERSION = 1;
+
+    public static final double SHOOTER_SPINUP_TIME = 2.0;
+    public static final double SHOOTER_SHOOT_TIME = 2.0;
   }
 }

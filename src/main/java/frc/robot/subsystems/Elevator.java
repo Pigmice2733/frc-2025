@@ -37,7 +37,6 @@ public class Elevator extends SubsystemBase {
 
   public void setSpeed(double speed) {
     frontMotor.set(speed);
-    backMotor.set(speed);
   }
 
   public Command stopMotor() {

@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ShootAlgae;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -20,7 +22,8 @@ import frc.robot.subsystems.Drivetrain;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private Drivetrain drivetrain;
+  private final Drivetrain drivetrain;
+  private final Shooter shooter;
 
   private final CommandXboxController driver;
   private final CommandXboxController operator;
@@ -35,6 +38,7 @@ public class RobotContainer {
     controls = new Controls(driver);
 
     drivetrain = new Drivetrain();
+    shooter = new Shooter();
 
     // Configure the trigger bindings
     configureBindings();
@@ -62,6 +66,7 @@ public class RobotContainer {
 
     // OPERATOR
     operator.povDown().onTrue(Commands.none()); // elevator down
+    operator.y().onTrue(new ShootAlgae(shooter));
   }
 
   /**
