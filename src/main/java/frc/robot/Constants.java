@@ -24,10 +24,10 @@ public final class Constants {
   public static final double AXIS_THRESHOLD = 0.1;
 
   public static class CANConfig {
-    public static final int ELEVATOR_FRONT = 0;
-    public static final int ELEVATOR_BACK = 1;
+    public static final int ELEVATOR_LEFT = 0;
+    public static final int ELEVATOR_RIGHT = 1;
     public static final int PIVOT = 2;
-    public static final int ALGAE_INTAKE = 3;
+    public static final int ALGAE_GRABBER = 3;
     public static final int CORAL_LEFT = 4;
     public static final int CORAL_RIGHT = 5;
     public static final int SHOOTER_FLYWHEELS_LEFT = 6;
@@ -53,39 +53,48 @@ public final class Constants {
   public static class SystemConfig {
     public static final PIDController PIVOT_PID = new PIDController(0.1, 0, 0);
     public static final PIDController SHOOTER_PID = new PIDController(0.1, 0, 0);
-
-    // deg
-    public static final double PIVOT_TOLERANCE = 2;
-    public static final double SHOOTER_TOLERANCE = 2;
+    public static final PIDController ELEVATOR_PID = new PIDController(0.1, 0, 0);
+    public static final double PIVOT_TOLERANCE = 2; // deg
+    public static final double SHOOTER_TOLERANCE = 2; // deg
+    public static final double ELEVATOR_TOLERANCE = 0.1; // m
 
     public static final double ELEVATOR_SPEED = 0.5;
-    public static final double PIVOT_SPEED = 0.5;
-    public static final double PROCESSOR_SPEED = 0.5;
+    public static final double GRABBER_SPEED = 0.5;
     public static final double CORAL_INTAKE_SPEED = 0.5;
-    public static final double SHOOTER_PIVOT_SPEED = 0.5;
-    public static final double SHOOTER_FLYWHEEL_SPEED = 0.5;
+    public static final double FLYWHEEL_PROCESSOR_SPEED = 0.2;
+    public static final double FLYWHEEL_NET_SPEED = 0.8;
     public static final double INDEXER_SPEED = 0.5;
 
     public static final double PIVOT_CONVERSION = 1;
+    public static final double ELEVATOR_CONVERSION = 1;
+    public static final double SHOOTER_CONVERSION = 1;
 
+    // s
     public static final double SHOOTER_SPINUP_TIME = 2.0;
     public static final double SHOOTER_SHOOT_TIME = 2.0;
     public static final double SHOOTER_INTAKE_TIME = 0.5;
     public static final double CORAL_INTAKE_TIME = 1.0;
     public static final double CORAL_OUTTAKE_TIME = 1.0;
+    public static final double GRABBER_TIME = 3.0;
   }
 
-  public static enum PivotPosition {
-    INITIAL(0), HUMAN_PLAYER(-30), SCORE_L4(20), SCORE_L3(30), SCORE_L1(80), PROCESSOR(120), REEF(45);
+  public static enum ElevatorPosition {
+    HUMAN_PLAYER(120, 0), SCORE_L1(260, 0), SCORE_L2(225, 0.3), SCORE_L3(225, 0.7), SCORE_L4(200, 1.0),
+    REEF_L2(210, 0.4), REEF_L3(210, 0.8), STOW(0, 0);
 
-    private double angle;
+    private double pivotAngle, elevatorHeight;
 
-    private PivotPosition(double angle) {
-      this.angle = angle;
+    private ElevatorPosition(double pivot, double elevator) {
+      pivotAngle = pivot;
+      elevatorHeight = elevator;
     }
 
-    public double getAngle() {
-      return angle;
+    public double getPivotAngle() {
+      return pivotAngle;
+    }
+
+    public double getElevatorHeight() {
+      return elevatorHeight;
     }
   }
 }

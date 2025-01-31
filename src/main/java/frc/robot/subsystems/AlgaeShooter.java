@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
@@ -24,7 +25,8 @@ public class AlgaeShooter extends SubsystemBase {
     rightFlywheels = new SparkMax(CANConfig.SHOOTER_FLYWHEELS_RIGHT, MotorType.kBrushless);
     indexerMotor = new SparkMax(CANConfig.INDEXER, MotorType.kBrushless);
 
-    leftPivot.configure(new SparkMaxConfig().inverted(false),
+    leftPivot.configure(new SparkMaxConfig().inverted(false)
+        .apply(new AbsoluteEncoderConfig().positionConversionFactor(SystemConfig.SHOOTER_CONVERSION)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     rightPivot.configure(new SparkMaxConfig().inverted(false).follow(CANConfig.SHOOTER_PIVOT_LEFT),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -74,14 +76,6 @@ public class AlgaeShooter extends SubsystemBase {
       setFlywheels(0);
       setIndexer(0);
     });
-  }
-
-  public Command runFlywheelsForward() {
-    return new InstantCommand(() -> setFlywheels(SystemConfig.SHOOTER_FLYWHEEL_SPEED));
-  }
-
-  public Command runFlywheelsReverse() {
-    return new InstantCommand(() -> setFlywheels(-SystemConfig.SHOOTER_FLYWHEEL_SPEED));
   }
 
   public Command runIndexerForward() {

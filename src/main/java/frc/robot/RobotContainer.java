@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ElevatorPosition;
+import frc.robot.commands.AlgaeFromReef;
+import frc.robot.commands.IntakeCoral;
+import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.ShootProcessor;
+import frc.robot.commands.SetElevatorPosition;
 import frc.robot.commands.ShootAlgae;
-import frc.robot.commands.coral.IntakeCoral;
-import frc.robot.commands.coral.ScoreCoralHigh;
-import frc.robot.commands.coral.ScoreCoralLow;
-import frc.robot.commands.coral.ScoreCoralMid;
-import frc.robot.subsystems.AlgaeProcessor;
+import frc.robot.subsystems.AlgaeGrabber;
 import frc.robot.subsystems.AlgaeShooter;
 import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.Drivetrain;
@@ -31,7 +33,7 @@ import frc.robot.subsystems.Pivot;
  */
 public class RobotContainer {
   private final Drivetrain drivetrain;
-  private final AlgaeProcessor processor;
+  private final AlgaeGrabber processor;
   private final AlgaeShooter shooter;
   private final CoralManipulator coral;
   private final Elevator elevator;
@@ -50,7 +52,7 @@ public class RobotContainer {
     controls = new Controls(driver);
 
     drivetrain = new Drivetrain();
-    processor = new AlgaeProcessor();
+    processor = new AlgaeGrabber();
     shooter = new AlgaeShooter();
     coral = new CoralManipulator();
     elevator = new Elevator();
@@ -77,15 +79,16 @@ public class RobotContainer {
   private void configureBindings() {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
-    driver.b().onTrue(Commands.none()); // need vision subsystem
     driver.y().onTrue(controls.toggleSlowmode());
 
-    // OPERATOR
-    operator.y().onTrue(new ShootAlgae(shooter));
-    operator.povUp().onTrue(new ScoreCoralHigh(coral, pivot));
-    operator.povLeft().onTrue(new ScoreCoralMid(coral, pivot));
-    operator.povDown().onTrue(new ScoreCoralLow(coral, pivot));
-    operator.povRight().onTrue(new IntakeCoral(coral, pivot));
+    // OPERATOR TODO
+    operator.rightBumper().onTrue(new ScoreCoral(coral));
+    operator.leftBumper().onTrue(new IntakeCoral(coral));
+    operator.povUp().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L4));
+    operator.povLeft().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L3));
+    operator.povRight().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L2));
+    operator.povDown().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L1));
+    operator.x().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.HUMAN_PLAYER));
   }
 
   /**

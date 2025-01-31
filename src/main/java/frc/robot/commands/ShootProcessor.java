@@ -6,11 +6,11 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.SystemConfig;
 import frc.robot.subsystems.AlgaeShooter;
 
-public class ShootAlgae extends SequentialCommandGroup {
-  /** Scores an algae in the net. */
-  public ShootAlgae(AlgaeShooter shooter) {
+public class ShootProcessor extends SequentialCommandGroup {
+  /** Scores an algae in the processor. */
+  public ShootProcessor(AlgaeShooter shooter) {
     addCommands(
-        new InstantCommand(() -> shooter.setFlywheels(SystemConfig.FLYWHEEL_NET_SPEED)),
+        new InstantCommand(() -> shooter.setFlywheels(SystemConfig.FLYWHEEL_PROCESSOR_SPEED)),
         new WaitCommand(SystemConfig.SHOOTER_SPINUP_TIME),
         shooter.runIndexerForward(),
         new WaitCommand(SystemConfig.SHOOTER_SHOOT_TIME),

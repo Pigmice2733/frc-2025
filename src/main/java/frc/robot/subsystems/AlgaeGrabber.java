@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
 
-public class AlgaeProcessor extends SubsystemBase {
+public class AlgaeGrabber extends SubsystemBase {
   private SparkMax motor;
 
-  public AlgaeProcessor() {
-    motor = new SparkMax(CANConfig.ALGAE_INTAKE, MotorType.kBrushless);
+  public AlgaeGrabber() {
+    motor = new SparkMax(CANConfig.ALGAE_GRABBER, MotorType.kBrushless);
     motor.configure(new SparkMaxConfig().inverted(false), ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
   }
@@ -27,7 +27,7 @@ public class AlgaeProcessor extends SubsystemBase {
   }
 
   private void updateEntries() {
-    SmartDashboard.putNumber("Algae Intake Motor", motor.get());
+    SmartDashboard.putNumber("Algae Grabber Motor", motor.get());
   }
 
   private void setSpeed(double speed) {
@@ -38,11 +38,7 @@ public class AlgaeProcessor extends SubsystemBase {
     return new InstantCommand(() -> setSpeed(0));
   }
 
-  public Command outtake() {
-    return new InstantCommand(() -> setSpeed(SystemConfig.PROCESSOR_SPEED));
-  }
-
-  public Command intake() {
-    return new InstantCommand(() -> setSpeed(-SystemConfig.PROCESSOR_SPEED));
+  public Command runMotor() {
+    return new InstantCommand(() -> setSpeed(SystemConfig.GRABBER_SPEED));
   }
 }

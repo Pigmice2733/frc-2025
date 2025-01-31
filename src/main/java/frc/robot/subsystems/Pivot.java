@@ -20,9 +20,8 @@ public class Pivot extends SubsystemBase {
 
   public Pivot() {
     motor = new SparkMax(CANConfig.PIVOT, MotorType.kBrushless);
-    motor.configure(
-        new SparkMaxConfig().inverted(false)
-            .apply(new AbsoluteEncoderConfig().positionConversionFactor(SystemConfig.PIVOT_CONVERSION)),
+    motor.configure(new SparkMaxConfig().inverted(false)
+        .apply(new AbsoluteEncoderConfig().positionConversionFactor(SystemConfig.PIVOT_CONVERSION)),
         ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     motor.getEncoder().setPosition(0);
 
@@ -53,9 +52,5 @@ public class Pivot extends SubsystemBase {
 
   public Command stopMotor() {
     return new InstantCommand(() -> setSpeed(0));
-  }
-
-  public Command startMotor() {
-    return new InstantCommand(() -> setSpeed(SystemConfig.PIVOT_SPEED));
   }
 }
