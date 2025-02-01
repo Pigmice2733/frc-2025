@@ -69,7 +69,7 @@ public final class Constants {
     public static final double ELEVATOR_CONVERSION = 1;
     public static final double SHOOTER_CONVERSION = 1;
 
-    // s
+    // seconds
     public static final double SHOOTER_SPINUP_TIME = 2.0;
     public static final double SHOOTER_SHOOT_TIME = 2.0;
     public static final double SHOOTER_INTAKE_TIME = 0.5;
@@ -96,5 +96,26 @@ public final class Constants {
     public double getElevatorHeight() {
       return elevatorHeight;
     }
+  }
+
+  public static enum ShooterPosition {
+    INTAKE(0), PROCESSOR(0), NET(0);
+
+    private double angle;
+
+    private ShooterPosition(double angle) {
+      this.angle = angle;
+    }
+
+    public double getAngle() {
+      return angle;
+    }
+  }
+
+  public static enum OperatorMode {
+    NONE,
+    CORAL,
+    ELEVATOR,
+    SHOOTER
   }
 }

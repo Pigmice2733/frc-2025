@@ -61,6 +61,10 @@ public class Elevator extends SubsystemBase {
     this.position = position;
   }
 
+  public ElevatorPosition getPosition() {
+    return position;
+  }
+
   public boolean getSwitch() {
     return limitSwitch.get();
   }

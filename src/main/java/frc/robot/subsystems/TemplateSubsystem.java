@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -13,11 +14,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TemplateSubsystem extends SubsystemBase {
   private SparkMax motor = new SparkMax(0, MotorType.kBrushless);
+  private PIDController motorController;
 
   public TemplateSubsystem() {
     motor = new SparkMax(0, MotorType.kBrushless);
     motor.configure(new SparkMaxConfig().inverted(false),
         ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+    motorController = new PIDController(0, 0, 0);
+    motorController.setTolerance(0);
   }
 
   @Override
@@ -39,5 +44,9 @@ public class TemplateSubsystem extends SubsystemBase {
 
   public Command startMotor() {
     return new InstantCommand(() -> setMotorSpeed(1), this);
+  }
+
+  public PIDController getController() {
+    return motorController;
   }
 }
