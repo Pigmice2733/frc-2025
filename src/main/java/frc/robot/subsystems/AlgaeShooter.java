@@ -17,7 +17,6 @@ import frc.robot.Constants.*;
 public class AlgaeShooter extends SubsystemBase {
   private SparkMax leftPivot, rightPivot, leftFlywheels, rightFlywheels, indexerMotor;
   private PIDController pivotController;
-  private ShooterPosition position;
 
   public AlgaeShooter() {
     leftPivot = new SparkMax(CANConfig.SHOOTER_PIVOT_LEFT, MotorType.kBrushless);
@@ -41,7 +40,6 @@ public class AlgaeShooter extends SubsystemBase {
     pivotController = SystemConfig.SHOOTER_PID;
     pivotController.setTolerance(SystemConfig.SHOOTER_TOLERANCE);
 
-    position = ShooterPosition.PROCESSOR;
   }
 
   @Override
@@ -83,14 +81,6 @@ public class AlgaeShooter extends SubsystemBase {
 
   public PIDController getController() {
     return pivotController;
-  }
-
-  public void setPosition(ShooterPosition newPosition) {
-    position = newPosition;
-  }
-
-  public ShooterPosition getPosition() {
-    return position;
   }
 
   public Command stopMotors() {

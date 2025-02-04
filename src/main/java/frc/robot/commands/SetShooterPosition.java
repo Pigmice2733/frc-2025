@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ShooterPosition;
 import frc.robot.subsystems.AlgaeShooter;
 
@@ -32,7 +33,7 @@ public class SetShooterPosition extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.setPivot(0);
-    shooter.setPosition(endPosition);
+    RobotContainer.setShooterPosition(endPosition);
   }
 
   @Override

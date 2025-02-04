@@ -19,7 +19,6 @@ public class Elevator extends SubsystemBase {
   private SparkMax leftMotor, rightMotor;
   private DigitalInput limitSwitch;
   private PIDController heightController;
-  public ElevatorPosition position;
 
   public Elevator() {
     leftMotor = new SparkMax(CANConfig.ELEVATOR_LEFT, MotorType.kBrushless);
@@ -35,8 +34,6 @@ public class Elevator extends SubsystemBase {
     heightController.setTolerance(SystemConfig.ELEVATOR_TOLERANCE);
 
     limitSwitch = new DigitalInput(CANConfig.LIMIT_SWITCH_CHANNEL);
-
-    position = ElevatorPosition.STOW;
   }
 
   @Override
@@ -55,14 +52,6 @@ public class Elevator extends SubsystemBase {
 
   public void setSpeed(double speed) {
     leftMotor.set(speed);
-  }
-
-  public void setPosition(ElevatorPosition position) {
-    this.position = position;
-  }
-
-  public ElevatorPosition getPosition() {
-    return position;
   }
 
   public boolean getSwitch() {

@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ElevatorPosition;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
@@ -39,7 +40,7 @@ public class SetElevatorPosition extends Command {
   public void end(boolean interrupted) {
     pivot.setSpeed(0);
     elevator.setSpeed(0);
-    elevator.setPosition(endPosition);
+    RobotContainer.setElevatorPosition(endPosition);
   }
 
   @Override

@@ -99,7 +99,7 @@ public final class Constants {
   }
 
   public static enum ShooterPosition {
-    INTAKE(0), PROCESSOR(0), NET(0);
+    INTAKE(0), PROCESSOR(10), NET(60), STOW(90);
 
     private double angle;
 

@@ -50,6 +50,8 @@ public class RobotContainer {
   private final Controls controls;
 
   private OperatorMode mode;
+  public static ElevatorPosition elevPos;
+  public static ShooterPosition shootPos;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -67,6 +69,8 @@ public class RobotContainer {
     pivot = new Pivot();
 
     mode = OperatorMode.NONE;
+    elevPos = ElevatorPosition.STOW;
+    shootPos = ShooterPosition.STOW;
 
     // Configure the trigger bindings
     configureBindings();
@@ -94,41 +98,47 @@ public class RobotContainer {
 
     // OPERATOR
     operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
-    operator.povDown().and(() -> (mode == OperatorMode.SHOOTER))
+    operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(new SetShooterPosition(shooter, ShooterPosition.INTAKE));
-    operator.povRight().and(() -> (mode == OperatorMode.SHOOTER))
+    operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(new SetShooterPosition(shooter, ShooterPosition.PROCESSOR));
-    operator.povUp().and(() -> (mode == OperatorMode.SHOOTER))
+    operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(new SetShooterPosition(shooter, ShooterPosition.NET));
-    operator.leftBumper().and(() -> (shooter.getPosition() == ShooterPosition.INTAKE)).onTrue(new IntakeAlgae(shooter));
-    operator.leftBumper().and(() -> (shooter.getPosition() == ShooterPosition.NET)).onTrue(new ShootNet(shooter));
-    operator.leftBumper().and(() -> (shooter.getPosition() == ShooterPosition.PROCESSOR))
+    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(new SetShooterPosition(shooter, ShooterPosition.STOW));
+    operator.leftBumper().and(() -> (shootPos == ShooterPosition.INTAKE))
+        .onTrue(new IntakeAlgae(shooter));
+    operator.leftBumper().and(() -> (shootPos == ShooterPosition.NET)).onTrue(new ShootNet(shooter));
+    operator.leftBumper().and(() -> (shootPos == ShooterPosition.PROCESSOR))
         .onTrue(new ShootProcessor(shooter));
 
     operator.b().onTrue(new InstantCommand(() -> changeMode(OperatorMode.ELEVATOR)));
-    operator.povDown().and(() -> (mode == OperatorMode.ELEVATOR))
+    operator.povDown().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.STOW));
-    operator.povLeft().and(() -> (mode == OperatorMode.ELEVATOR))
+    operator.povLeft().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.HUMAN_PLAYER));
-    operator.povRight().and(() -> (mode == OperatorMode.ELEVATOR))
+    operator.povRight().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.REEF_L2));
-    operator.povUp().and(() -> (mode == OperatorMode.ELEVATOR))
+    operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.REEF_L3));
-    operator.rightBumper().and(() -> (elevator.getPosition() == ElevatorPosition.HUMAN_PLAYER))
+    operator.rightBumper().and(() -> (elevPos == ElevatorPosition.HUMAN_PLAYER))
         .onTrue(new IntakeCoral(coral));
-    operator.rightBumper().and(() -> (elevator.getPosition() == ElevatorPosition.REEF_L2
-        || elevator.getPosition() == ElevatorPosition.REEF_L3)).onTrue(new AlgaeFromReef(grabber));
+    operator.rightBumper().and(() -> (elevPos == ElevatorPosition.REEF_L2
+        || elevPos == ElevatorPosition.REEF_L3)).onTrue(new AlgaeFromReef(grabber));
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.CORAL)));
-    operator.povDown().and(() -> (mode == OperatorMode.CORAL))
+    operator.povDown().and(() -> mode == OperatorMode.CORAL)
         .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L1));
-    operator.povLeft().and(() -> (mode == OperatorMode.CORAL))
+    operator.povLeft().and(() -> mode == OperatorMode.CORAL)
         .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L2));
-    operator.povRight().and(() -> (mode == OperatorMode.CORAL))
+    operator.povRight().and(() -> mode == OperatorMode.CORAL)
         .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L3));
-    operator.povUp().and(() -> (mode == OperatorMode.CORAL))
+    operator.povUp().and(() -> mode == OperatorMode.CORAL)
         .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L4));
-    operator.rightBumper().and(() -> (mode == OperatorMode.CORAL)).onTrue(new ScoreCoral(coral));
+    operator.rightBumper()
+        .and(() -> elevPos == ElevatorPosition.SCORE_L1 || elevPos == ElevatorPosition.SCORE_L2
+            || elevPos == ElevatorPosition.SCORE_L3 || elevPos == ElevatorPosition.SCORE_L4)
+        .onTrue(new ScoreCoral(coral));
 
     operator.y().onTrue(new Climb());
   }
@@ -145,5 +155,13 @@ public class RobotContainer {
 
   private void changeMode(OperatorMode newMode) {
     mode = newMode;
+  }
+
+  public static void setShooterPosition(ShooterPosition newPos) {
+    shootPos = newPos;
+  }
+
+  public static void setElevatorPosition(ElevatorPosition newPos) {
+    elevPos = newPos;
   }
 }
