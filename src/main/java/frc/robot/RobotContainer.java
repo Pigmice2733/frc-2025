@@ -13,7 +13,6 @@ import frc.robot.Constants.ElevatorPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
 import frc.robot.commands.AlgaeFromReef;
-import frc.robot.commands.Climb;
 import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.ScoreCoral;
@@ -23,6 +22,7 @@ import frc.robot.commands.ShootNet;
 import frc.robot.commands.ShootProcessor;
 import frc.robot.subsystems.AlgaeGrabber;
 import frc.robot.subsystems.AlgaeShooter;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -41,6 +41,7 @@ public class RobotContainer {
   private final Drivetrain drivetrain;
   private final AlgaeGrabber grabber;
   private final AlgaeShooter shooter;
+  private final Climber climber;
   private final CoralManipulator coral;
   private final Elevator elevator;
   private final Pivot pivot;
@@ -59,11 +60,12 @@ public class RobotContainer {
   public RobotContainer() {
     driver = new CommandXboxController(0);
     operator = new CommandXboxController(1);
-    controls = new Controls(driver);
+    controls = new Controls(driver, operator);
 
     drivetrain = new Drivetrain();
     grabber = new AlgaeGrabber();
     shooter = new AlgaeShooter();
+    climber = new Climber();
     coral = new CoralManipulator();
     elevator = new Elevator();
     pivot = new Pivot();
@@ -74,9 +76,17 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     configureBindings();
+    configureDefaultCommands();
   }
-
-  /**
+    
+  private void configureDefaultCommands() {
+    // drivetrain.setDefaultCommand();
+    elevator.setDefaultCommand(elevator.manualSpeed(controls.getElevatorSpeed()));
+    pivot.setDefaultCommand(pivot.manualSpeed(controls.getPivotSpeed()));
+    shooter.setDefaultCommand(shooter.manualSpeed(controls.getShooterSpeed()));
+  }
+    
+      /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
@@ -140,7 +150,7 @@ public class RobotContainer {
             || elevPos == ElevatorPosition.SCORE_L3 || elevPos == ElevatorPosition.SCORE_L4)
         .onTrue(new ScoreCoral(coral));
 
-    operator.y().onTrue(new Climb());
+    operator.y().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.CLIMB)).onTrue(climber.climbPosition());
   }
 
   /**

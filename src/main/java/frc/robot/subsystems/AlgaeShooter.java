@@ -91,6 +91,14 @@ public class AlgaeShooter extends SubsystemBase {
     });
   }
 
+  public Command manualSpeed(double speed) {
+    return new InstantCommand(() -> {
+      setPivot(speed);
+      setFlywheels(speed);
+      setIndexer(speed);
+    });
+  }
+
   public Command runIndexerForward() {
     return new InstantCommand(() -> setIndexer(SystemConfig.INDEXER_SPEED));
   }

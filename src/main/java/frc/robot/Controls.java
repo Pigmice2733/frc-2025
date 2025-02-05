@@ -6,17 +6,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DrivetrainConfig;
+import frc.robot.Constants.SystemConfig;
 
 public class Controls {
-    private CommandXboxController driver;
+    private CommandXboxController driver, operator;
 
     // If a value from a joystick is less than this, it will return 0.
     private double threshold = Constants.AXIS_THRESHOLD;
 
     private boolean slowmode;
 
-    public Controls(CommandXboxController driver) {
+    public Controls(CommandXboxController driver, CommandXboxController operator) {
         this.driver = driver;
+        this.operator = operator;
 
         setSlowmode(false);
     }
@@ -49,7 +51,7 @@ public class Controls {
     }
 
     public Command toggleSlowmode() {
-        return new InstantCommand(slowmode ? () -> setSlowmode(true) : () -> setSlowmode(false));
+        return new InstantCommand(slowmode ? () -> setSlowmode(false) : () -> setSlowmode(true));
     }
 
     public void setSlowmode(boolean slow) {
@@ -59,5 +61,23 @@ public class Controls {
 
     public boolean getSlowmode() {
         return slowmode;
+    }
+
+    public double getElevatorSpeed() {
+        double joystickSpeed = MathUtil.applyDeadband(operator.getLeftY(), threshold);
+ 
+        return joystickSpeed * SystemConfig.ELEVATOR_SPEED;
+    }
+
+    public double getPivotSpeed() {
+        double joystickSpeed = MathUtil.applyDeadband(operator.getRightY(), threshold);
+ 
+        return joystickSpeed * SystemConfig.PIVOT_SPEED;
+    }
+
+    public double getShooterSpeed() {
+        double joystickSpeed = MathUtil.applyDeadband(operator.getRightTriggerAxis(), threshold) - MathUtil.applyDeadband(operator.getLeftTriggerAxis(), threshold);
+ 
+        return joystickSpeed * SystemConfig.SHOOTER_SPEED;
     }
 }

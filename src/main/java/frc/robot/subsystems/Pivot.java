@@ -53,4 +53,8 @@ public class Pivot extends SubsystemBase {
   public Command stopMotor() {
     return new InstantCommand(() -> setSpeed(0));
   }
+
+  public Command manualSpeed(double speed) {
+    return new InstantCommand(() -> setSpeed(speed));
+  }
 }

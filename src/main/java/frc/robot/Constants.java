@@ -35,6 +35,7 @@ public final class Constants {
     public static final int SHOOTER_PIVOT_LEFT = 8;
     public static final int SHOOTER_PIVOT_RIGHT = 9;
     public static final int INDEXER = 10;
+    public static final int CLIMBER = 11;
 
     public static final int LIMIT_SWITCH_CHANNEL = 0;
   }
@@ -59,6 +60,8 @@ public final class Constants {
     public static final double ELEVATOR_TOLERANCE = 0.1; // m
 
     public static final double ELEVATOR_SPEED = 0.5;
+    public static final double PIVOT_SPEED = 0.5;
+    public static final double SHOOTER_SPEED = 0.5;
     public static final double GRABBER_SPEED = 0.5;
     public static final double CORAL_INTAKE_SPEED = 0.5;
     public static final double FLYWHEEL_PROCESSOR_SPEED = 0.2;
@@ -76,11 +79,14 @@ public final class Constants {
     public static final double CORAL_INTAKE_TIME = 1.0;
     public static final double CORAL_OUTTAKE_TIME = 1.0;
     public static final double GRABBER_TIME = 3.0;
+
+    public static final double CLIMBER_DEFAULT_POSITION = 0;
+    public static final double CLIMBER_CLIMB_POSITION = 0.5;
   }
 
   public static enum ElevatorPosition {
     HUMAN_PLAYER(120, 0), SCORE_L1(260, 0), SCORE_L2(225, 0.3), SCORE_L3(225, 0.7), SCORE_L4(200, 1.0),
-    REEF_L2(210, 0.4), REEF_L3(210, 0.8), STOW(0, 0);
+    REEF_L2(210, 0.4), REEF_L3(210, 0.8), STOW(0, 0), CLIMB(0, 0.2);
 
     private double pivotAngle, elevatorHeight;
 

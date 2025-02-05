@@ -70,11 +70,7 @@ public class Elevator extends SubsystemBase {
     return new InstantCommand(() -> setSpeed(0));
   }
 
-  public Command up() {
-    return new InstantCommand(() -> setSpeed(SystemConfig.ELEVATOR_SPEED));
-  }
-
-  public Command down() {
-    return new InstantCommand(() -> setSpeed(-SystemConfig.ELEVATOR_SPEED));
+  public Command manualSpeed(double speed) {
+    return new InstantCommand(() -> setSpeed(speed));
   }
 }
