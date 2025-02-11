@@ -11,7 +11,7 @@ import frc.robot.Constants.SystemConfig;
 public class Controls {
     private CommandXboxController driver, operator;
 
-    // If a value from a joystick is less than this, it will return 0.
+    /** If a value from a joystick is less than this, it will return 0. */
     private double threshold = Constants.AXIS_THRESHOLD;
 
     private boolean slowmode;
@@ -24,25 +24,28 @@ public class Controls {
     }
 
     /**
-     * Returns the left joystick's Y-axis value.
+     * Returns the left joystick's Y-axis value, corresponding to the robot's
+     * X-direction speed.
      */
-    public double getDriveSpeedY() {
+    public double getDriveSpeedX() {
         double joystickY = MathUtil.applyDeadband(driver.getLeftY(), threshold);
 
         return joystickY * DrivetrainConfig.MAX_DRIVE_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
     }
 
     /**
-     * Returns the left joystick's X-axis value.
+     * Returns the left joystick's X-axis value, corresponding to the robot's
+     * Y-direction speed.
      */
-    public double getDriveSpeedX() {
+    public double getDriveSpeedY() {
         double joystickX = MathUtil.applyDeadband(driver.getLeftX(), threshold);
 
         return joystickX * DrivetrainConfig.MAX_DRIVE_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
     }
 
     /**
-     * Returns the right joystick's X-axis value
+     * Returns the right joystick's X-axis value, corresponding to the robot's
+     * rotational speed.
      */
     public double getTurnSpeed() {
         double joystickTurn = MathUtil.applyDeadband(driver.getRightX(), threshold);
@@ -65,19 +68,20 @@ public class Controls {
 
     public double getElevatorSpeed() {
         double joystickSpeed = MathUtil.applyDeadband(operator.getLeftY(), threshold);
- 
+
         return joystickSpeed * SystemConfig.ELEVATOR_SPEED;
     }
 
     public double getPivotSpeed() {
         double joystickSpeed = MathUtil.applyDeadband(operator.getRightY(), threshold);
- 
+
         return joystickSpeed * SystemConfig.PIVOT_SPEED;
     }
 
     public double getShooterSpeed() {
-        double joystickSpeed = MathUtil.applyDeadband(operator.getRightTriggerAxis(), threshold) - MathUtil.applyDeadband(operator.getLeftTriggerAxis(), threshold);
- 
+        double joystickSpeed = MathUtil.applyDeadband(operator.getRightTriggerAxis(), threshold)
+                - MathUtil.applyDeadband(operator.getLeftTriggerAxis(), threshold);
+
         return joystickSpeed * SystemConfig.SHOOTER_SPEED;
     }
 }

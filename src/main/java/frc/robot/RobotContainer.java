@@ -13,6 +13,7 @@ import frc.robot.Constants.ElevatorPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
 import frc.robot.commands.AlgaeFromReef;
+import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.ScoreCoral;
@@ -78,15 +79,19 @@ public class RobotContainer {
     configureBindings();
     configureDefaultCommands();
   }
-    
+
   private void configureDefaultCommands() {
-    // drivetrain.setDefaultCommand();
+    drivetrain.setDefaultCommand(new DriveJoysticks(
+        drivetrain,
+        controls::getDriveSpeedX,
+        controls::getDriveSpeedY,
+        controls::getTurnSpeed));
     elevator.setDefaultCommand(elevator.manualSpeed(controls.getElevatorSpeed()));
     pivot.setDefaultCommand(pivot.manualSpeed(controls.getPivotSpeed()));
     shooter.setDefaultCommand(shooter.manualSpeed(controls.getShooterSpeed()));
   }
-    
-      /**
+
+  /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
@@ -150,7 +155,8 @@ public class RobotContainer {
             || elevPos == ElevatorPosition.SCORE_L3 || elevPos == ElevatorPosition.SCORE_L4)
         .onTrue(new ScoreCoral(coral));
 
-    operator.y().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.CLIMB)).onTrue(climber.climbPosition());
+    operator.y().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.CLIMB))
+        .onTrue(climber.climbPosition());
   }
 
   /**
