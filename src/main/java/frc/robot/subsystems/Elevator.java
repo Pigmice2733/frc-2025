@@ -38,7 +38,8 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (leftMotor.get() < 0 && getSwitch()) {
+    if ((leftMotor.get() < 0 && getSwitch())
+        || (leftMotor.get() > 0 && getHeight() >= SystemConfig.ELEVATOR_UPPER_LIMIT)) {
       setSpeed(0);
     }
 

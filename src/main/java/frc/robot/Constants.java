@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -59,9 +60,9 @@ public final class Constants {
     public static final double SHOOTER_TOLERANCE = 2; // deg
     public static final double ELEVATOR_TOLERANCE = 0.1; // m
 
-    public static final double ELEVATOR_SPEED = 0.5;
-    public static final double PIVOT_SPEED = 0.5;
-    public static final double SHOOTER_SPEED = 0.5;
+    public static final double MAX_ELEVATOR_SPEED = 0.5;
+    public static final double MAX_PIVOT_SPEED = 0.5;
+    public static final double MAX_SHOOTER_SPEED = 0.5;
     public static final double GRABBER_SPEED = 0.5;
     public static final double CORAL_INTAKE_SPEED = 0.5;
     public static final double FLYWHEEL_PROCESSOR_SPEED = 0.2;
@@ -82,11 +83,17 @@ public final class Constants {
 
     public static final double CLIMBER_DEFAULT_POSITION = 0;
     public static final double CLIMBER_CLIMB_POSITION = 0.5;
+
+    public static final double ELEVATOR_UPPER_LIMIT = Units.inchesToMeters(21.5);
+    public static final double PIVOT_LOWER_LIMIT = 10; // deg
+    public static final double PIVOT_UPPER_LIMIT = 270; // deg
+    public static final double SHOOTER_LOWER_LIMIT = -12; // deg
+    public static final double SHOOTER_UPPER_LIMIT = 90; // deg
   }
 
   public static enum ElevatorPosition {
-    HUMAN_PLAYER(120, 0), SCORE_L1(260, 0), SCORE_L2(225, 0.3), SCORE_L3(225, 0.7), SCORE_L4(200, 1.0),
-    REEF_L2(210, 0.4), REEF_L3(210, 0.8), STOW(0, 0), CLIMB(0, 0.2);
+    HUMAN_PLAYER(120, 0), SCORE_L1(260, 0), SCORE_L2(225, 0.15), SCORE_L3(225, 0.35), SCORE_L4(200, 0.5),
+    REEF_L2(210, 0.2), REEF_L3(210, 0.4), STOW(0, 0), CLIMB(0, 0.1);
 
     private double pivotAngle, elevatorHeight;
 
@@ -105,7 +112,7 @@ public final class Constants {
   }
 
   public static enum ShooterPosition {
-    INTAKE(0), PROCESSOR(10), NET(60), STOW(90);
+    INTAKE(-8), PROCESSOR(0), NET(40), STOW(90);
 
     private double angle;
 

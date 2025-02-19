@@ -44,6 +44,11 @@ public class AlgaeShooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if ((leftPivot.get() < 0 && getPivot() <= SystemConfig.SHOOTER_LOWER_LIMIT)
+        || (leftPivot.get() > 0 && getPivot() >= SystemConfig.SHOOTER_UPPER_LIMIT)) {
+      setPivot(0);
+    }
+
     updateEntries();
   }
 

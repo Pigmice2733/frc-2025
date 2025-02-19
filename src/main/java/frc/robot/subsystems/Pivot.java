@@ -31,6 +31,11 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if ((motor.get() < 0 && getAngle() <= SystemConfig.PIVOT_LOWER_LIMIT)
+        || (motor.get() > 0 && getAngle() >= SystemConfig.PIVOT_UPPER_LIMIT)) {
+      setSpeed(0);
+    }
+
     updateEntries();
   }
 
