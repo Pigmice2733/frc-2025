@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -23,7 +24,6 @@ import frc.robot.commands.ShootNet;
 import frc.robot.commands.ShootProcessor;
 import frc.robot.subsystems.AlgaeGrabber;
 import frc.robot.subsystems.AlgaeShooter;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -40,12 +40,11 @@ import frc.robot.subsystems.Pivot;
  */
 public class RobotContainer {
   private final Drivetrain drivetrain;
-  private final AlgaeGrabber grabber;
-  private final AlgaeShooter shooter;
-  private final Climber climber;
-  private final CoralManipulator coral;
-  private final Elevator elevator;
-  private final Pivot pivot;
+  // private final AlgaeGrabber grabber;
+  // private final AlgaeShooter shooter;
+  // private final CoralManipulator coral;
+  // private final Elevator elevator;
+  // private final Pivot pivot;
 
   private final CommandXboxController driver;
   private final CommandXboxController operator;
@@ -64,12 +63,11 @@ public class RobotContainer {
     controls = new Controls(driver, operator);
 
     drivetrain = new Drivetrain();
-    grabber = new AlgaeGrabber();
-    shooter = new AlgaeShooter();
-    climber = new Climber();
-    coral = new CoralManipulator();
-    elevator = new Elevator();
-    pivot = new Pivot();
+    // grabber = new AlgaeGrabber();
+    // shooter = new AlgaeShooter();
+    // coral = new CoralManipulator();
+    // elevator = new Elevator();
+    // pivot = new Pivot();
 
     mode = OperatorMode.NONE;
     elevPos = ElevatorPosition.STOW;
@@ -78,6 +76,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     configureDefaultCommands();
+
+    DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   private void configureDefaultCommands() {
@@ -86,9 +86,9 @@ public class RobotContainer {
         controls::getDriveSpeedX,
         controls::getDriveSpeedY,
         controls::getTurnSpeed));
-    elevator.setDefaultCommand(elevator.manualSpeed(controls.getElevatorSpeed()));
-    pivot.setDefaultCommand(pivot.manualSpeed(controls.getPivotSpeed()));
-    shooter.setDefaultCommand(shooter.manualSpeed(controls.getShooterSpeed()));
+    // elevator.setDefaultCommand(elevator.manualSpeed(controls.getElevatorSpeed()));
+    // pivot.setDefaultCommand(pivot.manualSpeed(controls.getPivotSpeed()));
+    // shooter.setDefaultCommand(shooter.manualSpeed(controls.getShooterSpeed()));
   }
 
   /**
@@ -112,51 +112,60 @@ public class RobotContainer {
     // create vision commands once Vision subsystem exists
 
     // OPERATOR
-    operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
-    operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new SetShooterPosition(shooter, ShooterPosition.INTAKE));
-    operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new SetShooterPosition(shooter, ShooterPosition.PROCESSOR));
-    operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new SetShooterPosition(shooter, ShooterPosition.NET));
-    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new SetShooterPosition(shooter, ShooterPosition.STOW));
-    operator.leftBumper().and(() -> (shootPos == ShooterPosition.INTAKE))
-        .onTrue(new IntakeAlgae(shooter));
-    operator.leftBumper().and(() -> (shootPos == ShooterPosition.NET)).onTrue(new ShootNet(shooter));
-    operator.leftBumper().and(() -> (shootPos == ShooterPosition.PROCESSOR))
-        .onTrue(new ShootProcessor(shooter));
-
-    operator.b().onTrue(new InstantCommand(() -> changeMode(OperatorMode.ELEVATOR)));
-    operator.povDown().and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.STOW));
-    operator.povLeft().and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.HUMAN_PLAYER));
-    operator.povRight().and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.REEF_L2));
-    operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.REEF_L3));
-    operator.rightBumper().and(() -> (elevPos == ElevatorPosition.HUMAN_PLAYER))
-        .onTrue(new IntakeCoral(coral));
-    operator.rightBumper().and(() -> (elevPos == ElevatorPosition.REEF_L2
-        || elevPos == ElevatorPosition.REEF_L3)).onTrue(new AlgaeFromReef(grabber));
-
-    operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.CORAL)));
-    operator.povDown().and(() -> mode == OperatorMode.CORAL)
-        .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L1));
-    operator.povLeft().and(() -> mode == OperatorMode.CORAL)
-        .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L2));
-    operator.povRight().and(() -> mode == OperatorMode.CORAL)
-        .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L3));
-    operator.povUp().and(() -> mode == OperatorMode.CORAL)
-        .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L4));
-    operator.rightBumper()
-        .and(() -> elevPos == ElevatorPosition.SCORE_L1 || elevPos == ElevatorPosition.SCORE_L2
-            || elevPos == ElevatorPosition.SCORE_L3 || elevPos == ElevatorPosition.SCORE_L4)
-        .onTrue(new ScoreCoral(coral));
-
-    operator.y().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.CLIMB))
-        .onTrue(climber.climbPosition());
+    /*
+     * operator.a().onTrue(new InstantCommand(() ->
+     * changeMode(OperatorMode.SHOOTER)));
+     * operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(new SetShooterPosition(shooter, ShooterPosition.INTAKE));
+     * operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(new SetShooterPosition(shooter, ShooterPosition.PROCESSOR));
+     * operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(new SetShooterPosition(shooter, ShooterPosition.NET));
+     * operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(new SetShooterPosition(shooter, ShooterPosition.STOW));
+     * operator.leftBumper().and(() -> (shootPos == ShooterPosition.INTAKE))
+     * .onTrue(new IntakeAlgae(shooter));
+     * operator.leftBumper().and(() -> (shootPos == ShooterPosition.NET)).onTrue(new
+     * ShootNet(shooter));
+     * operator.leftBumper().and(() -> (shootPos == ShooterPosition.PROCESSOR))
+     * .onTrue(new ShootProcessor(shooter));
+     * 
+     * operator.b().onTrue(new InstantCommand(() ->
+     * changeMode(OperatorMode.ELEVATOR)));
+     * operator.povDown().and(() -> mode == OperatorMode.ELEVATOR)
+     * .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.STOW));
+     * operator.povLeft().and(() -> mode == OperatorMode.ELEVATOR)
+     * .onTrue(new SetElevatorPosition(elevator, pivot,
+     * ElevatorPosition.HUMAN_PLAYER));
+     * operator.povRight().and(() -> mode == OperatorMode.ELEVATOR)
+     * .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.REEF_L2));
+     * operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
+     * .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.REEF_L3));
+     * operator.rightBumper().and(() -> (elevPos == ElevatorPosition.HUMAN_PLAYER))
+     * .onTrue(new IntakeCoral(coral));
+     * operator.rightBumper().and(() -> (elevPos == ElevatorPosition.REEF_L2
+     * || elevPos == ElevatorPosition.REEF_L3)).onTrue(new AlgaeFromReef(grabber));
+     * 
+     * operator.x().onTrue(new InstantCommand(() ->
+     * changeMode(OperatorMode.CORAL)));
+     * operator.povDown().and(() -> mode == OperatorMode.CORAL)
+     * .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L1));
+     * operator.povLeft().and(() -> mode == OperatorMode.CORAL)
+     * .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L2));
+     * operator.povRight().and(() -> mode == OperatorMode.CORAL)
+     * .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L3));
+     * operator.povUp().and(() -> mode == OperatorMode.CORAL)
+     * .onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.SCORE_L4));
+     * operator.rightBumper()
+     * .and(() -> elevPos == ElevatorPosition.SCORE_L1 || elevPos ==
+     * ElevatorPosition.SCORE_L2
+     * || elevPos == ElevatorPosition.SCORE_L3 || elevPos ==
+     * ElevatorPosition.SCORE_L4)
+     * .onTrue(new ScoreCoral(coral));
+     * 
+     * operator.y().onTrue(new SetElevatorPosition(elevator, pivot,
+     * ElevatorPosition.CLIMB));
+     */
   }
 
   /**

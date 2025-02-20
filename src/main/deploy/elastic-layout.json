@@ -1,0 +1,33 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Drivetrain & Vision",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "Swerve Modules",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": []
+          }
+        ],
+        "containers": []
+      }
+    },
+    {
+      "name": "Subsystems",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    }
+  ]
+}

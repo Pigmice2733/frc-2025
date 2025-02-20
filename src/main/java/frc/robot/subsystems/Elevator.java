@@ -72,6 +72,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command manualSpeed(double speed) {
-    return new InstantCommand(() -> setSpeed(speed));
+    return new InstantCommand(() -> setSpeed(speed), this);
   }
 }

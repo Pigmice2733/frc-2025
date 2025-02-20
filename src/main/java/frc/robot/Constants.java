@@ -25,20 +25,19 @@ public final class Constants {
   public static final double AXIS_THRESHOLD = 0.1;
 
   public static class CANConfig {
-    public static final int ELEVATOR_LEFT = 0;
-    public static final int ELEVATOR_RIGHT = 1;
-    public static final int PIVOT = 2;
-    public static final int ALGAE_GRABBER = 3;
-    public static final int CORAL_LEFT = 4;
-    public static final int CORAL_RIGHT = 5;
-    public static final int SHOOTER_FLYWHEELS_LEFT = 6;
-    public static final int SHOOTER_FLYWHEELS_RIGHT = 7;
-    public static final int SHOOTER_PIVOT_LEFT = 8;
-    public static final int SHOOTER_PIVOT_RIGHT = 9;
-    public static final int INDEXER = 10;
-    public static final int CLIMBER = 11;
+    public static final int ELEVATOR_LEFT = 14;
+    public static final int ELEVATOR_RIGHT = 15;
+    public static final int PIVOT = 16;
+    public static final int ALGAE_GRABBER = 17;
+    public static final int CORAL_LEFT = 18;
+    public static final int CORAL_RIGHT = 19;
+    public static final int SHOOTER_FLYWHEELS_LEFT = 20;
+    public static final int SHOOTER_FLYWHEELS_RIGHT = 21;
+    public static final int SHOOTER_PIVOT_LEFT = 22;
+    public static final int SHOOTER_PIVOT_RIGHT = 23;
+    public static final int INDEXER = 24;
 
-    public static final int LIMIT_SWITCH_CHANNEL = 0;
+    public static final int LIMIT_SWITCH_CHANNEL = 25;
   }
 
   public static class DrivetrainConfig {
