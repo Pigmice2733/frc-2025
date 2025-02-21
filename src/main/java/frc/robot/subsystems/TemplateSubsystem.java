@@ -7,10 +7,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class TemplateSubsystem extends SubsystemBase {
   private SparkMax motor = new SparkMax(0, MotorType.kBrushless);
@@ -31,7 +31,7 @@ public class TemplateSubsystem extends SubsystemBase {
   }
 
   private void updateEntries() {
-    SmartDashboard.putNumber("Motor Speed", motor.get());
+    Constants.sendNumberToElastic("Motor Speed", motor.get(), 2);
   }
 
   public void setMotorSpeed(double speed) {

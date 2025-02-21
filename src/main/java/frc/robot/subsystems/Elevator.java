@@ -9,10 +9,10 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.*;
 
 public class Elevator extends SubsystemBase {
@@ -47,8 +47,8 @@ public class Elevator extends SubsystemBase {
   }
 
   private void updateEntries() {
-    SmartDashboard.putNumber("Elevator Left Speed", leftMotor.get());
-    SmartDashboard.putNumber("Elevator Right Speed", rightMotor.get());
+    Constants.sendNumberToElastic("Elevator Left Speed", leftMotor.get(), 2);
+    Constants.sendNumberToElastic("Elevator Right Speed", rightMotor.get(), 2);
   }
 
   public void setSpeed(double speed) {

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.*;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
@@ -108,14 +109,14 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private void updateEntries() {
-    SmartDashboard.putNumber("Robot X", robotPose.getX());
-    SmartDashboard.putNumber("Robot Y", robotPose.getY());
-    SmartDashboard.putNumber("Robot Angle", robotPose.getRotation().getDegrees());
+    Constants.sendNumberToElastic("Robot X", robotPose.getX(), 2);
+    Constants.sendNumberToElastic("Robot Y", robotPose.getY(), 2);
+    Constants.sendNumberToElastic("Robot Angle", robotPose.getRotation().getDegrees(), 1);
 
-    SmartDashboard.putNumber("Front Left Encoder Output", modules[0].getAbsolutePosition());
-    SmartDashboard.putNumber("Front Right Encoder Output", modules[1].getAbsolutePosition());
-    SmartDashboard.putNumber("Back Left Encoder Output", modules[2].getAbsolutePosition());
-    SmartDashboard.putNumber("Back Right Encoder Output", modules[3].getAbsolutePosition());
+    Constants.sendNumberToElastic("Front Left Encoder Output", modules[0].getAbsolutePosition(), 1);
+    Constants.sendNumberToElastic("Front Right Encoder Output", modules[1].getAbsolutePosition(), 1);
+    Constants.sendNumberToElastic("Back Left Encoder Output", modules[2].getAbsolutePosition(), 1);
+    Constants.sendNumberToElastic("Back Right Encoder Output", modules[3].getAbsolutePosition(), 1);
 
     fieldWidget.setRobotPose(robotPose);
     SmartDashboard.putData("Field", fieldWidget);

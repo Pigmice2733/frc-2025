@@ -8,10 +8,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.*;
 
 public class AlgaeShooter extends SubsystemBase {
@@ -53,11 +53,11 @@ public class AlgaeShooter extends SubsystemBase {
   }
 
   private void updateEntries() {
-    SmartDashboard.putNumber("Shooter Left Pivot Speed", leftPivot.get());
-    SmartDashboard.putNumber("Shooter Right Pivot Speed", rightPivot.get());
-    SmartDashboard.putNumber("Shooter Left Flywheel Speed", leftFlywheels.get());
-    SmartDashboard.putNumber("Shooter Right Flywheel Speed", rightFlywheels.get());
-    SmartDashboard.putNumber("Shooter Indexer Speed", indexerMotor.get());
+    Constants.sendNumberToElastic("Shooter Left Pivot Speed", leftPivot.get(), 2);
+    Constants.sendNumberToElastic("Shooter Right Pivot Speed", rightPivot.get(), 2);
+    Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheels.get(), 2);
+    Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheels.get(), 2);
+    Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
   }
 
   public void setPivot(double speed) {

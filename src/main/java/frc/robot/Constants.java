@@ -8,6 +8,7 @@ import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -129,5 +130,10 @@ public final class Constants {
     CORAL,
     ELEVATOR,
     SHOOTER
+  }
+
+  public static void sendNumberToElastic(String name, double num, double places) {
+    double newNum = Math.round(num * Math.pow(10, places)) / Math.pow(10, places);
+    SmartDashboard.putNumber(name, newNum);
   }
 }
