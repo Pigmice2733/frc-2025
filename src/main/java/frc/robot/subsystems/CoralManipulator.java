@@ -13,16 +13,12 @@ import frc.robot.Constants;
 import frc.robot.Constants.*;
 
 public class CoralManipulator extends SubsystemBase {
-  private SparkMax leftMotor, rightMotor;
+  private SparkMax motor;
 
   public CoralManipulator() {
-    leftMotor = new SparkMax(CANConfig.CORAL_LEFT, MotorType.kBrushless);
-    rightMotor = new SparkMax(CANConfig.CORAL_RIGHT, MotorType.kBrushless);
+    motor = new SparkMax(CANConfig.CORAL_GRABBER, MotorType.kBrushless);
 
-    leftMotor.configure(new SparkMaxConfig().inverted(false), ResetMode.kNoResetSafeParameters,
-        PersistMode.kNoPersistParameters);
-    rightMotor.configure(new SparkMaxConfig().inverted(true).follow(CANConfig.CORAL_LEFT),
-        ResetMode.kNoResetSafeParameters,
+    motor.configure(new SparkMaxConfig().inverted(false), ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
   }
 
@@ -32,12 +28,11 @@ public class CoralManipulator extends SubsystemBase {
   }
 
   private void updateEntries() {
-    Constants.sendNumberToElastic("Coral Intake Left Motor Speed", leftMotor.get(), 2);
-    Constants.sendNumberToElastic("Coral Intake Right Motor Speed", rightMotor.get(), 2);
+    Constants.sendNumberToElastic("Coral Intake Motor Speed", motor.get(), 2);
   }
 
   private void setSpeed(double speed) {
-    leftMotor.set(speed);
+    motor.set(speed);
   }
 
   public Command stopMotor() {

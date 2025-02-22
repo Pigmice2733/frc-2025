@@ -7,7 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -30,20 +29,19 @@ public final class Constants {
     public static final int ELEVATOR_RIGHT = 15;
     public static final int PIVOT = 16;
     public static final int ALGAE_GRABBER = 17;
-    public static final int CORAL_LEFT = 18;
-    public static final int CORAL_RIGHT = 19;
+    public static final int CORAL_GRABBER = 18;
     public static final int SHOOTER_FLYWHEELS_LEFT = 20;
     public static final int SHOOTER_FLYWHEELS_RIGHT = 21;
     public static final int SHOOTER_PIVOT_LEFT = 22;
     public static final int SHOOTER_PIVOT_RIGHT = 23;
     public static final int INDEXER = 24;
 
-    public static final int LIMIT_SWITCH_CHANNEL = 25;
+    public static final int LIMIT_SWITCH_CHANNEL = 0;
   }
 
   public static class DrivetrainConfig {
     public static final double MAX_DRIVE_SPEED = 10.0; // m/s
-    public static final double MAX_TURN_SPEED = 200.0; // deg/s
+    public static final double MAX_TURN_SPEED = 20.0; // rad/s
     public static final double SLOWMODE_FACTOR = 0.4;
     public static final PIDConstants DRIVE_PID = new PIDConstants(0.5, 0, 0);
     public static final PIDConstants TURN_PID = new PIDConstants(0.5, 0, 0);
@@ -63,14 +61,14 @@ public final class Constants {
     public static final double MAX_ELEVATOR_SPEED = 0.5;
     public static final double MAX_PIVOT_SPEED = 0.5;
     public static final double MAX_SHOOTER_SPEED = 0.5;
-    public static final double GRABBER_SPEED = 0.5;
-    public static final double CORAL_INTAKE_SPEED = 0.5;
+    public static final double GRABBER_SPEED = 1.0;
+    public static final double CORAL_INTAKE_SPEED = 1.0;
     public static final double FLYWHEEL_PROCESSOR_SPEED = 0.2;
     public static final double FLYWHEEL_NET_SPEED = 0.8;
     public static final double INDEXER_SPEED = 0.5;
 
-    public static final double PIVOT_CONVERSION = 1;
-    public static final double ELEVATOR_CONVERSION = 1;
+    public static final double PIVOT_CONVERSION = 360; // degrees per rotation
+    public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
     public static final double SHOOTER_CONVERSION = 1;
 
     // seconds
@@ -84,16 +82,18 @@ public final class Constants {
     public static final double CLIMBER_DEFAULT_POSITION = 0;
     public static final double CLIMBER_CLIMB_POSITION = 0.5;
 
-    public static final double ELEVATOR_UPPER_LIMIT = Units.inchesToMeters(21.5);
+    public static final double ELEVATOR_UPPER_LIMIT = 21.5;
     public static final double PIVOT_LOWER_LIMIT = 10; // deg
     public static final double PIVOT_UPPER_LIMIT = 270; // deg
     public static final double SHOOTER_LOWER_LIMIT = -12; // deg
     public static final double SHOOTER_UPPER_LIMIT = 90; // deg
+
+    public static final double PIVOT_ANGLE_OFFSET = -137.18; // makes 0 down
   }
 
   public static enum ElevatorPosition {
     HUMAN_PLAYER(120, 0), SCORE_L1(260, 0), SCORE_L2(225, 0.15), SCORE_L3(225, 0.35), SCORE_L4(200, 0.5),
-    REEF_L2(210, 0.2), REEF_L3(210, 0.4), STOW(0, 0), CLIMB(0, 0.1);
+    REEF_L2(210, 0.2), REEF_L3(10, 12), STOW(10, 0), CLIMB(10, 0.1);
 
     private double pivotAngle, elevatorHeight;
 
@@ -127,7 +127,7 @@ public final class Constants {
 
   public static enum OperatorMode {
     NONE,
-    CORAL,
+    REEF,
     ELEVATOR,
     SHOOTER
   }
@@ -135,5 +135,9 @@ public final class Constants {
   public static void sendNumberToElastic(String name, double num, double places) {
     double newNum = Math.round(num * Math.pow(10, places)) / Math.pow(10, places);
     SmartDashboard.putNumber(name, newNum);
+  }
+
+  public static void sendBooleanToElastic(String name, boolean val) {
+    SmartDashboard.putBoolean(name, val);
   }
 }

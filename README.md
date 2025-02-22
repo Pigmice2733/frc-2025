@@ -17,7 +17,7 @@ On the driver controller, the left joystick is for driving, the right joystick i
 
 The operator controls are mostly divided into three modes:
 
-- In coral mode, the four d-pad buttons move the elevator to the four reef levels, and the right bumper outtakes coral from the manipulator. X enters coral mode.
+- In reef mode, the four d-pad buttons move the elevator to the four reef levels, and the right bumper outtakes coral from the manipulator. X enters reef mode.
 - In elevator mode, two d-pad buttons move the elevator to positions for removing algae from the reef, one to the position for intaking coral from the human player station, and one to all the way down. The right bumper activates the algae grabber at the algae positions, intakes coral to the manipulator at the station position, and does nothing at the last position. B enters elevator mode.
 - In shooter mode, one d-pad button moves the algae shooter to the intaking position, one to the position for scoring in the processor, and one to the position for shooting into the net. The fourth does nothing. The left bumper intakes algae at the intaking position and shoots at the shooting positions. A enters shooter mode.
 

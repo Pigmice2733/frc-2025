@@ -17,8 +17,6 @@ public class SetElevatorPosition extends Command {
   public SetElevatorPosition(Elevator elevator, Pivot pivot, ElevatorPosition position) {
     this.pivot = pivot;
     this.elevator = elevator;
-    pivotController = pivot.getController();
-    elevatorController = elevator.getController();
     endPosition = position;
 
     addRequirements(pivot, elevator);
@@ -26,6 +24,14 @@ public class SetElevatorPosition extends Command {
 
   @Override
   public void initialize() {
+    pivotController = pivot.getController();
+    elevatorController = elevator.getController();
+
+    System.out.println(
+        "Pivot: P=" + pivotController.getP() + " I=" + pivotController.getI() + " D=" + pivotController.getD());
+    System.out.println("Elevator: P=" + elevatorController.getP() + " I=" + elevatorController.getI() + " D="
+        + elevatorController.getD());
+
     pivotController.setSetpoint(endPosition.getPivotAngle());
     elevatorController.setSetpoint(endPosition.getElevatorHeight());
   }
@@ -33,13 +39,13 @@ public class SetElevatorPosition extends Command {
   @Override
   public void execute() {
     pivot.setSpeed(pivotController.calculate(pivot.getAngle()));
-    elevator.setSpeed(elevatorController.calculate(elevator.getHeight()));
+    elevator.setSpeeds(elevatorController.calculate(elevator.getHeight()));
   }
 
   @Override
   public void end(boolean interrupted) {
     pivot.setSpeed(0);
-    elevator.setSpeed(0);
+    elevator.setSpeeds(0);
     RobotContainer.setElevatorPosition(endPosition);
   }
 

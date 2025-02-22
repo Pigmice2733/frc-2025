@@ -14,15 +14,15 @@ import frc.robot.Constants;
 
 public class TemplateSubsystem extends SubsystemBase {
   private SparkMax motor = new SparkMax(0, MotorType.kBrushless);
-  private PIDController motorController;
+  private PIDController pidController;
 
   public TemplateSubsystem() {
     motor = new SparkMax(0, MotorType.kBrushless);
     motor.configure(new SparkMaxConfig().inverted(false),
         ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    motorController = new PIDController(0, 0, 0);
-    motorController.setTolerance(0);
+    pidController = new PIDController(0, 0, 0);
+    pidController.setTolerance(0);
   }
 
   @Override
@@ -47,6 +47,6 @@ public class TemplateSubsystem extends SubsystemBase {
   }
 
   public PIDController getController() {
-    return motorController;
+    return pidController;
   }
 }

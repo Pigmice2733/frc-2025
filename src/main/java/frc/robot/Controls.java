@@ -25,32 +25,35 @@ public class Controls {
 
   /**
    * Returns the left joystick's Y-axis value, corresponding to the robot's
-   * X-direction speed.
+   * X-direction speed. Inverted because positive joystick axis is down but
+   * positive X-movement is forward.
    */
   public double getDriveSpeedX() {
     double joystickY = MathUtil.applyDeadband(driver.getLeftY(), threshold);
 
-    return joystickY * DrivetrainConfig.MAX_DRIVE_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
+    return -1 * joystickY * DrivetrainConfig.MAX_DRIVE_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
   }
 
   /**
    * Returns the left joystick's X-axis value, corresponding to the robot's
-   * Y-direction speed.
+   * Y-direction speed. Inverted because positive joystick axis is right but
+   * positive Y-movement is left.
    */
   public double getDriveSpeedY() {
     double joystickX = MathUtil.applyDeadband(driver.getLeftX(), threshold);
 
-    return joystickX * DrivetrainConfig.MAX_DRIVE_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
+    return -1 * joystickX * DrivetrainConfig.MAX_DRIVE_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
   }
 
   /**
    * Returns the right joystick's X-axis value, corresponding to the robot's
-   * rotational speed.
+   * rotational speed. Inverted because positive joystick axis is right but
+   * positive rotation is left.
    */
   public double getTurnSpeed() {
     double joystickTurn = MathUtil.applyDeadband(driver.getRightX(), threshold);
 
-    return joystickTurn * DrivetrainConfig.MAX_TURN_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
+    return -1 * joystickTurn * DrivetrainConfig.MAX_TURN_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
   }
 
   public Command toggleSlowmode() {
@@ -68,14 +71,16 @@ public class Controls {
 
   public double getElevatorSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getLeftY(), threshold);
+    // System.out.println("JOYSTICK SPEED: " + -1 * joystickSpeed *
+    // SystemConfig.MAX_ELEVATOR_SPEED);
 
-    return joystickSpeed * SystemConfig.MAX_ELEVATOR_SPEED;
+    return -1 * joystickSpeed * SystemConfig.MAX_ELEVATOR_SPEED;
   }
 
   public double getPivotSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getRightY(), threshold);
 
-    return joystickSpeed * SystemConfig.MAX_PIVOT_SPEED;
+    return -1 * joystickSpeed * SystemConfig.MAX_PIVOT_SPEED;
   }
 
   public double getShooterSpeed() {

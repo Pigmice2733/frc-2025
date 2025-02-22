@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -36,6 +37,7 @@ public class Drivetrain extends SubsystemBase {
   private final SwerveDriveOdometry odometry;
   private Pose2d robotPose;
   private final Field2d fieldWidget;
+  private double driveMult = 0.1;
 
   private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
   private SwerveModule[] modules = new SwerveModule[4];
@@ -52,14 +54,17 @@ public class Drivetrain extends SubsystemBase {
     modulePositions = swerve.getModulePositions();
     kinematics = swerve.kinematics;
     gyro = swerve.getGyro();
+    // gyro.setInverted(true);
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation3d().toRotation2d(), modulePositions);
-    robotPose = new Pose2d();
-    resetPose(robotPose);
+    resetPose(new Pose2d());
 
     setUpAuto();
 
     fieldWidget = new Field2d();
     PathPlannerLogging.setLogActivePathCallback((pose) -> fieldWidget.getObject("target pose").setPoses(pose));
+
+    driveMult = 0;
+    Constants.sendNumberToElastic("Drive Multiplier", 0.1, 0);
   }
 
   @Override
@@ -85,11 +90,11 @@ public class Drivetrain extends SubsystemBase {
 
     AutoBuilder.configure(() -> {
       Pose2d pose = getPose();
-      return new Pose2d(pose.getX(), pose.getY(), new Rotation2d(-pose.getRotation().getRadians()));
+      return new Pose2d(pose.getX(), pose.getY(), new Rotation2d(pose.getRotation().getRadians()));
     },
         (pose) -> swerve.resetOdometry(pose),
         swerve::getRobotVelocity,
-        (speed) -> drive(speed.vxMetersPerSecond, speed.vyMetersPerSecond, -speed.omegaRadiansPerSecond),
+        (speed) -> drive(speed.vxMetersPerSecond, speed.vyMetersPerSecond, speed.omegaRadiansPerSecond),
         new PPHolonomicDriveController(DrivetrainConfig.DRIVE_PID, DrivetrainConfig.TURN_PID),
         config,
         () -> (DriverStation.getAlliance().get() == Alliance.Red),
@@ -118,6 +123,8 @@ public class Drivetrain extends SubsystemBase {
     Constants.sendNumberToElastic("Back Left Encoder Output", modules[2].getAbsolutePosition(), 1);
     Constants.sendNumberToElastic("Back Right Encoder Output", modules[3].getAbsolutePosition(), 1);
 
+    driveMult = SmartDashboard.getNumber("Drive Multiplier", driveMult);
+
     fieldWidget.setRobotPose(robotPose);
     SmartDashboard.putData("Field", fieldWidget);
   }
@@ -129,7 +136,9 @@ public class Drivetrain extends SubsystemBase {
 
   /** Returns the current pose of the robot. */
   public Pose2d getPose() {
-    return new Pose2d(swerve.getPose().getX(), swerve.getPose().getY(), swerve.getPose().getRotation());
+    Pose2d pose = swerve.getPose();
+    return new Pose2d(pose.getX(), pose.getY(), new Rotation2d(pose.getRotation().getRadians()));
+    // return swerve.getPose();
   }
 
   /** Sets the robot odometry to the given pose. */
@@ -145,7 +154,7 @@ public class Drivetrain extends SubsystemBase {
   public void drive(double driveSpeedX, double driveSpeedY, double turnSpeed) {
     // System.out.println("Driving. x speed " + driveSpeedX + ", y speed " +
     // driveSpeedY + ", turn speed " + turnSpeed);
-    swerve.driveFieldOriented(new ChassisSpeeds(driveSpeedX, driveSpeedY, turnSpeed));
+    swerve.driveFieldOriented(new ChassisSpeeds(driveSpeedX, driveSpeedY, turnSpeed).times(driveMult));
   }
 
   public Command reset() {
@@ -158,7 +167,7 @@ public class Drivetrain extends SubsystemBase {
    * driver's perspective.
    */
   public Command driveCommand(double driveSpeedX, double driveSpeedY, double turnSpeed) {
-    return new InstantCommand(() -> drive(driveSpeedX, driveSpeedY, turnSpeed), this);
+    return Commands.run(() -> drive(driveSpeedX, driveSpeedY, turnSpeed), this);
   }
 
 }
