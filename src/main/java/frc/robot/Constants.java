@@ -82,8 +82,8 @@ public final class Constants {
     public static final double CLIMBER_DEFAULT_POSITION = 0;
     public static final double CLIMBER_CLIMB_POSITION = 0.5;
 
-    public static final double ELEVATOR_UPPER_LIMIT = 21.5;
-    public static final double PIVOT_LOWER_LIMIT = 10; // deg
+    public static final double ELEVATOR_UPPER_LIMIT = 20;
+    public static final double PIVOT_LOWER_LIMIT = 15; // deg
     public static final double PIVOT_UPPER_LIMIT = 270; // deg
     public static final double SHOOTER_LOWER_LIMIT = -12; // deg
     public static final double SHOOTER_UPPER_LIMIT = 90; // deg
