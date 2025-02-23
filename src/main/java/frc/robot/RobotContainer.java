@@ -15,8 +15,10 @@ import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
 import frc.robot.commands.AlgaeFromReef;
 import frc.robot.commands.DriveJoysticks;
+import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakeCoral;
+import frc.robot.commands.PivotControl;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetElevatorPosition;
 import frc.robot.commands.SetShooterPosition;
@@ -87,8 +89,8 @@ public class RobotContainer {
         controls::getDriveSpeedX,
         controls::getDriveSpeedY,
         controls::getTurnSpeed));
-    elevator.setDefaultCommand(elevator.manualSpeed(controls::getElevatorSpeed));
-    pivot.setDefaultCommand(pivot.manualSpeed(controls::getPivotSpeed));
+    elevator.setDefaultCommand(new ElevatorControl(elevator, controls::getElevatorSpeed));
+    pivot.setDefaultCommand(new PivotControl(pivot, controls::getPivotSpeed));
     // shooter.setDefaultCommand(shooter.manualSpeed(controls.getShooterSpeed()));
   }
 

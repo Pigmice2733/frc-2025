@@ -4,10 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.ElevatorPosition;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Pivot;
 
 public class ElevatorControl extends Command {
   private Elevator elevator;
