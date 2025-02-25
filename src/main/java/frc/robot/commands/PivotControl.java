@@ -26,12 +26,12 @@ public class PivotControl extends Command {
   @Override
   public void execute() {
     pivotController.setSetpoint(pivot.getAngle() + speed.getAsDouble() * 0.1);
-    pivot.setSpeed(pivotController.calculate(pivot.getAngle()));
+    pivot.setMotorSpeed(pivotController.calculate(pivot.getAngle()));
   }
 
   @Override
   public void end(boolean interrupted) {
-    pivot.setSpeed(0);
+    pivot.setMotorSpeed(0);
   }
 
   @Override

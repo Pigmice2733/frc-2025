@@ -90,4 +90,12 @@ public class Pivot extends SubsystemBase {
   public Command manualSpeed(DoubleSupplier speed) {
     return Commands.run(() -> setSpeed(speed.getAsDouble()), this);
   }
+
+  public void setMotorSpeed(double motorSpeed) {
+    this.motorSpeed = motorSpeed;
+  }
+
+  public double getMotorSpeed() {
+    return motorSpeed;
+  }
 }

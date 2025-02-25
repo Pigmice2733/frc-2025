@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -53,7 +54,6 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Constants.sendNumberToElastic("Elevator Output", motorSpeed, 2);
     setSpeeds(motorSpeed);
 
     if (getSwitch()) {
@@ -71,10 +71,10 @@ public class Elevator extends SubsystemBase {
     Constants.sendNumberToElastic("Elevator Right Position", rightMotor.getEncoder().getPosition(), 2);
     Constants.sendBooleanToElastic("Elevator Limit Switch", getSwitch());
 
-    // heightController = new PIDController(SmartDashboard.getNumber("Elevator P",
-    // 0),
-    // SmartDashboard.getNumber("Elevator I", 0),
-    // SmartDashboard.getNumber("Elevator D", 0));
+    Constants.sendNumberToElastic("Elevator Output", motorSpeed, 2);
+
+    heightController = new PIDController(SmartDashboard.getNumber("Elevator P", 0),
+        SmartDashboard.getNumber("Elevator I", 0), SmartDashboard.getNumber("Elevator D", 0));
   }
 
   public void setSpeeds(double speed) {
@@ -88,8 +88,8 @@ public class Elevator extends SubsystemBase {
       motorSpeed = 0;
     }
 
-    leftMotor.set(motorSpeed);
-    rightMotor.set(motorSpeed);
+    leftMotor.set(motorSpeed + 0.04);
+    rightMotor.set(motorSpeed + 0.04);
   }
 
   public boolean getSwitch() {
@@ -111,5 +111,13 @@ public class Elevator extends SubsystemBase {
 
   public Command manualSpeed(DoubleSupplier speed) {
     return Commands.run(() -> setSpeeds(speed.getAsDouble()), this);
+  }
+
+  public void setMotorSpeed(double motorSpeed) {
+    this.motorSpeed = motorSpeed;
+  }
+
+  public double getMotorSpeed() {
+    return motorSpeed;
   }
 }

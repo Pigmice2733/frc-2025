@@ -43,8 +43,8 @@ public class SetArmPosition extends Command {
     double pivotSpeed = pivotController.calculate(pivot.getAngle());
     // System.out.println("pivot.getanlge: " + pivot.getAngle());
     // System.out.println("Setting Pivot Speed to: " + pivotSpeed);
-    pivot.setSpeed(pivotSpeed);
-    elevator.setSpeeds(elevatorController.calculate(elevator.getHeight()));
+    pivot.setMotorSpeed(pivotSpeed);
+    elevator.setMotorSpeed(elevatorController.calculate(elevator.getHeight()));
   }
 
   @Override
