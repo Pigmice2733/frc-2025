@@ -27,9 +27,9 @@ public class DriveVision extends Command {
    * 
    * @param drivetrain drivetrain subsystem
    * @param vision     vision subsystem
-   * @param xOffset    distance from target in the X direction
-   * @param yOffset
-   * @param rOffset
+   * @param xOffset    target distance from tag in the X direction
+   * @param yOffset    target distance from tag in the Y direction
+   * @param rOffset    target angle relative from tag
    */
   public DriveVision(Drivetrain drivetrain, Vision vision, double xOffset, double yOffset, double rOffset) {
     this.drivetrain = drivetrain;
@@ -48,23 +48,25 @@ public class DriveVision extends Command {
 
   @Override
   public void initialize() {
-    // manualConstants = drivetrain.pidConstants;
+    manualConstants = drivetrain.getPidConstants();
     xConstants = DrivetrainConfig.DRIVE_PID;
     yConstants = DrivetrainConfig.DRIVE_PID;
     rConstants = DrivetrainConfig.TURN_PID;
 
-    xPID = new PIDController(xConstants.kP, xConstants.kI, xConstants.kD);
-    // xPID = new PIDController(manualConstants.kP, manualConstants.kI,
-    // manualConstants.kD);
+    // xPID = new PIDController(xConstants.kP, xConstants.kI, xConstants.kD);
+    xPID = new PIDController(manualConstants.kP, manualConstants.kI,
+        manualConstants.kD);
     xPID.setTolerance(DrivetrainConfig.DRIVE_TOLERANCE);
-    yPID = new PIDController(yConstants.kP, yConstants.kI, yConstants.kD);
+
+    // yPID = new PIDController(yConstants.kP, yConstants.kI, yConstants.kD);
     // yPID = new PIDController(manualConstants.kP, manualConstants.kI,
     // manualConstants.kD);
-    yPID.setTolerance(DrivetrainConfig.DRIVE_TOLERANCE);
-    rPID = new PIDController(rConstants.kP, rConstants.kI, rConstants.kD);
+    // yPID.setTolerance(DrivetrainConfig.DRIVE_TOLERANCE);
+
+    // rPID = new PIDController(rConstants.kP, rConstants.kI, rConstants.kD);
     // rPID = new PIDController(manualConstants.kP, manualConstants.kI,
     // manualConstants.kD);
-    rPID.setTolerance(DrivetrainConfig.TURN_TOLERANCE);
+    // rPID.setTolerance(DrivetrainConfig.TURN_TOLERANCE);
 
     drivetrain.resetPose(new Pose2d());
     getTargetSetpoint();
@@ -81,9 +83,11 @@ public class DriveVision extends Command {
       getTargetSetpoint();
 
     drivetrain.drive(
-        xPID.calculate(robotPose.getX()),
-        yPID.calculate(robotPose.getY()),
-        -1 * rPID.calculate(robotPose.getRotation().getDegrees()));
+        xPID.calculate(robotPose.getX()), 0, 0);
+    /*
+     * yPID.calculate(robotPose.getY()),
+     * -1 * rPID.calculate(robotPose.getRotation().getDegrees()));
+     */
   }
 
   @Override
@@ -95,7 +99,7 @@ public class DriveVision extends Command {
 
   @Override
   public boolean isFinished() {
-    return xPID.atSetpoint() && yPID.atSetpoint() && rPID.atSetpoint();
+    return xPID.atSetpoint() /* && yPID.atSetpoint() && rPID.atSetpoint() */;
   }
 
   private void getTargetSetpoint() {
@@ -104,9 +108,9 @@ public class DriveVision extends Command {
 
     /* The PID controllers use the robot's pose, not the target pose. */
     xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
-    yPID.setSetpoint(robotPose.getY() + target.getY() + yOffset);
-    rPID.setSetpoint(robotPose.getRotation().getDegrees() +
-        target.getRotation().getDegrees() + rOffset);
+    // yPID.setSetpoint(robotPose.getY() + target.getY() + yOffset);
+    // rPID.setSetpoint(robotPose.getRotation().getDegrees() +
+    // target.getRotation().getDegrees() + rOffset);
 
     Constants.sendNumberToElastic("Drivetrain PID Setpoint", xPID.getSetpoint(), 3);
   }

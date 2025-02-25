@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -35,12 +36,12 @@ public class Drivetrain extends SubsystemBase {
   private final SwerveIMU gyro;
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
-  private Pose2d robotPose;
-  private final Field2d fieldWidget;
-  private double driveMult = 1.0;
-
   private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
   private SwerveModule[] modules = new SwerveModule[4];
+
+  private Pose2d robotPose;
+  private final Field2d fieldWidget;
+  private PIDConstants pidConstants;
 
   public Drivetrain() {
     try {
@@ -63,8 +64,9 @@ public class Drivetrain extends SubsystemBase {
     fieldWidget = new Field2d();
     PathPlannerLogging.setLogActivePathCallback((pose) -> fieldWidget.getObject("target pose").setPoses(pose));
 
-    driveMult = 1.0;
-    Constants.sendNumberToElastic("Drive Multiplier", 0.1, 0);
+    Constants.sendNumberToElastic("Drivetrain P", 0, 3);
+    Constants.sendNumberToElastic("Drivetrain I", 0, 3);
+    Constants.sendNumberToElastic("Drivetrain D", 0, 3);
   }
 
   @Override
@@ -123,7 +125,8 @@ public class Drivetrain extends SubsystemBase {
     Constants.sendNumberToElastic("Back Left Encoder Output", modules[2].getAbsolutePosition(), 1);
     Constants.sendNumberToElastic("Back Right Encoder Output", modules[3].getAbsolutePosition(), 1);
 
-    driveMult = SmartDashboard.getNumber("Drive Multiplier", driveMult);
+    pidConstants = new PIDConstants(SmartDashboard.getNumber("Drivetrain P", 0),
+        SmartDashboard.getNumber("Drivetrain I", 0), SmartDashboard.getNumber("Drivetrain D", 0));
 
     fieldWidget.setRobotPose(robotPose);
     SmartDashboard.putData("Field", fieldWidget);
@@ -136,9 +139,6 @@ public class Drivetrain extends SubsystemBase {
 
   /** Returns the current pose of the robot. */
   public Pose2d getPose() {
-    // Pose2d pose = swerve.getPose();
-    // return new Pose2d(pose.getX(), pose.getY(), new
-    // Rotation2d(pose.getRotation().getRadians()));
     return swerve.getPose();
   }
 
@@ -171,4 +171,11 @@ public class Drivetrain extends SubsystemBase {
     return Commands.run(() -> drive(driveSpeedX, driveSpeedY, turnSpeed), this);
   }
 
+  public PIDConstants getPidConstants() {
+    return pidConstants;
+  }
+
+  public void setPidConstants(PIDConstants pidConstants) {
+    this.pidConstants = pidConstants;
+  }
 }
