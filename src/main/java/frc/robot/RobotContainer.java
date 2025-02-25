@@ -19,7 +19,7 @@ import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
 import frc.robot.commands.ScoreCoral;
-import frc.robot.commands.SetElevatorPosition;
+import frc.robot.commands.SetArmPosition;
 import frc.robot.commands.TestDrive;
 import frc.robot.subsystems.AlgaeGrabber;
 import frc.robot.subsystems.CoralManipulator;
@@ -114,9 +114,9 @@ public class RobotContainer {
     // OPERATOR
     operator.x().onTrue(new IntakeCoral(coral));
     operator.b().whileTrue(new ScoreCoral(coral));
-    operator.povDown().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.STOW));
-    operator.povUp().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.ALGAE_L3));
-    operator.povRight().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.ALGAE_L2));
+    operator.povDown().onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.STOW));
+    operator.povUp().onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.ALGAE_L3));
+    operator.povRight().onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.ALGAE_L2));
     operator.rightBumper().onTrue(new AlgaeFromReef(grabber));
     // operator.a().onTrue(new InstantCommand(() ->
     // changeMode(OperatorMode.SHOOTER)));
