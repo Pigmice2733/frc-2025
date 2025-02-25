@@ -44,7 +44,6 @@ public class Pivot extends SubsystemBase {
   @Override
   public void periodic() {
     setSpeed(calculate());
-
     updateEntries();
   }
 
@@ -69,6 +68,8 @@ public class Pivot extends SubsystemBase {
       motorSpeed = 0;
       System.out.println("PIVOT UPPER STOP, Angle = " + getAngle());
     }
+
+    motorSpeed += 0.037;
 
     motor.set(motorSpeed);
   }
