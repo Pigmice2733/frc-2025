@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -44,17 +45,16 @@ public class Elevator extends SubsystemBase {
 
     limitSwitch = new DigitalInput(SensorConfig.ELEVATOR_LIMIT_SWITCH_CHANNEL);
 
-    Constants.sendNumberToElastic("Elevator P", 0, 0);
-    Constants.sendNumberToElastic("Elevator I", 0, 0);
-    Constants.sendNumberToElastic("Elevator D", 0, 0);
+    Constants.sendNumberToElastic("Elevator P", pidController.getP(), 0);
+    Constants.sendNumberToElastic("Elevator I", pidController.getI(), 0);
+    Constants.sendNumberToElastic("Elevator D", pidController.getD(), 0);
 
     motorSpeed = 0;
   }
 
   @Override
   public void periodic() {
-    Constants.sendNumberToElastic("Elevator Output", motorSpeed, 2);
-    setSpeeds(motorSpeed);
+    setSpeeds(calculate());
 
     if (getSwitch()) {
       leftMotor.getEncoder().setPosition(0);
@@ -71,10 +71,10 @@ public class Elevator extends SubsystemBase {
     Constants.sendNumberToElastic("Elevator Right Position", rightMotor.getEncoder().getPosition(), 2);
     Constants.sendBooleanToElastic("Elevator Limit Switch", getSwitch());
 
-    // heightController = new PIDController(SmartDashboard.getNumber("Elevator P",
-    // 0),
-    // SmartDashboard.getNumber("Elevator I", 0),
-    // SmartDashboard.getNumber("Elevator D", 0));
+    Constants.sendNumberToElastic("Elevator Output", motorSpeed, 2);
+
+    pidController = new PIDController(SmartDashboard.getNumber("Elevator P", 0),
+        SmartDashboard.getNumber("Elevator I", 0), SmartDashboard.getNumber("Elevator D", 0));
   }
 
   public void setSpeeds(double speed) {
@@ -128,4 +128,11 @@ public class Elevator extends SubsystemBase {
     return Commands.run(() -> setSpeeds(speed.getAsDouble()), this);
   }
 
+  public void setMotorSpeed(double motorSpeed) {
+    this.motorSpeed = motorSpeed;
+  }
+
+  public double getMotorSpeed() {
+    return motorSpeed;
+  }
 }

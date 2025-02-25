@@ -24,7 +24,7 @@ public class PivotControl extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    pivot.setSpeed(0);
+    pivot.setMotorSpeed(0);
   }
 
   @Override

@@ -20,6 +20,7 @@ import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetElevatorPosition;
+import frc.robot.commands.TestDrive;
 import frc.robot.subsystems.AlgaeGrabber;
 import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.Drivetrain;
@@ -107,7 +108,7 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    // driver.x().onTrue(new TestDrive(drivetrain));
+    driver.x().onTrue(new TestDrive(drivetrain));
     // create vision commands once Vision subsystem exists
 
     // OPERATOR

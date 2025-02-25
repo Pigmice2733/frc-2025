@@ -6,13 +6,13 @@ import frc.robot.Constants.ElevatorPosition;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 
-public class SetElevatorPosition extends Command {
+public class SetArmPosition extends Command {
   private Pivot pivot;
   private Elevator elevator;
   private ElevatorPosition endPosition;
 
   /** Sets the elevator and pivot arm to the given position. */
-  public SetElevatorPosition(Elevator elevator, Pivot pivot, ElevatorPosition position) {
+  public SetArmPosition(Elevator elevator, Pivot pivot, ElevatorPosition position) {
     this.pivot = pivot;
     this.elevator = elevator;
     endPosition = position;
@@ -33,14 +33,6 @@ public class SetElevatorPosition extends Command {
     elevator.setSetpoint(endPosition.getElevatorHeight());
     System.out.println(
         "Setting Setpoint to Elev: " + endPosition.getElevatorHeight() + ", Pivot: " + endPosition.getPivotAngle());
-  }
-
-  @Override
-  public void execute() {
-    // System.out.println("pivot.getanlge: " + pivot.getAngle());
-    // System.out.println("Setting Pivot Speed to: " + pivotSpeed);
-    pivot.setSpeed(pivot.calculate());
-    elevator.setSpeeds(elevator.calculate());
   }
 
   @Override
