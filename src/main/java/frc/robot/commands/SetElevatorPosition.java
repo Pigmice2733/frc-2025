@@ -34,11 +34,16 @@ public class SetElevatorPosition extends Command {
 
     pivotController.setSetpoint(endPosition.getPivotAngle());
     elevatorController.setSetpoint(endPosition.getElevatorHeight());
+    System.out.println(
+        "Setting Setpoint to Elev: " + endPosition.getElevatorHeight() + ", Pivot: " + endPosition.getPivotAngle());
   }
 
   @Override
   public void execute() {
-    pivot.setSpeed(pivotController.calculate(pivot.getAngle()));
+    double pivotSpeed = pivotController.calculate(pivot.getAngle());
+    // System.out.println("pivot.getanlge: " + pivot.getAngle());
+    // System.out.println("Setting Pivot Speed to: " + pivotSpeed);
+    pivot.setSpeed(pivotSpeed);
     elevator.setSpeeds(elevatorController.calculate(elevator.getHeight()));
   }
 

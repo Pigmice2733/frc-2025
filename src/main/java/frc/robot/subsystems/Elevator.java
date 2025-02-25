@@ -43,7 +43,7 @@ public class Elevator extends SubsystemBase {
     heightController = SystemConfig.ELEVATOR_PID;
     heightController.setTolerance(SystemConfig.ELEVATOR_TOLERANCE);
 
-    limitSwitch = new DigitalInput(CANConfig.LIMIT_SWITCH_CHANNEL);
+    limitSwitch = new DigitalInput(SensorConfig.ELEVATOR_LIMIT_SWITCH_CHANNEL);
 
     Constants.sendNumberToElastic("Elevator P", 0, 0);
     Constants.sendNumberToElastic("Elevator I", 0, 0);
@@ -54,6 +54,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Constants.sendNumberToElastic("Elevator Output", motorSpeed, 2);
     setSpeeds(motorSpeed);
 
     if (getSwitch()) {
@@ -71,9 +72,10 @@ public class Elevator extends SubsystemBase {
     Constants.sendNumberToElastic("Elevator Right Position", rightMotor.getEncoder().getPosition(), 2);
     Constants.sendBooleanToElastic("Elevator Limit Switch", getSwitch());
 
-    heightController = new PIDController(SmartDashboard.getNumber("Elevator P", 0),
-        SmartDashboard.getNumber("Elevator I", 0),
-        SmartDashboard.getNumber("Elevator D", 0));
+    // heightController = new PIDController(SmartDashboard.getNumber("Elevator P",
+    // 0),
+    // SmartDashboard.getNumber("Elevator I", 0),
+    // SmartDashboard.getNumber("Elevator D", 0));
   }
 
   public void setSpeeds(double speed) {

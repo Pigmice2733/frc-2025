@@ -50,11 +50,13 @@ public class Pivot extends SubsystemBase {
 
   private void updateEntries() {
     Constants.sendNumberToElastic("Pivot Motor Speed", motor.get(), 2);
+
+    Constants.sendNumberToElastic("Target Pivot Motor Speed", motorSpeed, 2);
     Constants.sendNumberToElastic("Pivot Angle", getAngle(), 3);
 
-    pidController = new PIDController(SmartDashboard.getNumber("Pivot P", 0),
-        SmartDashboard.getNumber("Pivot I", 0),
-        SmartDashboard.getNumber("Pivot D", 0));
+    // pidController = new PIDController(SmartDashboard.getNumber("Pivot P", 0),
+    // SmartDashboard.getNumber("Pivot I", 0),
+    // SmartDashboard.getNumber("Pivot D", 0));
   }
 
   public void setSpeed(double speed) {
@@ -62,11 +64,13 @@ public class Pivot extends SubsystemBase {
 
     if (getAngle() <= SystemConfig.PIVOT_LOWER_LIMIT && motorSpeed < 0) {
       motorSpeed = 0;
+      System.out.println("PIVOT LOWER STOP, Angle = " + getAngle());
     }
     if (getAngle() >= SystemConfig.PIVOT_UPPER_LIMIT && motorSpeed > 0) {
       motorSpeed = 0;
+      System.out.println("PIVOT UPPER STOP, Angle = " + getAngle());
     }
-
+    // System.out.println("Setting Motor Speed To " + motorSpeed);
     motor.set(motorSpeed);
   }
 

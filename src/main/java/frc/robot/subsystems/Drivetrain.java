@@ -37,7 +37,7 @@ public class Drivetrain extends SubsystemBase {
   private final SwerveDriveOdometry odometry;
   private Pose2d robotPose;
   private final Field2d fieldWidget;
-  private double driveMult = 0.1;
+  private double driveMult = 1.0;
 
   private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
   private SwerveModule[] modules = new SwerveModule[4];
@@ -63,7 +63,7 @@ public class Drivetrain extends SubsystemBase {
     fieldWidget = new Field2d();
     PathPlannerLogging.setLogActivePathCallback((pose) -> fieldWidget.getObject("target pose").setPoses(pose));
 
-    driveMult = 0;
+    driveMult = 1.0;
     Constants.sendNumberToElastic("Drive Multiplier", 0.1, 0);
   }
 
@@ -154,7 +154,7 @@ public class Drivetrain extends SubsystemBase {
   public void drive(double driveSpeedX, double driveSpeedY, double turnSpeed) {
     // System.out.println("Driving. x speed " + driveSpeedX + ", y speed " +
     // driveSpeedY + ", turn speed " + turnSpeed);
-    swerve.driveFieldOriented(new ChassisSpeeds(driveSpeedX, driveSpeedY, turnSpeed).times(driveMult));
+    swerve.driveFieldOriented(new ChassisSpeeds(driveSpeedX, driveSpeedY, turnSpeed));
   }
 
   public Command reset() {

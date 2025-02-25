@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import javax.sound.sampled.SourceDataLine;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
@@ -25,8 +27,11 @@ public class ElevatorControl extends Command {
 
   @Override
   public void execute() {
-    elevatorController.setSetpoint(elevator.getHeight() + speed.getAsDouble() * 0.1);
-    elevator.setSpeeds(elevatorController.calculate(elevator.getHeight()));
+    System.out.println(
+        "Elevator pos: " + elevator.getHeight() + "Setting to: " + (elevator.getHeight() + speed.getAsDouble() * 1));
+    elevatorController.setSetpoint(elevator.getHeight() + speed.getAsDouble() * 1);
+    // SetElevatorPosition(elevator.getHeight() + speed.getAsDouble() * 1);
+    // elevator.setSpeeds(elevatorController.calculate(elevator.getHeight()));
   }
 
   @Override
