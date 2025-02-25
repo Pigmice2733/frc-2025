@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ElevatorPosition;
@@ -10,7 +9,6 @@ import frc.robot.subsystems.Pivot;
 public class SetElevatorPosition extends Command {
   private Pivot pivot;
   private Elevator elevator;
-  private PIDController pivotController, elevatorController;
   private ElevatorPosition endPosition;
 
   /** Sets the elevator and pivot arm to the given position. */
@@ -24,27 +22,25 @@ public class SetElevatorPosition extends Command {
 
   @Override
   public void initialize() {
-    pivotController = pivot.getController();
-    elevatorController = elevator.getController();
+    // System.out.println(
+    // "Pivot: P=" + pivotController.getP() + " I=" + pivotController.getI() + " D="
+    // + pivotController.getD());
+    // System.out.println("Elevator: P=" + elevator.getP() + " I=" +
+    // elevatorController.getI() + " D="
+    // + elevatorController.getD());
 
-    System.out.println(
-        "Pivot: P=" + pivotController.getP() + " I=" + pivotController.getI() + " D=" + pivotController.getD());
-    System.out.println("Elevator: P=" + elevatorController.getP() + " I=" + elevatorController.getI() + " D="
-        + elevatorController.getD());
-
-    pivotController.setSetpoint(endPosition.getPivotAngle());
-    elevatorController.setSetpoint(endPosition.getElevatorHeight());
+    pivot.setSetpoint(endPosition.getPivotAngle());
+    elevator.setSetpoint(endPosition.getElevatorHeight());
     System.out.println(
         "Setting Setpoint to Elev: " + endPosition.getElevatorHeight() + ", Pivot: " + endPosition.getPivotAngle());
   }
 
   @Override
   public void execute() {
-    double pivotSpeed = pivotController.calculate(pivot.getAngle());
     // System.out.println("pivot.getanlge: " + pivot.getAngle());
     // System.out.println("Setting Pivot Speed to: " + pivotSpeed);
-    pivot.setSpeed(pivotSpeed);
-    elevator.setSpeeds(elevatorController.calculate(elevator.getHeight()));
+    pivot.setSpeed(pivot.calculate());
+    elevator.setSpeeds(elevator.calculate());
   }
 
   @Override
@@ -56,6 +52,6 @@ public class SetElevatorPosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return pivotController.atSetpoint() && elevatorController.atSetpoint();
+    return pivot.atSetpoint() && elevator.atSetpoint();
   }
 }

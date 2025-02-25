@@ -23,7 +23,7 @@ import frc.robot.Constants.*;
 public class Elevator extends SubsystemBase {
   private SparkMax leftMotor, rightMotor;
   private DigitalInput limitSwitch;
-  private PIDController heightController;
+  private PIDController pidController;
   private double motorSpeed;
 
   public Elevator() {
@@ -39,8 +39,8 @@ public class Elevator extends SubsystemBase {
             .apply(new EncoderConfig().positionConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    heightController = ElevatorConfig.ELEVATOR_PID;
-    heightController.setTolerance(ElevatorConfig.ELEVATOR_TOLERANCE);
+    pidController = ElevatorConfig.ELEVATOR_PID;
+    pidController.setTolerance(ElevatorConfig.ELEVATOR_TOLERANCE);
 
     limitSwitch = new DigitalInput(SensorConfig.ELEVATOR_LIMIT_SWITCH_CHANNEL);
 
@@ -65,8 +65,8 @@ public class Elevator extends SubsystemBase {
   }
 
   private void updateEntries() {
-    Constants.sendNumberToElastic("Elevator Left Speed", leftMotor.get(), 2);
-    Constants.sendNumberToElastic("Elevator Right Speed", rightMotor.get(), 2);
+    Constants.sendNumberToElastic("Elevator Left Speed", leftMotor.get() + 0.04, 2);
+    Constants.sendNumberToElastic("Elevator Right Speed", rightMotor.get() + 0.04, 2);
     Constants.sendNumberToElastic("Elevator Left Position", leftMotor.getEncoder().getPosition(), 2);
     Constants.sendNumberToElastic("Elevator Right Position", rightMotor.getEncoder().getPosition(), 2);
     Constants.sendBooleanToElastic("Elevator Limit Switch", getSwitch());
@@ -88,6 +88,8 @@ public class Elevator extends SubsystemBase {
       motorSpeed = 0;
     }
 
+    motorSpeed += 0.04;
+
     leftMotor.set(motorSpeed);
     rightMotor.set(motorSpeed);
   }
@@ -101,8 +103,21 @@ public class Elevator extends SubsystemBase {
     return leftMotor.getEncoder().getPosition();
   }
 
-  public PIDController getController() {
-    return heightController;
+  public void setSetpoint(double height) {
+    pidController.setSetpoint(height);
+  }
+
+  public void changeSetpoint(double delta) {
+    pidController.setSetpoint(pidController.getSetpoint() + delta);
+  }
+
+  public boolean atSetpoint() {
+    return pidController.atSetpoint();
+  }
+
+  /** Returns the calculated output based on the current height. */
+  public double calculate() {
+    return pidController.calculate(getHeight());
   }
 
   public Command stopMotors() {
@@ -112,4 +127,5 @@ public class Elevator extends SubsystemBase {
   public Command manualSpeed(DoubleSupplier speed) {
     return Commands.run(() -> setSpeeds(speed.getAsDouble()), this);
   }
+
 }

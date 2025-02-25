@@ -73,22 +73,17 @@ public class Controls {
 
   public double getElevatorSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getLeftY(), threshold);
-    // System.out.println("JOYSTICK SPEED: " + -1 * joystickSpeed *
-    // SystemConfig.MAX_ELEVATOR_SPEED);
-
     return -1 * joystickSpeed * ElevatorConfig.MAX_ELEVATOR_SPEED;
   }
 
   public double getPivotSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getRightY(), threshold);
-
     return -1 * joystickSpeed * ArmConfig.MAX_PIVOT_SPEED;
   }
 
   public double getShooterSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getRightTriggerAxis(), threshold)
         - MathUtil.applyDeadband(operator.getLeftTriggerAxis(), threshold);
-
-    return joystickSpeed * ShooterConfig.MAX_SHOOTER_SPEED;
+    return joystickSpeed * ShooterConfig.MAX_PIVOT_SPEED;
   }
 }

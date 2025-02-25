@@ -73,8 +73,21 @@ public class Pivot extends SubsystemBase {
     motor.set(motorSpeed);
   }
 
-  public PIDController getController() {
-    return pidController;
+  public void setSetpoint(double angle) {
+    pidController.setSetpoint(angle);
+  }
+
+  public void changeSetpoint(double delta) {
+    pidController.setSetpoint(pidController.getSetpoint() + delta);
+  }
+
+  public boolean atSetpoint() {
+    return pidController.atSetpoint();
+  }
+
+  /** Returns the calculated output based on the current angle. */
+  public double calculate() {
+    return pidController.calculate(getAngle());
   }
 
   public double getAngle() {
