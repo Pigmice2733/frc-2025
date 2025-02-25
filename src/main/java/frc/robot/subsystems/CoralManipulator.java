@@ -52,11 +52,11 @@ public class CoralManipulator extends SubsystemBase {
 
   public Command outtake() {
     System.out.println("outtaking");
-    return new InstantCommand(() -> setSpeed(SystemConfig.CORAL_OUTTAKE_SPEED));
+    return new InstantCommand(() -> setSpeed(ArmConfig.CORAL_OUTTAKE_SPEED));
   }
 
   public Command intake() {
     System.out.println("intaking");
-    return new InstantCommand(() -> setSpeed(SystemConfig.CORAL_INTAKE_SPEED));
+    return new InstantCommand(() -> setSpeed(ArmConfig.CORAL_INTAKE_SPEED));
   }
 }

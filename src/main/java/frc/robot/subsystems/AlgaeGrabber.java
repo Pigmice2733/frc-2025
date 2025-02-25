@@ -39,6 +39,6 @@ public class AlgaeGrabber extends SubsystemBase {
   }
 
   public Command runMotor() {
-    return new InstantCommand(() -> setSpeed(SystemConfig.GRABBER_SPEED));
+    return new InstantCommand(() -> setSpeed(ArmConfig.GRABBER_SPEED));
   }
 }

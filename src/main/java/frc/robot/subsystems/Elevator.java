@@ -13,7 +13,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -33,15 +32,15 @@ public class Elevator extends SubsystemBase {
 
     leftMotor.configure(
         new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
-            .apply(new EncoderConfig().positionConversionFactor(SystemConfig.ELEVATOR_CONVERSION)),
+            .apply(new EncoderConfig().positionConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     rightMotor.configure(
         new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
-            .apply(new EncoderConfig().positionConversionFactor(SystemConfig.ELEVATOR_CONVERSION)),
+            .apply(new EncoderConfig().positionConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    heightController = SystemConfig.ELEVATOR_PID;
-    heightController.setTolerance(SystemConfig.ELEVATOR_TOLERANCE);
+    heightController = ElevatorConfig.ELEVATOR_PID;
+    heightController.setTolerance(ElevatorConfig.ELEVATOR_TOLERANCE);
 
     limitSwitch = new DigitalInput(SensorConfig.ELEVATOR_LIMIT_SWITCH_CHANNEL);
 
@@ -84,7 +83,7 @@ public class Elevator extends SubsystemBase {
       System.out.println("CANNOT GO BELOW MINIMUM HEIGHT.");
       motorSpeed = 0;
     }
-    if (leftMotor.get() > 0 && getHeight() >= SystemConfig.ELEVATOR_UPPER_LIMIT) {
+    if (leftMotor.get() > 0 && getHeight() >= ElevatorConfig.ELEVATOR_UPPER_LIMIT) {
       System.out.println("Cannot go above maximum height.");
       motorSpeed = 0;
     }
