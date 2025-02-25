@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -48,6 +50,11 @@ public final class Constants {
     public static final double SLOWMODE_FACTOR = 0.4;
     public static final PIDConstants DRIVE_PID = new PIDConstants(0.5, 0, 0);
     public static final PIDConstants TURN_PID = new PIDConstants(0.5, 0, 0);
+    public static final double DRIVE_TOLERANCE = 0.05; // m
+    public static final double TURN_TOLERANCE = 0.5; // deg
+
+    /** Transform from camera to center of robot. */
+    public static final Transform2d CAMERA_OFFSET = new Transform2d(0, 0, new Rotation2d(0));
   }
 
   public static class ElevatorConfig {
