@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -44,10 +45,6 @@ public class Elevator extends SubsystemBase {
 
     limitSwitch = new DigitalInput(SensorConfig.ELEVATOR_LIMIT_SWITCH_CHANNEL);
 
-    Constants.sendNumberToElastic("Elevator P", pidController.getP(), 0);
-    Constants.sendNumberToElastic("Elevator I", pidController.getI(), 0);
-    Constants.sendNumberToElastic("Elevator D", pidController.getD(), 0);
-
     motorSpeed = 0;
   }
 
@@ -71,10 +68,6 @@ public class Elevator extends SubsystemBase {
     Constants.sendBooleanToElastic("Elevator Limit Switch", getSwitch());
 
     Constants.sendNumberToElastic("Elevator Output", motorSpeed, 2);
-
-    // pidController = new PIDController(SmartDashboard.getNumber("Elevator P", 0),
-    // SmartDashboard.getNumber("Elevator I", 0), SmartDashboard.getNumber("Elevator
-    // D", 0));
   }
 
   public void setSpeeds(double speed) {
@@ -90,7 +83,6 @@ public class Elevator extends SubsystemBase {
     }
 
     motorSpeed += 0.03;
-
     leftMotor.set(motorSpeed);
     rightMotor.set(motorSpeed);
   }

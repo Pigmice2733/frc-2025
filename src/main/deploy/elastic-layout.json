@@ -127,8 +127,37 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "Drive Multiplier",
+                "x": 384.0,
+                "y": 256.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Number Slider",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive Multiplier",
+                  "period": 0.05,
+                  "data_type": "double",
+                  "min_value": 0.0,
+                  "max_value": 0.25,
+                  "divisions": 5,
+                  "update_continuously": false
+                }
               }
             ]
+          },
+          {
+            "title": "Target Pose",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": []
           }
         ],
         "containers": [
@@ -163,23 +192,6 @@
               "true_icon": "None",
               "false_icon": "None"
             }
-          },
-          {
-            "title": "Drive Multiplier",
-            "x": 768.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/Drive Multiplier",
-              "period": 0.05,
-              "data_type": "double",
-              "min_value": 0.0,
-              "max_value": 0.25,
-              "divisions": 5,
-              "update_continuously": false
-            }
           }
         ]
       }
@@ -189,7 +201,7 @@
       "grid_layout": {
         "layouts": [
           {
-            "title": "Elevator PID",
+            "title": "Elevator",
             "x": 0.0,
             "y": 0.0,
             "width": 256.0,
@@ -200,60 +212,68 @@
             },
             "children": [
               {
-                "title": "Elevator P",
-                "x": 384.0,
+                "title": "Elevator Output",
+                "x": 0.0,
+                "y": 128.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Elevator Output",
+                  "period": 0.05,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Elevator Left Position",
+                "x": 0.0,
+                "y": 128.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Elevator Left Position",
+                  "period": 0.05,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Elevator Left Speed",
+                "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
-                "type": "Number Slider",
+                "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Elevator P",
+                  "topic": "/SmartDashboard/Elevator Left Speed",
                   "period": 0.05,
                   "data_type": "double",
-                  "min_value": 0.0,
-                  "max_value": 0.5,
-                  "divisions": 5,
-                  "update_continuously": false
+                  "show_submit_button": false
                 }
               },
               {
-                "title": "Elevator I",
-                "x": 384.0,
-                "y": 128.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Number Slider",
-                "properties": {
-                  "topic": "/SmartDashboard/Elevator I",
-                  "period": 0.05,
-                  "data_type": "double",
-                  "min_value": 0.0,
-                  "max_value": 0.5,
-                  "divisions": 5,
-                  "update_continuously": false
-                }
-              },
-              {
-                "title": "Elevator D",
-                "x": 256.0,
+                "title": "Elevator Limit Switch",
+                "x": 0.0,
                 "y": 256.0,
                 "width": 128.0,
                 "height": 128.0,
-                "type": "Number Slider",
+                "type": "Boolean Box",
                 "properties": {
-                  "topic": "/SmartDashboard/Elevator D",
+                  "topic": "/SmartDashboard/Elevator Limit Switch",
                   "period": 0.05,
-                  "data_type": "double",
-                  "min_value": 0.0,
-                  "max_value": 0.5,
-                  "divisions": 5,
-                  "update_continuously": false
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
                 }
               }
             ]
           },
           {
-            "title": "Pivot PID",
+            "title": "Pivot",
             "x": 256.0,
             "y": 0.0,
             "width": 256.0,
@@ -264,120 +284,93 @@
             },
             "children": [
               {
-                "title": "Pivot P",
-                "x": 896.0,
+                "title": "Pivot Angle",
+                "x": 256.0,
                 "y": 128.0,
                 "width": 128.0,
                 "height": 128.0,
-                "type": "Number Slider",
+                "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Pivot P",
+                  "topic": "/SmartDashboard/Pivot Angle",
                   "period": 0.05,
                   "data_type": "double",
-                  "min_value": 0.0,
-                  "max_value": 0.5,
-                  "divisions": 5,
-                  "update_continuously": false
+                  "show_submit_button": false
                 }
               },
               {
-                "title": "Pivot I",
-                "x": 896.0,
+                "title": "Pivot Motor Speed",
+                "x": 256.0,
                 "y": 128.0,
-                "width": 128.0,
+                "width": 256.0,
                 "height": 128.0,
-                "type": "Number Slider",
+                "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Pivot I",
+                  "topic": "/SmartDashboard/Pivot Motor Speed",
                   "period": 0.05,
                   "data_type": "double",
-                  "min_value": 0.0,
-                  "max_value": 0.5,
-                  "divisions": 5,
-                  "update_continuously": false
+                  "show_submit_button": false
                 }
               },
               {
-                "title": "Pivot D",
-                "x": 896.0,
+                "title": "Target Pivot Motor Speed",
+                "x": 256.0,
                 "y": 256.0,
-                "width": 128.0,
+                "width": 256.0,
                 "height": 128.0,
-                "type": "Number Slider",
+                "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Pivot D",
+                  "topic": "/SmartDashboard/Target Pivot Motor Speed",
                   "period": 0.05,
                   "data_type": "double",
-                  "min_value": 0.0,
-                  "max_value": 0.5,
-                  "divisions": 5,
-                  "update_continuously": false
+                  "show_submit_button": false
                 }
               }
             ]
+          },
+          {
+            "title": "Grabbers",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Has Coral",
+                "x": 512.0,
+                "y": 128.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Has Coral",
+                  "period": 0.05,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
+            "title": "Shooter",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": []
           }
         ],
-        "containers": [
-          {
-            "title": "Elevator Limit Switch",
-            "x": 640.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/Elevator Limit Switch",
-              "period": 0.05,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "Elevator Left Position",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Elevator Left Position",
-              "period": 0.05,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Pivot Motor Speed",
-            "x": 512.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Pivot Motor Speed",
-              "period": 0.05,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Pivot Angle",
-            "x": 640.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Pivot Angle",
-              "period": 0.05,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          }
-        ]
+        "containers": []
       }
     },
     {
