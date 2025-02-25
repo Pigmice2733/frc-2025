@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -49,13 +50,12 @@ public class Pivot extends SubsystemBase {
 
   private void updateEntries() {
     Constants.sendNumberToElastic("Pivot Motor Speed", motor.get(), 2);
-
     Constants.sendNumberToElastic("Target Pivot Motor Speed", motorSpeed, 2);
     Constants.sendNumberToElastic("Pivot Angle", getAngle(), 3);
 
-    // pidController = new PIDController(SmartDashboard.getNumber("Pivot P", 0),
-    // SmartDashboard.getNumber("Pivot I", 0),
-    // SmartDashboard.getNumber("Pivot D", 0));
+    pidController.setP(SmartDashboard.getNumber("Pivot P", 0));
+    pidController.setI(SmartDashboard.getNumber("Pivot I", 0));
+    pidController.setD(SmartDashboard.getNumber("Pivot D", 0));
   }
 
   public void setSpeed(double speed) {
@@ -69,7 +69,7 @@ public class Pivot extends SubsystemBase {
       motorSpeed = 0;
       System.out.println("PIVOT UPPER STOP, Angle = " + getAngle());
     }
-    // System.out.println("Setting Motor Speed To " + motorSpeed);
+
     motor.set(motorSpeed);
   }
 

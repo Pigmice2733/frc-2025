@@ -19,7 +19,7 @@ public class PivotControl extends Command {
 
   @Override
   public void execute() {
-    pivot.changeSetpoint(speed.getAsDouble() * 0.1);
+    pivot.changeSetpoint(speed.getAsDouble());
   }
 
   @Override

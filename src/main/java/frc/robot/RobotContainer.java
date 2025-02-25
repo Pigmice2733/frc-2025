@@ -187,6 +187,11 @@ public class RobotContainer {
     return Commands.none();
   }
 
+  public void onEnable() {
+    elevator.setSetpoint(elevator.getHeight());
+    pivot.setSetpoint(pivot.getAngle());
+  }
+
   private void changeMode(OperatorMode newMode) {
     mode = newMode;
   }

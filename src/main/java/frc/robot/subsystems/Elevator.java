@@ -13,7 +13,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -73,29 +72,31 @@ public class Elevator extends SubsystemBase {
 
     Constants.sendNumberToElastic("Elevator Output", motorSpeed, 2);
 
-    pidController = new PIDController(SmartDashboard.getNumber("Elevator P", 0),
-        SmartDashboard.getNumber("Elevator I", 0), SmartDashboard.getNumber("Elevator D", 0));
+    // pidController = new PIDController(SmartDashboard.getNumber("Elevator P", 0),
+    // SmartDashboard.getNumber("Elevator I", 0), SmartDashboard.getNumber("Elevator
+    // D", 0));
   }
 
   public void setSpeeds(double speed) {
     motorSpeed = speed;
-    if ((leftMotor.get() < 0 && getSwitch())) {
+
+    if ((motorSpeed < 0 && getSwitch())) {
       System.out.println("CANNOT GO BELOW MINIMUM HEIGHT.");
       motorSpeed = 0;
     }
-    if (leftMotor.get() > 0 && getHeight() >= ElevatorConfig.ELEVATOR_UPPER_LIMIT) {
+    if (motorSpeed > 0 && getHeight() >= ElevatorConfig.ELEVATOR_UPPER_LIMIT) {
       System.out.println("Cannot go above maximum height.");
       motorSpeed = 0;
     }
 
-    motorSpeed += 0.04;
+    motorSpeed += 0.03;
 
     leftMotor.set(motorSpeed);
     rightMotor.set(motorSpeed);
   }
 
   public boolean getSwitch() {
-    // Negated because limit switch is wired for NC
+    // negated because limit switch is wired for NC
     return !limitSwitch.get();
   }
 
