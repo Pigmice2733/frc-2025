@@ -136,9 +136,10 @@ public class Drivetrain extends SubsystemBase {
 
   /** Returns the current pose of the robot. */
   public Pose2d getPose() {
-    Pose2d pose = swerve.getPose();
-    return new Pose2d(pose.getX(), pose.getY(), new Rotation2d(pose.getRotation().getRadians()));
-    // return swerve.getPose();
+    // Pose2d pose = swerve.getPose();
+    // return new Pose2d(pose.getX(), pose.getY(), new
+    // Rotation2d(pose.getRotation().getRadians()));
+    return swerve.getPose();
   }
 
   /** Sets the robot odometry to the given pose. */

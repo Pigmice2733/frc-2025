@@ -20,7 +20,7 @@ import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
 import frc.robot.commands.ScoreCoral;
-import frc.robot.commands.SetElevatorPosition;
+import frc.robot.commands.SetArmPosition;
 import frc.robot.commands.SetShooterPosition;
 import frc.robot.commands.ShootNet;
 import frc.robot.commands.ShootProcessor;
@@ -114,15 +114,15 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    // driver.x().onTrue(new TestDrive(drivetrain));
+    driver.x().onTrue(new TestDrive(drivetrain));
     // create vision commands once Vision subsystem exists
 
     // OPERATOR
     operator.x().onTrue(new IntakeCoral(coral));
     operator.b().whileTrue(new ScoreCoral(coral));
-    operator.povDown().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.STOW));
-    operator.povUp().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.ALGAE_L3));
-    operator.povRight().onTrue(new SetElevatorPosition(elevator, pivot, ElevatorPosition.ALGAE_L2));
+    operator.povDown().onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.STOW));
+    operator.povUp().onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.ALGAE_L3));
+    operator.povRight().onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.ALGAE_L2));
     operator.rightBumper().onTrue(new AlgaeFromReef(grabber));
     // operator.a().onTrue(new InstantCommand(() ->
     // changeMode(OperatorMode.SHOOTER)));
