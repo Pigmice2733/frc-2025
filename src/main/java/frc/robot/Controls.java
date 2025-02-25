@@ -5,8 +5,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ArmConfig;
 import frc.robot.Constants.DrivetrainConfig;
-import frc.robot.Constants.SystemConfig;
+import frc.robot.Constants.ElevatorConfig;
+import frc.robot.Constants.ShooterConfig;
 
 public class Controls {
   private CommandXboxController driver, operator;
@@ -74,19 +76,19 @@ public class Controls {
     // System.out.println("JOYSTICK SPEED: " + -1 * joystickSpeed *
     // SystemConfig.MAX_ELEVATOR_SPEED);
 
-    return -1 * joystickSpeed * SystemConfig.MAX_ELEVATOR_SPEED;
+    return -1 * joystickSpeed * ElevatorConfig.MAX_ELEVATOR_SPEED;
   }
 
   public double getPivotSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getRightY(), threshold);
 
-    return -1 * joystickSpeed * SystemConfig.MAX_PIVOT_SPEED;
+    return -1 * joystickSpeed * ArmConfig.MAX_PIVOT_SPEED;
   }
 
   public double getShooterSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getRightTriggerAxis(), threshold)
         - MathUtil.applyDeadband(operator.getLeftTriggerAxis(), threshold);
 
-    return joystickSpeed * SystemConfig.MAX_SHOOTER_SPEED;
+    return joystickSpeed * ShooterConfig.MAX_SHOOTER_SPEED;
   }
 }

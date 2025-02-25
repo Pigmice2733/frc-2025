@@ -12,7 +12,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -28,11 +27,11 @@ public class Pivot extends SubsystemBase {
   public Pivot() {
     motor = new SparkMax(CANConfig.PIVOT, MotorType.kBrushless);
     motor.configure(new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
-        .apply(new AbsoluteEncoderConfig().positionConversionFactor(SystemConfig.PIVOT_CONVERSION).inverted(true)),
+        .apply(new AbsoluteEncoderConfig().positionConversionFactor(ArmConfig.PIVOT_CONVERSION).inverted(true)),
         ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    pidController = SystemConfig.PIVOT_PID;
-    pidController.setTolerance(SystemConfig.PIVOT_TOLERANCE);
+    pidController = ArmConfig.PIVOT_PID;
+    pidController.setTolerance(ArmConfig.PIVOT_TOLERANCE);
 
     Constants.sendNumberToElastic("Pivot P", 0, 0);
     Constants.sendNumberToElastic("Pivot I", 0, 0);
@@ -62,11 +61,11 @@ public class Pivot extends SubsystemBase {
   public void setSpeed(double speed) {
     motorSpeed = speed;
 
-    if (getAngle() <= SystemConfig.PIVOT_LOWER_LIMIT && motorSpeed < 0) {
+    if (getAngle() <= ArmConfig.PIVOT_LOWER_LIMIT && motorSpeed < 0) {
       motorSpeed = 0;
       System.out.println("PIVOT LOWER STOP, Angle = " + getAngle());
     }
-    if (getAngle() >= SystemConfig.PIVOT_UPPER_LIMIT && motorSpeed > 0) {
+    if (getAngle() >= ArmConfig.PIVOT_UPPER_LIMIT && motorSpeed > 0) {
       motorSpeed = 0;
       System.out.println("PIVOT UPPER STOP, Angle = " + getAngle());
     }
@@ -80,7 +79,7 @@ public class Pivot extends SubsystemBase {
 
   public double getAngle() {
     double position = motor.getAbsoluteEncoder().getPosition();
-    position += SystemConfig.PIVOT_ANGLE_OFFSET;
+    position += ArmConfig.PIVOT_ANGLE_OFFSET;
     return position < 0 ? position + 360 : position;
   }
 
