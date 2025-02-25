@@ -11,9 +11,9 @@ public class ShootNet extends SequentialCommandGroup {
   public ShootNet(AlgaeShooter shooter) {
     addCommands(
         new InstantCommand(() -> shooter.setFlywheels(ShooterConfig.FLYWHEEL_NET_SPEED)),
-        new WaitCommand(ShooterConfig.SHOOTER_SPINUP_TIME),
+        new WaitCommand(ShooterConfig.SPINUP_TIME),
         shooter.runIndexerForward(),
-        new WaitCommand(ShooterConfig.SHOOTER_SHOOT_TIME),
+        new WaitCommand(ShooterConfig.SHOOT_TIME),
         shooter.stopMotors());
     addRequirements(shooter);
   }

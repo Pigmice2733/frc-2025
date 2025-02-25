@@ -59,20 +59,22 @@ public final class Constants {
 
   public static class ElevatorConfig {
     public static final PIDController ELEVATOR_PID = new PIDController(0.14, 0, 0.01);
-    public static final double ELEVATOR_TOLERANCE = 0.1; // m
+    public static final double ELEVATOR_TOLERANCE = 0.1; // in.
     public static final double MAX_ELEVATOR_SPEED = 0.5;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
-    public static final double ELEVATOR_UPPER_LIMIT = 20;
+    public static final double ELEVATOR_UPPER_LIMIT = 20; // in.
   }
 
   public static class ArmConfig {
+    // TODO nothing should run for a set amount of time, stuff should generally be
+    // toggle or while held. --Nathan (see also ShooterConfig)
     public static final PIDController PIVOT_PID = new PIDController(0.005, 0, 0);
     public static final double PIVOT_TOLERANCE = 2; // deg
     public static final double MAX_PIVOT_SPEED = 0.5;
     public static final double PIVOT_CONVERSION = 360; // degrees per rotation
+    public static final double PIVOT_ANGLE_OFFSET = -137.18; // makes 0 down
     public static final double PIVOT_LOWER_LIMIT = 9.5; // deg
     public static final double PIVOT_UPPER_LIMIT = 270; // deg
-    public static final double PIVOT_ANGLE_OFFSET = -137.18; // makes 0 down
 
     public static final double CORAL_INTAKE_SPEED = 1.0;
     public static final double CORAL_OUTTAKE_SPEED = -1.0;
@@ -84,21 +86,20 @@ public final class Constants {
   }
 
   public static class ShooterConfig {
-    public static final PIDController SHOOTER_PID = new PIDController(0.1, 0, 0);
-    public static final double SHOOTER_TOLERANCE = 2; // deg
-    public static final double MAX_SHOOTER_SPEED = 0.5;
-    public static final double SHOOTER_CONVERSION = 1;
-    public static final double SHOOTER_LOWER_LIMIT = -12; // deg
-    public static final double SHOOTER_UPPER_LIMIT = 90; // deg
+    public static final PIDController PIVOT_PID = new PIDController(0.1, 0, 0);
+    public static final double PIVOT_TOLERANCE = 2; // deg
+    public static final double MAX_PIVOT_SPEED = 0.5;
+    public static final double PIVOT_CONVERSION = 1;
+    public static final double PIVOT_LOWER_LIMIT = -12; // deg
+    public static final double PIVOT_UPPER_LIMIT = 90; // deg
 
     public static final double FLYWHEEL_PROCESSOR_SPEED = 0.2;
     public static final double FLYWHEEL_NET_SPEED = 0.8;
     public static final double INDEXER_SPEED = 0.5;
 
-    public static final double SHOOTER_SPINUP_TIME = 2.0; // TODO nothing should run for a set amount of time, stuff
-                                                          // should generally be toggle or while held -Nathan.
-    public static final double SHOOTER_SHOOT_TIME = 2.0;
-    public static final double SHOOTER_INTAKE_TIME = 0.5;
+    public static final double SPINUP_TIME = 2.0;
+    public static final double SHOOT_TIME = 2.0;
+    public static final double INTAKE_TIME = 0.5;
   }
 
   public static class ClimberConfig {

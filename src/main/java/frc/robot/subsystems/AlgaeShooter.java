@@ -26,7 +26,7 @@ public class AlgaeShooter extends SubsystemBase {
     indexerMotor = new SparkMax(CANConfig.INDEXER, MotorType.kBrushless);
 
     leftPivot.configure(new SparkMaxConfig().inverted(false)
-        .apply(new AbsoluteEncoderConfig().positionConversionFactor(ShooterConfig.SHOOTER_CONVERSION)),
+        .apply(new AbsoluteEncoderConfig().positionConversionFactor(ShooterConfig.PIVOT_CONVERSION)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     rightPivot.configure(new SparkMaxConfig().inverted(false).follow(CANConfig.SHOOTER_PIVOT_LEFT),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -37,15 +37,15 @@ public class AlgaeShooter extends SubsystemBase {
     indexerMotor.configure(new SparkMaxConfig().inverted(false),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
-    pivotController = ShooterConfig.SHOOTER_PID;
-    pivotController.setTolerance(ShooterConfig.SHOOTER_TOLERANCE);
+    pivotController = ShooterConfig.PIVOT_PID;
+    pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
 
   }
 
   @Override
   public void periodic() {
-    if ((leftPivot.get() < 0 && getPivot() <= ShooterConfig.SHOOTER_LOWER_LIMIT)
-        || (leftPivot.get() > 0 && getPivot() >= ShooterConfig.SHOOTER_UPPER_LIMIT)) {
+    if ((leftPivot.get() < 0 && getPivot() <= ShooterConfig.PIVOT_LOWER_LIMIT)
+        || (leftPivot.get() > 0 && getPivot() >= ShooterConfig.PIVOT_UPPER_LIMIT)) {
       setPivot(0);
     }
 

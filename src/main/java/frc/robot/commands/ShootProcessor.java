@@ -11,9 +11,9 @@ public class ShootProcessor extends SequentialCommandGroup {
   public ShootProcessor(AlgaeShooter shooter) {
     addCommands(
         new InstantCommand(() -> shooter.setFlywheels(ShooterConfig.FLYWHEEL_PROCESSOR_SPEED)),
-        new WaitCommand(ShooterConfig.SHOOTER_SPINUP_TIME),
+        new WaitCommand(ShooterConfig.SPINUP_TIME),
         shooter.runIndexerForward(),
-        new WaitCommand(ShooterConfig.SHOOTER_SHOOT_TIME),
+        new WaitCommand(ShooterConfig.SHOOT_TIME),
         shooter.stopMotors());
     addRequirements(shooter);
   }
