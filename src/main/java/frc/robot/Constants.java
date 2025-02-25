@@ -58,7 +58,7 @@ public final class Constants {
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.14, 0, 0.01);
+    public static final PIDController ELEVATOR_PID = new PIDController(0.3, 0, 0.0);
     public static final double ELEVATOR_TOLERANCE = 0.1; // in.
     public static final double MAX_ELEVATOR_SPEED = 0.5;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
@@ -73,7 +73,7 @@ public final class Constants {
     public static final double MAX_PIVOT_SPEED = 0.5;
     public static final double PIVOT_CONVERSION = 360; // degrees per rotation
     public static final double PIVOT_ANGLE_OFFSET = -137.18; // makes 0 down
-    public static final double PIVOT_LOWER_LIMIT = 9.5; // deg
+    public static final double PIVOT_LOWER_LIMIT = 15; // deg
     public static final double PIVOT_UPPER_LIMIT = 270; // deg
 
     public static final double CORAL_INTAKE_SPEED = 1.0;
@@ -86,7 +86,7 @@ public final class Constants {
   }
 
   public static class ShooterConfig {
-    public static final PIDController PIVOT_PID = new PIDController(0.1, 0, 0);
+    public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
     public static final double PIVOT_TOLERANCE = 2; // deg
     public static final double MAX_PIVOT_SPEED = 0.5;
     public static final double PIVOT_CONVERSION = 1;
@@ -108,8 +108,8 @@ public final class Constants {
   }
 
   public static enum ElevatorPosition {
-    HUMAN_PLAYER(120, 0), SCORE_L1(260, 0), SCORE_L2(225, 0.15), SCORE_L3(225, 0.35), SCORE_L4(200, 20),
-    REEF_L2(210, 0.2), REEF_L3(10, 12), STOW(10, 0), CLIMB(10, 0.1), ALGAE_L3(250, 21), ALGAE_L2(250, 0);
+    HUMAN_PLAYER(120, 0), SCORE_L1(260, 0), SCORE_L2(225, 6), SCORE_L3(225, 15), SCORE_L4(200, 20),
+    STOW(10, 0), CLIMB(10, 4), ALGAE_L3(250, 21), ALGAE_L2(250, 0);
 
     private double pivotAngle, elevatorHeight;
 
