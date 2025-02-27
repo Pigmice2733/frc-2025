@@ -1,29 +1,48 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.EncoderConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.DoubleSupplier;
 
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.EncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.VelocityUnit;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants;
-import frc.robot.Constants.*;
+import frc.robot.Constants.CANConfig;
+import frc.robot.Constants.ElevatorConfig;
+import frc.robot.Constants.SensorConfig;
 
 public class Elevator extends SubsystemBase {
   private SparkMax leftMotor, rightMotor;
   private DigitalInput limitSwitch;
   private PIDController pidController;
+  private ElevatorFeedforward ff;
+  private SysIdRoutine routine;
   private double motorSpeed;
 
   public Elevator() {
@@ -41,6 +60,12 @@ public class Elevator extends SubsystemBase {
 
     pidController = ElevatorConfig.ELEVATOR_PID;
     pidController.setTolerance(ElevatorConfig.ELEVATOR_TOLERANCE);
+
+    ff = ElevatorConfig.ELEVATOR_FEEDFORWARD;
+
+    routine = new SysIdRoutine(
+        new Config(Velocity.ofRelativeUnits(0.8, VelocityUnit.combine(Volts, Seconds)), Volts.of(4), Seconds.of(15)),
+        new Mechanism(this::setSpeeds, this::log, this));
 
     limitSwitch = new DigitalInput(SensorConfig.ELEVATOR_LIMIT_SWITCH_CHANNEL);
 
@@ -84,7 +109,6 @@ public class Elevator extends SubsystemBase {
       motorSpeed = 0;
     }
 
-    motorSpeed += 0.03;
     leftMotor.set(motorSpeed);
     rightMotor.set(motorSpeed);
   }
@@ -110,9 +134,9 @@ public class Elevator extends SubsystemBase {
     return pidController.atSetpoint();
   }
 
-  /** Returns the calculated output based on the current height. */
+  /** Returns the calculated output based on the current height and velocity. */
   public double calculate() {
-    return pidController.calculate(getHeight());
+    return pidController.calculate(getHeight()) + ff.calculate(leftMotor.getEncoder().getVelocity());
   }
 
   public Command stopMotors() {
@@ -129,5 +153,30 @@ public class Elevator extends SubsystemBase {
 
   public double getMotorSpeed() {
     return motorSpeed;
+  }
+
+  private void log(SysIdRoutineLog log) {
+    System.out.println("logging");
+    log.motor("left")
+        .voltage(Voltage.ofRelativeUnits(leftMotor.get() * 12, Volts))
+        .linearPosition(Distance.ofRelativeUnits(leftMotor.getEncoder().getPosition(), Inches))
+        .linearVelocity(LinearVelocity.ofRelativeUnits(leftMotor.getEncoder().getVelocity(), InchesPerSecond));
+    log.motor("right")
+        .voltage(Voltage.ofRelativeUnits(rightMotor.get() * 12, Volts))
+        .linearPosition(Distance.ofRelativeUnits(rightMotor.getEncoder().getPosition(), Inches))
+        .linearVelocity(LinearVelocity.ofRelativeUnits(rightMotor.getEncoder().getVelocity(), InchesPerSecond));
+  }
+
+  public Command sysIdQuasistatic(Direction direction) {
+    return routine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(Direction direction) {
+    return routine.dynamic(direction);
+  }
+
+  private void setSpeeds(Voltage voltage) {
+    setSpeeds(voltage.magnitude() / 12);
+    System.out.println("setting motor speeds by voltage");
   }
 }

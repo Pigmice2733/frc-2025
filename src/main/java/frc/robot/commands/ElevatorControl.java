@@ -19,8 +19,9 @@ public class ElevatorControl extends Command {
 
   @Override
   public void execute() {
-    System.out.println(
-        "Elevator pos: " + elevator.getHeight() + " | Setting to: " + (elevator.getHeight() + speed.getAsDouble()));
+    // System.out.println(
+    // "Elevator pos: " + elevator.getHeight() + " | Setting to: " +
+    // (elevator.getHeight() + speed.getAsDouble()));
     elevator.changeSetpoint(speed.getAsDouble());
   }
 

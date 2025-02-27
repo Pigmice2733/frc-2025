@@ -10,21 +10,17 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.Constants.ElevatorPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
-import frc.robot.commands.AlgaeFromReef;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.ElevatorControl;
-import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
-import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetArmPosition;
-import frc.robot.commands.SetShooterPosition;
 import frc.robot.commands.TestDrive;
 import frc.robot.subsystems.AlgaeGrabber;
-import frc.robot.subsystems.AlgaeShooter;
 import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -166,6 +162,11 @@ public class RobotContainer {
 
     // operator.y().onTrue(new SetElevatorPosition(elevator, pivot,
     // ElevatorPosition.CLIMB));
+
+    // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
+    // operator.b().whileTrue(pivot.sysIdDynamic(Direction.kReverse));
+    // operator.x().whileTrue(pivot.sysIdQuasistatic(Direction.kForward));
+    // operator.y().whileTrue(pivot.sysIdQuasistatic(Direction.kReverse));
   }
 
   /**
