@@ -11,10 +11,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import frc.robot.Constants.ElevatorPosition;
+import frc.robot.Constants.ArmPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
-import frc.robot.commands.AlgaeFromReef;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeCoral;
@@ -50,7 +49,7 @@ public class RobotContainer {
   private final Controls controls;
 
   private OperatorMode mode;
-  public static ElevatorPosition elevPos;
+  public static ArmPosition elevPos;
   public static ShooterPosition shootPos;
 
   /**
@@ -69,7 +68,7 @@ public class RobotContainer {
     pivot = new Pivot();
 
     mode = OperatorMode.NONE;
-    elevPos = ElevatorPosition.STOW;
+    elevPos = ArmPosition.STOW;
     shootPos = ShooterPosition.STOW;
 
     // Configure the trigger bindings
@@ -133,31 +132,31 @@ public class RobotContainer {
     operator.b().onTrue(new InstantCommand(() -> changeMode(OperatorMode.ELEVATOR)));
     operator.povDown().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot,
-            ElevatorPosition.STOW));
+            ArmPosition.STOW));
     operator.povLeft().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot,
-            ElevatorPosition.HUMAN_PLAYER));
+            ArmPosition.HUMAN_PLAYER));
     operator.povRight().and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.ALGAE_L2));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L2));
     operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.ALGAE_L3));
-    operator.rightBumper().and(() -> (elevPos == ElevatorPosition.HUMAN_PLAYER))
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L3));
+    operator.rightBumper().and(() -> (elevPos == ArmPosition.HUMAN_PLAYER))
         .onTrue(new IntakeCoral(coral));
-    operator.rightBumper().and(() -> (elevPos == ElevatorPosition.ALGAE_L2
-        || elevPos == ElevatorPosition.ALGAE_L3)).onTrue(new AlgaeFromReef(grabber));
+    operator.rightBumper().and(() -> (elevPos == ArmPosition.ALGAE_L2
+        || elevPos == ArmPosition.ALGAE_L3)).onTrue(grabber.runMotor()).onFalse(grabber.stopMotor());
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
     operator.povDown().and(() -> mode == OperatorMode.REEF)
-        .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.SCORE_L1));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L1));
     operator.povLeft().and(() -> mode == OperatorMode.REEF)
-        .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.SCORE_L2));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L2));
     operator.povRight().and(() -> mode == OperatorMode.REEF)
-        .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.SCORE_L3));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L3));
     operator.povUp().and(() -> mode == OperatorMode.REEF)
-        .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.SCORE_L4));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L4));
     operator.rightBumper()
-        .and(() -> elevPos == ElevatorPosition.SCORE_L1 || elevPos == ElevatorPosition.SCORE_L2
-            || elevPos == ElevatorPosition.SCORE_L3 || elevPos == ElevatorPosition.SCORE_L4)
+        .and(() -> elevPos == ArmPosition.SCORE_L1 || elevPos == ArmPosition.SCORE_L2
+            || elevPos == ArmPosition.SCORE_L3 || elevPos == ArmPosition.SCORE_L4)
         .onTrue(new ScoreCoral(coral));
 
     // operator.y().onTrue(new SetElevatorPosition(elevator, pivot,
@@ -192,7 +191,7 @@ public class RobotContainer {
     shootPos = newPos;
   }
 
-  public static void setElevatorPosition(ElevatorPosition newPos) {
+  public static void setElevatorPosition(ArmPosition newPos) {
     elevPos = newPos;
   }
 }

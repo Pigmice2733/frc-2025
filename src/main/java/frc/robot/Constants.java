@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -114,13 +113,13 @@ public final class Constants {
     public static final double CLIMBER_CLIMB_POSITION = 0.5;
   }
 
-  public static enum ElevatorPosition {
-    HUMAN_PLAYER(/* 120, 0 */ 200, 0), SCORE_L1(260, 0), SCORE_L2(240, 0), SCORE_L3(215, 0), SCORE_L4(200, 21),
-    STOW(10, 0), CLIMB(10, 4), ALGAE_L3(/* 250, 21 */ 200, 12), ALGAE_L2(/* 250, 0 */ 10, 12);
+  public static enum ArmPosition {
+    HUMAN_PLAYER(30, 20), SCORE_L1(260, 0), SCORE_L2(240, 0), SCORE_L3(215, 0), SCORE_L4(200, 20),
+    STOW(10, 0), CLIMB(10, 4), ALGAE_L3(230, 12), ALGAE_L2(240, 1.5);
 
     private double pivotAngle, elevatorHeight;
 
-    private ElevatorPosition(double pivot, double elevator) {
+    private ArmPosition(double pivot, double elevator) {
       pivotAngle = pivot;
       elevatorHeight = elevator;
     }

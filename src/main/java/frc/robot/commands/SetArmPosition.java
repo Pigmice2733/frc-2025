@@ -2,17 +2,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.ElevatorPosition;
+import frc.robot.Constants.ArmPosition;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 
 public class SetArmPosition extends Command {
   private Pivot pivot;
   private Elevator elevator;
-  private ElevatorPosition endPosition;
+  private ArmPosition endPosition;
 
   /** Sets the elevator and pivot arm to the given position. */
-  public SetArmPosition(Elevator elevator, Pivot pivot, ElevatorPosition position) {
+  public SetArmPosition(Elevator elevator, Pivot pivot, ArmPosition position) {
     this.pivot = pivot;
     this.elevator = elevator;
     endPosition = position;

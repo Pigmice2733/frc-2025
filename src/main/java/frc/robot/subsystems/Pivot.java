@@ -15,7 +15,6 @@ import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VelocityUnit;
@@ -23,7 +22,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -40,7 +38,6 @@ import frc.robot.Constants.CANConfig;
 public class Pivot extends SubsystemBase {
   private SparkMax motor;
   private PIDController pidController;
-  private ArmFeedforward ff;
   private SysIdRoutine routine;
   private double motorSpeed;
 
@@ -52,8 +49,6 @@ public class Pivot extends SubsystemBase {
 
     pidController = ArmConfig.PIVOT_PID;
     pidController.setTolerance(ArmConfig.PIVOT_TOLERANCE);
-
-    // ff = ArmConfig.PIVOT_FEEDFORWARD;
 
     routine = new SysIdRoutine(
         new Config(Velocity.ofRelativeUnits(2, VelocityUnit.combine(Volts, Seconds)), Volts.of(5), Seconds.of(15)),
@@ -123,8 +118,6 @@ public class Pivot extends SubsystemBase {
   /** Returns the calculated output based on the current angle and velocity. */
   public double calculate() {
     return pidController.calculate(getAngle()) + 0.033 * Math.sin(Units.degreesToRadians(getAngle()));
-    // + ff.calculate(Units.degreesToRadians(getAngle()),
-    // motor.getAbsoluteEncoder().getVelocity());
   }
 
   public double getAngle() {
