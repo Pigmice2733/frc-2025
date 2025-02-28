@@ -7,7 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -60,11 +59,11 @@ public final class Constants {
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.028846, 0, 0.0);
+    public static final PIDController ELEVATOR_PID = new PIDController(0.15, 0.0, 0.2);
+    public static final double ELEVATOR_P_UP = 1.4;
+    public static final double ELEVATOR_P_DOWN = 0.15;
     public static final double ELEVATOR_TOLERANCE = 0.1; // in.
-
-    public static final ElevatorFeedforward ELEVATOR_FEEDFORWARD = new ElevatorFeedforward(0.040971, 1.5, 0.069608,
-        0.16856);
+    public static final double ELEVATOR_HEIGHT_OFFSET = 0.3;
 
     public static final double MAX_ELEVATOR_DELTA = 2;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation

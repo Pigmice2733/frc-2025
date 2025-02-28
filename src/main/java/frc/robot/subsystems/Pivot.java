@@ -63,7 +63,7 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // setSpeed(calculate());
+    setSpeed(calculate());
     updateEntries();
   }
 
