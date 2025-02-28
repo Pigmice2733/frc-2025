@@ -73,7 +73,7 @@ public class Controls {
 
   public double getElevatorSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getLeftY(), threshold);
-    return -1 * joystickSpeed * ElevatorConfig.MAX_ELEVATOR_SPEED;
+    return -1 * joystickSpeed * ElevatorConfig.MAX_ELEVATOR_DELTA;
   }
 
   public double getPivotSpeed() {

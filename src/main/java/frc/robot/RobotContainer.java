@@ -85,7 +85,7 @@ public class RobotContainer {
         controls::getTurnSpeed));
 
     elevator.setDefaultCommand(new ElevatorControl(elevator, controls::getElevatorSpeed));
-    pivot.setDefaultCommand(new PivotControl(pivot, controls::getPivotSpeed));
+    // pivot.setDefaultCommand(new PivotControl(pivot, controls::getPivotSpeed));
     // shooter.setDefaultCommand(shooter.manualSpeed(controls.getShooterSpeed()));
   }
 

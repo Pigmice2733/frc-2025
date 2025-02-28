@@ -66,7 +66,7 @@ public final class Constants {
     public static final ElevatorFeedforward ELEVATOR_FEEDFORWARD = new ElevatorFeedforward(0.040971, 1.5, 0.069608,
         0.16856);
 
-    public static final double MAX_ELEVATOR_SPEED = 0.5;
+    public static final double MAX_ELEVATOR_DELTA = 2;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
     public static final double ELEVATOR_UPPER_LIMIT = 20; // in.
   }

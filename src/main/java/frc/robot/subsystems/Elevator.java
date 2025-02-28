@@ -23,6 +23,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -70,6 +71,10 @@ public class Elevator extends SubsystemBase {
     limitSwitch = new DigitalInput(SensorConfig.ELEVATOR_LIMIT_SWITCH_CHANNEL);
 
     motorSpeed = 0;
+
+    Constants.sendNumberToElastic("Elevator P", 0, 3);
+    Constants.sendNumberToElastic("Elevator I", 0, 3);
+    Constants.sendNumberToElastic("Elevator D", 0, 3);
   }
 
   @Override
@@ -85,16 +90,18 @@ public class Elevator extends SubsystemBase {
   }
 
   private void updateEntries() {
-    Constants.sendNumberToElastic("Elevator Left Speed", leftMotor.get() + 0.04, 2);
-    Constants.sendNumberToElastic("Elevator Right Speed", rightMotor.get() + 0.04, 2);
+    Constants.sendNumberToElastic("Elevator Left Speed", leftMotor.get(), 2);
+    Constants.sendNumberToElastic("Elevator Right Speed", rightMotor.get(), 2);
     Constants.sendNumberToElastic("Elevator Left Position", leftMotor.getEncoder().getPosition(), 2);
     Constants.sendNumberToElastic("Elevator Right Position", rightMotor.getEncoder().getPosition(), 2);
     Constants.sendBooleanToElastic("Elevator Limit Switch", getSwitch());
     Constants.sendNumberToElastic("Elevator Output", motorSpeed, 2);
 
-    // pidController.setP(SmartDashboard.getNumber("Elevator P", 0));
-    // pidController.setI(SmartDashboard.getNumber("Elevator I", 0));
-    // pidController.setD(SmartDashboard.getNumber("Elevator D", 0));
+    Constants.sendNumberToElastic("Elevator Setpoint", pidController.getSetpoint(), 2);
+
+    pidController.setP(SmartDashboard.getNumber("Elevator P", 0));
+    pidController.setI(SmartDashboard.getNumber("Elevator I", 0));
+    pidController.setD(SmartDashboard.getNumber("Elevator D", 0));
   }
 
   public void setSpeeds(double speed) {
@@ -127,7 +134,9 @@ public class Elevator extends SubsystemBase {
   }
 
   public void changeSetpoint(double delta) {
-    pidController.setSetpoint(pidController.getSetpoint() + delta);
+    if (delta != 0) {
+      pidController.setSetpoint(getHeight() + delta);
+    }
   }
 
   public boolean atSetpoint() {
@@ -136,7 +145,7 @@ public class Elevator extends SubsystemBase {
 
   /** Returns the calculated output based on the current height and velocity. */
   public double calculate() {
-    return pidController.calculate(getHeight()) + ff.calculate(leftMotor.getEncoder().getVelocity());
+    return pidController.calculate(getHeight()); // + ff.calculate(leftMotor.getEncoder().getVelocity());
   }
 
   public Command stopMotors() {
