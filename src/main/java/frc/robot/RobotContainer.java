@@ -14,9 +14,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
+import frc.robot.commands.AlgaeFromReef;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.ElevatorControl;
+import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
+import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetArmPosition;
 import frc.robot.commands.TestDrive;
 import frc.robot.subsystems.AlgaeGrabber;
@@ -138,10 +141,10 @@ public class RobotContainer {
         .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.ALGAE_L2));
     operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.ALGAE_L3));
-    // operator.rightBumper().and(() -> (elevPos == ElevatorPosition.HUMAN_PLAYER))
-    // .onTrue(new IntakeCoral(coral));
-    // operator.rightBumper().and(() -> (elevPos == ElevatorPosition.ALGAE_L2
-    // || elevPos == ElevatorPosition.ALGAE_L3)).onTrue(new AlgaeFromReef(grabber));
+    operator.rightBumper().and(() -> (elevPos == ElevatorPosition.HUMAN_PLAYER))
+        .onTrue(new IntakeCoral(coral));
+    operator.rightBumper().and(() -> (elevPos == ElevatorPosition.ALGAE_L2
+        || elevPos == ElevatorPosition.ALGAE_L3)).onTrue(new AlgaeFromReef(grabber));
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
     operator.povDown().and(() -> mode == OperatorMode.REEF)
@@ -152,12 +155,10 @@ public class RobotContainer {
         .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.SCORE_L3));
     operator.povUp().and(() -> mode == OperatorMode.REEF)
         .onTrue(new SetArmPosition(elevator, pivot, ElevatorPosition.SCORE_L4));
-    // operator.rightBumper()
-    // .and(() -> elevPos == ElevatorPosition.SCORE_L1 || elevPos ==
-    // ElevatorPosition.SCORE_L2
-    // || elevPos == ElevatorPosition.SCORE_L3 || elevPos ==
-    // ElevatorPosition.SCORE_L4)
-    // .onTrue(new ScoreCoral(coral));
+    operator.rightBumper()
+        .and(() -> elevPos == ElevatorPosition.SCORE_L1 || elevPos == ElevatorPosition.SCORE_L2
+            || elevPos == ElevatorPosition.SCORE_L3 || elevPos == ElevatorPosition.SCORE_L4)
+        .onTrue(new ScoreCoral(coral));
 
     // operator.y().onTrue(new SetElevatorPosition(elevator, pivot,
     // ElevatorPosition.CLIMB));

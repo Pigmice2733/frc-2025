@@ -78,7 +78,7 @@ public class Controls {
 
   public double getPivotSpeed() {
     double joystickSpeed = MathUtil.applyDeadband(operator.getRightY(), threshold);
-    return -1 * joystickSpeed * ArmConfig.MAX_PIVOT_SPEED;
+    return -1 * joystickSpeed * ArmConfig.MAX_PIVOT_DELTA;
   }
 
   public double getShooterSpeed() {

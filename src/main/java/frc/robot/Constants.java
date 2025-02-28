@@ -59,25 +59,25 @@ public final class Constants {
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.15, 0.0, 0.2);
+    public static final PIDController ELEVATOR_PID = new PIDController(0.15, 0.0, 0.02);
     public static final double ELEVATOR_P_UP = 1.4;
     public static final double ELEVATOR_P_DOWN = 0.15;
     public static final double ELEVATOR_TOLERANCE = 0.1; // in.
-    public static final double ELEVATOR_HEIGHT_OFFSET = 0.3;
 
     public static final double MAX_ELEVATOR_DELTA = 2;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
-    public static final double ELEVATOR_UPPER_LIMIT = 20; // in.
+    public static final double ELEVATOR_UPPER_LIMIT = 21; // in.
   }
 
   public static class ArmConfig {
     // TODO nothing should run for a set amount of time, stuff should generally be
     // toggle or while held. --Nathan (see also ShooterConfig)
-    public static final PIDController PIVOT_PID = new PIDController(0.0001, 0, 0);
-    public static final ArmFeedforward PIVOT_FEEDFORWARD = new ArmFeedforward(0.26068, 26.628, 0.083333, 0.0047665);
+    public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
+    // public static final ArmFeedforward PIVOT_FEEDFORWARD = new
+    // ArmFeedforward(0.26068, 26.628, 0.083333, 0.0047665);
 
     public static final double PIVOT_TOLERANCE = 2; // deg
-    public static final double MAX_PIVOT_SPEED = 0.5;
+    public static final double MAX_PIVOT_DELTA = 20;
     public static final double PIVOT_CONVERSION = 360; // degrees per rotation
     public static final double PIVOT_ANGLE_OFFSET = -137.18; // makes 0 down
     public static final double PIVOT_LOWER_LIMIT = 15; // deg
@@ -115,7 +115,7 @@ public final class Constants {
   }
 
   public static enum ElevatorPosition {
-    HUMAN_PLAYER(/* 120, 0 */ 200, 0), SCORE_L1(260, 0), SCORE_L2(225, 6), SCORE_L3(225, 15), SCORE_L4(200, 20),
+    HUMAN_PLAYER(/* 120, 0 */ 200, 0), SCORE_L1(260, 0), SCORE_L2(240, 0), SCORE_L3(215, 0), SCORE_L4(200, 21),
     STOW(10, 0), CLIMB(10, 4), ALGAE_L3(/* 250, 21 */ 200, 12), ALGAE_L2(/* 250, 0 */ 10, 12);
 
     private double pivotAngle, elevatorHeight;

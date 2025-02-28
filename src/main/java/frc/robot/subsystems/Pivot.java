@@ -23,6 +23,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -52,11 +53,16 @@ public class Pivot extends SubsystemBase {
     pidController = ArmConfig.PIVOT_PID;
     pidController.setTolerance(ArmConfig.PIVOT_TOLERANCE);
 
-    ff = ArmConfig.PIVOT_FEEDFORWARD;
+    // ff = ArmConfig.PIVOT_FEEDFORWARD;
 
     routine = new SysIdRoutine(
         new Config(Velocity.ofRelativeUnits(2, VelocityUnit.combine(Volts, Seconds)), Volts.of(5), Seconds.of(15)),
         new Mechanism(this::setSpeed, this::log, this));
+
+    // Constants.sendNumberToElastic("Pivot G", 0, 0);
+    // Constants.sendNumberToElastic("Pivot P", 0, 0);
+    // Constants.sendNumberToElastic("Pivot I", 0, 0);
+    // Constants.sendNumberToElastic("Pivot D", 0, 0);
 
     motorSpeed = 0;
   }
@@ -70,7 +76,12 @@ public class Pivot extends SubsystemBase {
   private void updateEntries() {
     Constants.sendNumberToElastic("Pivot Motor Speed", motor.get(), 2);
     Constants.sendNumberToElastic("Target Pivot Motor Speed", motorSpeed, 2);
-    Constants.sendNumberToElastic("Pivot Angle", getAngle(), 3);
+    Constants.sendNumberToElastic("Pivot Angle", getAngle(), 2);
+    Constants.sendNumberToElastic("Pivot Setpoint", pidController.getSetpoint(), 2);
+
+    // pidController.setD(SmartDashboard.getNumber("Pivot D", 0));
+    // pidController.setP(SmartDashboard.getNumber("Pivot P", 0));
+    // pidController.setI(SmartDashboard.getNumber("Pivot I", 0));
   }
 
   public void setSpeed(double speed) {
@@ -88,12 +99,21 @@ public class Pivot extends SubsystemBase {
     motor.set(motorSpeed);
   }
 
-  public void setSetpoint(double angle) {
-    pidController.setSetpoint(angle);
+  public void setSetpoint(double setpoint) {
+    // prevent setpoint from being out of range
+    if (setpoint < ArmConfig.PIVOT_LOWER_LIMIT) {
+      pidController.setSetpoint(ArmConfig.PIVOT_LOWER_LIMIT);
+    } else if (setpoint > ArmConfig.PIVOT_UPPER_LIMIT) {
+      pidController.setSetpoint(ArmConfig.PIVOT_UPPER_LIMIT);
+    } else {
+      pidController.setSetpoint(setpoint);
+    }
   }
 
   public void changeSetpoint(double delta) {
-    pidController.setSetpoint(pidController.getSetpoint() + delta);
+    if (delta != 0) {
+      setSetpoint(getAngle() + delta);
+    }
   }
 
   public boolean atSetpoint() {
@@ -102,8 +122,9 @@ public class Pivot extends SubsystemBase {
 
   /** Returns the calculated output based on the current angle and velocity. */
   public double calculate() {
-    return pidController.calculate(getAngle())
-        + ff.calculate(Units.degreesToRadians(getAngle()), motor.getAbsoluteEncoder().getVelocity());
+    return pidController.calculate(getAngle()) + 0.033 * Math.sin(Units.degreesToRadians(getAngle()));
+    // + ff.calculate(Units.degreesToRadians(getAngle()),
+    // motor.getAbsoluteEncoder().getVelocity());
   }
 
   public double getAngle() {

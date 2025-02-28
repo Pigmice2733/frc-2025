@@ -60,6 +60,7 @@ public class Elevator extends SubsystemBase {
 
     pidController = ElevatorConfig.ELEVATOR_PID;
     pidController.setTolerance(ElevatorConfig.ELEVATOR_TOLERANCE);
+    pidController.setSetpoint(0);
 
     routine = new SysIdRoutine(
         new Config(Velocity.ofRelativeUnits(0.8, VelocityUnit.combine(Volts, Seconds)), Volts.of(4), Seconds.of(15)),
@@ -69,11 +70,10 @@ public class Elevator extends SubsystemBase {
 
     motorSpeed = 0;
 
-    Constants.sendNumberToElastic("Elevator Up-P", 0, 3);
-    Constants.sendNumberToElastic("Elevator Down-P", 0, 3);
-    Constants.sendNumberToElastic("Elevator I", 0, 3);
-    Constants.sendNumberToElastic("Elevator D", 0, 3);
-    Constants.sendNumberToElastic("Elevator Offset", 0, 3);
+    // Constants.sendNumberToElastic("Elevator Up-P", 0, 3);
+    // Constants.sendNumberToElastic("Elevator Down-P", 0, 3);
+    // Constants.sendNumberToElastic("Elevator I", 0, 3);
+    // Constants.sendNumberToElastic("Elevator D", 0, 3);
   }
 
   @Override
@@ -103,7 +103,6 @@ public class Elevator extends SubsystemBase {
     // downP = SmartDashboard.getNumber("Elevator Down-P", 0);
     // pidController.setI(SmartDashboard.getNumber("Elevator I", 0));
     // pidController.setD(SmartDashboard.getNumber("Elevator D", 0));
-    // heightOffset = SmartDashboard.getNumber("Elevator Offset", 0);
   }
 
   public void setSpeeds(double speed) {
@@ -131,21 +130,23 @@ public class Elevator extends SubsystemBase {
     return leftMotor.getEncoder().getPosition();
   }
 
-  public void setSetpoint(double height) {
+  public void setSetpoint(double setpoint) {
     // use different p-values up and down
-    if (height > getHeight()) {
+    if (setpoint > getHeight()) {
       pidController.setP(ElevatorConfig.ELEVATOR_P_UP);
-    } else {
+    } else if (setpoint < getHeight()) {
       pidController.setP(ElevatorConfig.ELEVATOR_P_DOWN);
+    } else {
+      pidController.setP(0);
     }
 
     // prevent setpoint from being out of range
-    if (height < 0) {
+    if (setpoint < 0) {
       pidController.setSetpoint(0);
-    } else if (height > ElevatorConfig.ELEVATOR_UPPER_LIMIT) {
+    } else if (setpoint > ElevatorConfig.ELEVATOR_UPPER_LIMIT) {
       pidController.setSetpoint(ElevatorConfig.ELEVATOR_UPPER_LIMIT);
     } else {
-      pidController.setSetpoint(height);
+      pidController.setSetpoint(setpoint);
     }
   }
 
@@ -161,7 +162,7 @@ public class Elevator extends SubsystemBase {
 
   /** Returns the calculated output based on the current height and velocity. */
   public double calculate() {
-    return pidController.calculate(getHeight()) + 0.05;
+    return pidController.calculate(getHeight()) + 0.04;
   }
 
   public Command stopMotors() {
