@@ -9,6 +9,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -48,21 +49,25 @@ public final class Constants {
     public static final double MAX_DRIVE_SPEED = 10.0; // m/s
     public static final double MAX_TURN_SPEED = 20.0; // rad/s
     public static final double SLOWMODE_FACTOR = 0.4;
-    public static final PIDConstants DRIVE_PID = new PIDConstants(0.5, 0, 0);
+
+    public static final PIDConstants DRIVE_PID = new PIDConstants(4.0, 0, 1.3);
+    public static final double DRIVE_POSITION_TOLERANCE = 0.05; // m
+    public static final double DRIVE_VELOCITY_TOLERANCE = 0.05; // m/s
+
     public static final PIDConstants TURN_PID = new PIDConstants(0.5, 0, 0);
-    public static final double DRIVE_TOLERANCE = 0.05; // m
-    public static final double TURN_TOLERANCE = 0.5; // deg
+    public static final double TURN_POSITION_TOLERANCE = Units.degreesToRadians(0.5); // rad
+    public static final double TURN_VELOCITY_TOLERANCE = Units.degreesToRadians(0.5); // rad/s
 
     /** Transform from camera to center of robot. */
-    public static final Transform2d CAMERA_OFFSET = new Transform2d(0, 0, new Rotation2d(0));
+    public static final Transform2d CAMERA_OFFSET = new Transform2d(Units.inchesToMeters(10), 0, new Rotation2d(0));
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.17, 0.0, 0.017);
+    public static final PIDController ELEVATOR_PID = new PIDController(0.17, 0.0, 0.01);
     public static final double ELEVATOR_P_UP = 1.4;
     public static final double ELEVATOR_P_DOWN = 0.17;
     public static final double ELEVATOR_TOLERANCE = 0.2; // in.
-    public static final double ELEVATOR_KG = 0.04;
+    public static final double ELEVATOR_KG = 0.0;
 
     public static final double MAX_ELEVATOR_DELTA = 2;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
@@ -115,7 +120,7 @@ public final class Constants {
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
     SCORE_L3(215, 0),
-    SCORE_L4(210, 21.5),
+    SCORE_L4(195, 21.5),
     STOW(10, 0),
     CLIMB(10, 4),
     ALGAE_L3(230, 12),

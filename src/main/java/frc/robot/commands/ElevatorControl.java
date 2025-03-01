@@ -3,8 +3,6 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.ArmPosition;
 import frc.robot.subsystems.Elevator;
 
 public class ElevatorControl extends Command {
@@ -25,9 +23,6 @@ public class ElevatorControl extends Command {
     // "Elevator pos: " + elevator.getHeight() + " | Setting to: " +
     // (elevator.getHeight() + speed.getAsDouble()));
     elevator.changeSetpoint(speed.getAsDouble());
-    if (speed.getAsDouble() != 0) {
-      RobotContainer.setElevatorPosition(ArmPosition.STOW);
-    }
   }
 
   @Override

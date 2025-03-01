@@ -22,6 +22,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -42,7 +43,7 @@ public class Elevator extends SubsystemBase {
   private PIDController pidController;
   private SysIdRoutine routine;
   private double motorSpeed;
-  // private double upP, downP;
+  private double upP, downP;
 
   public Elevator() {
     leftMotor = new SparkMax(CANConfig.ELEVATOR_LEFT, MotorType.kBrushless);
@@ -71,10 +72,10 @@ public class Elevator extends SubsystemBase {
 
     motorSpeed = 0;
 
-    // Constants.sendNumberToElastic("Elevator Up-P", 0, 3);
-    // Constants.sendNumberToElastic("Elevator Down-P", 0, 3);
-    // Constants.sendNumberToElastic("Elevator I", 0, 3);
-    // Constants.sendNumberToElastic("Elevator D", 0, 3);
+    Constants.sendNumberToElastic("Elevator Up-P", 0, 3);
+    Constants.sendNumberToElastic("Elevator Down-P", 0, 3);
+    Constants.sendNumberToElastic("Elevator I", 0, 3);
+    Constants.sendNumberToElastic("Elevator D", 0, 3);
   }
 
   @Override
@@ -100,10 +101,10 @@ public class Elevator extends SubsystemBase {
 
     Constants.sendNumberToElastic("Elevator Setpoint", pidController.getSetpoint(), 2);
 
-    // upP = SmartDashboard.getNumber("Elevator Up-P", 0);
-    // downP = SmartDashboard.getNumber("Elevator Down-P", 0);
-    // pidController.setI(SmartDashboard.getNumber("Elevator I", 0));
-    // pidController.setD(SmartDashboard.getNumber("Elevator D", 0));
+    upP = SmartDashboard.getNumber("Elevator Up-P", 0);
+    downP = SmartDashboard.getNumber("Elevator Down-P", 0);
+    pidController.setI(SmartDashboard.getNumber("Elevator I", 0));
+    pidController.setD(SmartDashboard.getNumber("Elevator D", 0));
   }
 
   public void setSpeeds(double speed) {
@@ -124,9 +125,9 @@ public class Elevator extends SubsystemBase {
   public void setSetpoint(double setpoint) {
     // use different p-values up and down
     if (setpoint > getHeight()) {
-      pidController.setP(ElevatorConfig.ELEVATOR_P_UP);
+      pidController.setP(upP);
     } else if (setpoint < getHeight()) {
-      pidController.setP(ElevatorConfig.ELEVATOR_P_DOWN);
+      pidController.setP(downP);
     } else {
       pidController.setP(0);
     }
@@ -153,6 +154,8 @@ public class Elevator extends SubsystemBase {
 
   /** Returns the calculated output based on the current height and velocity. */
   public double calculate() {
+    motorSpeed = pidController.calculate(getHeight()) + ElevatorConfig.ELEVATOR_KG;
+
     if ((motorSpeed < 0 && getSwitch())) {
       System.out.println("CANNOT GO BELOW MINIMUM HEIGHT.");
       return ElevatorConfig.ELEVATOR_KG;
@@ -162,7 +165,7 @@ public class Elevator extends SubsystemBase {
       return ElevatorConfig.ELEVATOR_KG;
     }
 
-    return pidController.calculate(getHeight()) + ElevatorConfig.ELEVATOR_KG;
+    return motorSpeed;
   }
 
   public Command stopMotors() {

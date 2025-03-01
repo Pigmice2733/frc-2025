@@ -147,6 +147,10 @@ public class Drivetrain extends SubsystemBase {
     swerve.resetOdometry(pose);
   }
 
+  public double getSpeed() {
+    return Math.hypot(swerve.getFieldVelocity().vxMetersPerSecond, swerve.getFieldVelocity().vyMetersPerSecond);
+  }
+
   /**
    * Drives the robot in field-oriented mode by creating a ChassisSpeeds object.
    * Positive X is away from the alliance wall; positive Y is left from the

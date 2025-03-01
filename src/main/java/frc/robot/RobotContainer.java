@@ -16,16 +16,17 @@ import frc.robot.Constants.ArmPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
 import frc.robot.commands.DriveJoysticks;
+import frc.robot.commands.DriveVision;
 import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
 import frc.robot.commands.SetArmPosition;
-import frc.robot.commands.TestDrive;
 import frc.robot.subsystems.GrabberWheel;
 import frc.robot.subsystems.CoralGrabber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -43,6 +44,7 @@ public class RobotContainer {
   private final CoralGrabber coral;
   private final Elevator elevator;
   private final Pivot pivot;
+  private final Vision vision;
 
   private final CommandXboxController driver;
   private final CommandXboxController operator;
@@ -66,6 +68,7 @@ public class RobotContainer {
     coral = new CoralGrabber();
     elevator = new Elevator();
     pivot = new Pivot();
+    vision = new Vision();
 
     mode = OperatorMode.NONE;
     elevPos = ArmPosition.STOW;
@@ -110,8 +113,7 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    driver.x().onTrue(new TestDrive(drivetrain));
-    // create vision commands once Vision subsystem exists
+    driver.x().onTrue(new DriveVision(drivetrain, vision, 2, 0));
 
     // OPERATOR
     // operator.a().onTrue(new InstantCommand(() ->
