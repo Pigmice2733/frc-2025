@@ -42,7 +42,7 @@ public class CoralManipulator extends SubsystemBase {
     return !beamBreak.get();
   }
 
-  private void setSpeed(double speed) {
+  public void setSpeed(double speed) {
     motor.set(speed);
   }
 

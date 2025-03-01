@@ -81,16 +81,6 @@ public class Pivot extends SubsystemBase {
 
   public void setSpeed(double speed) {
     motorSpeed = speed;
-
-    if (getAngle() <= ArmConfig.PIVOT_LOWER_LIMIT && motorSpeed < 0) {
-      motorSpeed = 0;
-      System.out.println("PIVOT LOWER STOP, Angle = " + getAngle());
-    }
-    if (getAngle() >= ArmConfig.PIVOT_UPPER_LIMIT && motorSpeed > 0) {
-      motorSpeed = 0;
-      System.out.println("PIVOT UPPER STOP, Angle = " + getAngle());
-    }
-
     motor.set(motorSpeed);
   }
 
@@ -117,7 +107,16 @@ public class Pivot extends SubsystemBase {
 
   /** Returns the calculated output based on the current angle and velocity. */
   public double calculate() {
-    return pidController.calculate(getAngle()) + 0.033 * Math.sin(Units.degreesToRadians(getAngle()));
+    if (getAngle() <= ArmConfig.PIVOT_LOWER_LIMIT && motorSpeed < 0) {
+      System.out.println("PIVOT LOWER STOP, Angle = " + getAngle());
+      return ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
+    }
+    if (getAngle() >= ArmConfig.PIVOT_UPPER_LIMIT && motorSpeed > 0) {
+      System.out.println("PIVOT UPPER STOP, Angle = " + getAngle());
+      return ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
+    }
+
+    return pidController.calculate(getAngle()) + ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
   }
 
   public double getAngle() {

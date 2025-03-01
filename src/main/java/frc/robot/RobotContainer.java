@@ -18,7 +18,6 @@ import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
-import frc.robot.commands.ScoreCoral;
 import frc.robot.commands.SetArmPosition;
 import frc.robot.commands.TestDrive;
 import frc.robot.subsystems.AlgaeGrabber;
@@ -141,9 +140,9 @@ public class RobotContainer {
     operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L3));
     operator.rightBumper().and(() -> (elevPos == ArmPosition.HUMAN_PLAYER))
-        .onTrue(new IntakeCoral(coral));
+        .whileTrue(new IntakeCoral(coral, grabber));
     operator.rightBumper().and(() -> (elevPos == ArmPosition.ALGAE_L2
-        || elevPos == ArmPosition.ALGAE_L3)).onTrue(grabber.runMotor()).onFalse(grabber.stopMotor());
+        || elevPos == ArmPosition.ALGAE_L3)).onTrue(grabber.runForward()).onFalse(grabber.stopMotor());
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
     operator.povDown().and(() -> mode == OperatorMode.REEF)
@@ -157,7 +156,7 @@ public class RobotContainer {
     operator.rightBumper()
         .and(() -> elevPos == ArmPosition.SCORE_L1 || elevPos == ArmPosition.SCORE_L2
             || elevPos == ArmPosition.SCORE_L3 || elevPos == ArmPosition.SCORE_L4)
-        .onTrue(new ScoreCoral(coral));
+        .onTrue(coral.outtake()).onTrue(grabber.runReverse()).onFalse(coral.stopMotor()).onFalse(grabber.stopMotor());
 
     // operator.y().onTrue(new SetElevatorPosition(elevator, pivot,
     // ElevatorPosition.CLIMB));
@@ -181,6 +180,8 @@ public class RobotContainer {
   public void onEnable() {
     elevator.setSetpoint(elevator.getHeight());
     pivot.setSetpoint(pivot.getAngle());
+    grabber.setSpeed(0);
+    coral.setSpeed(0);
   }
 
   private void changeMode(OperatorMode newMode) {

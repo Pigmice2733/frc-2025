@@ -62,18 +62,18 @@ public final class Constants {
     public static final double ELEVATOR_P_UP = 1.4;
     public static final double ELEVATOR_P_DOWN = 0.15;
     public static final double ELEVATOR_TOLERANCE = 0.1; // in.
+    public static final double ELEVATOR_KG = 0.04;
 
     public static final double MAX_ELEVATOR_DELTA = 2;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
-    public static final double ELEVATOR_UPPER_LIMIT = 21; // in.
+    public static final double ELEVATOR_UPPER_LIMIT = 21.5; // in.
   }
 
   public static class ArmConfig {
     // TODO nothing should run for a set amount of time, stuff should generally be
     // toggle or while held. --Nathan (see also ShooterConfig)
     public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
-    // public static final ArmFeedforward PIVOT_FEEDFORWARD = new
-    // ArmFeedforward(0.26068, 26.628, 0.083333, 0.0047665);
+    public static final double PIVOT_KG = 0.033;
 
     public static final double PIVOT_TOLERANCE = 2; // deg
     public static final double MAX_PIVOT_DELTA = 20;
@@ -114,11 +114,24 @@ public final class Constants {
   }
 
   public static enum ArmPosition {
-    HUMAN_PLAYER(30, 20), SCORE_L1(260, 0), SCORE_L2(240, 0), SCORE_L3(215, 0), SCORE_L4(200, 20),
-    STOW(10, 0), CLIMB(10, 4), ALGAE_L3(230, 12), ALGAE_L2(240, 1.5);
+    HUMAN_PLAYER(35, 20),
+    SCORE_L1(260, 0),
+    SCORE_L2(250, 0),
+    SCORE_L3(215, 0),
+    SCORE_L4(210, 21.5),
+    STOW(10, 0),
+    CLIMB(10, 4),
+    ALGAE_L3(230, 12),
+    ALGAE_L2(240, 1.5);
 
     private double pivotAngle, elevatorHeight;
 
+    /**
+     * Elevator and pivot setpoints.
+     * 
+     * @param pivot    target angle in degrees
+     * @param elevator target height in inches
+     */
     private ArmPosition(double pivot, double elevator) {
       pivotAngle = pivot;
       elevatorHeight = elevator;

@@ -30,7 +30,7 @@ public class AlgaeGrabber extends SubsystemBase {
     Constants.sendNumberToElastic("Algae Grabber Motor", motor.get(), 2);
   }
 
-  private void setSpeed(double speed) {
+  public void setSpeed(double speed) {
     motor.set(speed);
   }
 
@@ -38,7 +38,11 @@ public class AlgaeGrabber extends SubsystemBase {
     return new InstantCommand(() -> setSpeed(0));
   }
 
-  public Command runMotor() {
+  public Command runForward() {
     return new InstantCommand(() -> setSpeed(ArmConfig.GRABBER_SPEED));
+  }
+
+  public Command runReverse() {
+    return new InstantCommand(() -> setSpeed(-1 * ArmConfig.GRABBER_SPEED));
   }
 }

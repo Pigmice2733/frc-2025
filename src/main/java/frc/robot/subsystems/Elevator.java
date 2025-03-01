@@ -107,16 +107,6 @@ public class Elevator extends SubsystemBase {
 
   public void setSpeeds(double speed) {
     motorSpeed = speed;
-
-    if ((motorSpeed < 0 && getSwitch())) {
-      System.out.println("CANNOT GO BELOW MINIMUM HEIGHT.");
-      motorSpeed = 0;
-    }
-    if (motorSpeed > 0 && getHeight() >= ElevatorConfig.ELEVATOR_UPPER_LIMIT) {
-      System.out.println("Cannot go above maximum height.");
-      motorSpeed = 0;
-    }
-
     leftMotor.set(motorSpeed);
     rightMotor.set(motorSpeed);
   }
@@ -162,7 +152,16 @@ public class Elevator extends SubsystemBase {
 
   /** Returns the calculated output based on the current height and velocity. */
   public double calculate() {
-    return pidController.calculate(getHeight()) + 0.04;
+    if ((motorSpeed < 0 && getSwitch())) {
+      System.out.println("CANNOT GO BELOW MINIMUM HEIGHT.");
+      return ElevatorConfig.ELEVATOR_KG;
+    }
+    if (motorSpeed > 0 && getHeight() >= ElevatorConfig.ELEVATOR_UPPER_LIMIT) {
+      System.out.println("Cannot go above maximum height.");
+      return ElevatorConfig.ELEVATOR_KG;
+    }
+
+    return pidController.calculate(getHeight()) + ElevatorConfig.ELEVATOR_KG;
   }
 
   public Command stopMotors() {
