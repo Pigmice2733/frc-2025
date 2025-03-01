@@ -14,11 +14,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
 
-public class AlgaeShooter extends SubsystemBase {
+public class Shooter extends SubsystemBase {
   private SparkMax leftPivot, rightPivot, leftFlywheels, rightFlywheels, indexerMotor;
   private PIDController pivotController;
 
-  public AlgaeShooter() {
+  public Shooter() {
     leftPivot = new SparkMax(CANConfig.SHOOTER_PIVOT_LEFT, MotorType.kBrushless);
     rightPivot = new SparkMax(CANConfig.SHOOTER_PIVOT_RIGHT, MotorType.kBrushless);
     leftFlywheels = new SparkMax(CANConfig.SHOOTER_FLYWHEELS_LEFT, MotorType.kBrushless);

@@ -58,10 +58,10 @@ public final class Constants {
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.15, 0.0, 0.02);
+    public static final PIDController ELEVATOR_PID = new PIDController(0.17, 0.0, 0.017);
     public static final double ELEVATOR_P_UP = 1.4;
-    public static final double ELEVATOR_P_DOWN = 0.15;
-    public static final double ELEVATOR_TOLERANCE = 0.1; // in.
+    public static final double ELEVATOR_P_DOWN = 0.17;
+    public static final double ELEVATOR_TOLERANCE = 0.2; // in.
     public static final double ELEVATOR_KG = 0.04;
 
     public static final double MAX_ELEVATOR_DELTA = 2;
@@ -70,12 +70,10 @@ public final class Constants {
   }
 
   public static class ArmConfig {
-    // TODO nothing should run for a set amount of time, stuff should generally be
-    // toggle or while held. --Nathan (see also ShooterConfig)
     public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
     public static final double PIVOT_KG = 0.033;
 
-    public static final double PIVOT_TOLERANCE = 2; // deg
+    public static final double PIVOT_TOLERANCE = 4; // deg
     public static final double MAX_PIVOT_DELTA = 20;
     public static final double PIVOT_CONVERSION = 360; // degrees per rotation
     public static final double PIVOT_ANGLE_OFFSET = -137.18; // makes 0 down
@@ -84,14 +82,13 @@ public final class Constants {
 
     public static final double CORAL_INTAKE_SPEED = 1.0;
     public static final double CORAL_OUTTAKE_SPEED = -1.0;
-    public static final double CORAL_INTAKE_TIME = 1.0;
-    public static final double CORAL_OUTTAKE_TIME = 1.0;
-
-    public static final double GRABBER_SPEED = 1.0;
-    public static final double GRABBER_TIME = 7.0;
+    public static final double WHEEL_SPEED = 1.0;
   }
 
   public static class ShooterConfig {
+    // TODO nothing should run for a set amount of time, stuff should generally be
+    // toggle or while held. --Nathan
+
     public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
     public static final double PIVOT_TOLERANCE = 2; // deg
     public static final double MAX_PIVOT_SPEED = 0.5;

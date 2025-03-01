@@ -42,18 +42,19 @@ public class Elevator extends SubsystemBase {
   private PIDController pidController;
   private SysIdRoutine routine;
   private double motorSpeed;
+  // private double upP, downP;
 
   public Elevator() {
     leftMotor = new SparkMax(CANConfig.ELEVATOR_LEFT, MotorType.kBrushless);
     rightMotor = new SparkMax(CANConfig.ELEVATOR_RIGHT, MotorType.kBrushless);
 
     leftMotor.configure(
-        new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
+        new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)// .secondaryCurrentLimit(30)
             .apply(new EncoderConfig().positionConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION)
                 .velocityConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION / 60.0)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     rightMotor.configure(
-        new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
+        new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)// .secondaryCurrentLimit(30)
             .apply(new EncoderConfig().positionConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION)
                 .velocityConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION / 60.0)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);

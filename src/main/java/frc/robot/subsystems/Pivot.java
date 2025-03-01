@@ -43,7 +43,7 @@ public class Pivot extends SubsystemBase {
 
   public Pivot() {
     motor = new SparkMax(CANConfig.PIVOT, MotorType.kBrushless);
-    motor.configure(new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
+    motor.configure(new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake).secondaryCurrentLimit(30)
         .apply(new AbsoluteEncoderConfig().positionConversionFactor(ArmConfig.PIVOT_CONVERSION).inverted(true)),
         ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 

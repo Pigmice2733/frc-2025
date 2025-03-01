@@ -14,15 +14,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
 
-public class CoralManipulator extends SubsystemBase {
+public class CoralGrabber extends SubsystemBase {
   private SparkMax motor;
   private DigitalInput beamBreak;
 
-  public CoralManipulator() {
+  public CoralGrabber() {
     motor = new SparkMax(CANConfig.CORAL_GRABBER, MotorType.kBrushless);
 
-    motor.configure(new SparkMaxConfig().inverted(false).idleMode(IdleMode.kBrake), ResetMode.kNoResetSafeParameters,
-        PersistMode.kNoPersistParameters);
+    motor.configure(new SparkMaxConfig().inverted(false).idleMode(IdleMode.kBrake).secondaryCurrentLimit(15),
+        ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
     beamBreak = new DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
   }
