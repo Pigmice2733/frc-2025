@@ -4,6 +4,7 @@ import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConfig;
@@ -59,7 +60,7 @@ public class DriveVision extends Command {
     yPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE, DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
 
     // rPID = new PIDController(rConstants.kP, rConstants.kI, rConstants.kD);
-    rPID = new PIDController(manualConstants.kP, manualConstants.kI, manualConstants.kD);
+    rPID = new PIDController(turnConstants.kP, turnConstants.kI, turnConstants.kD);
     rPID.setTolerance(DrivetrainConfig.TURN_POSITION_TOLERANCE, DrivetrainConfig.TURN_VELOCITY_TOLERANCE);
 
     // System.out.println("starting auto-alignment, P = " + xPID.getP());
@@ -70,24 +71,23 @@ public class DriveVision extends Command {
   @Override
   public void execute() {
     robotPose = drivetrain.getPose();
-    calc = rPID.calculate(robotPose.getRotation().getRadians());
-    // System.out.println("Position: " + robotPose.getX() + " | calculated value: "
-    // + calc);
+    calc = rPID.calculate(robotPose.getRotation().getDegrees());
+    System.out.println("Position: " + robotPose.getRotation().getDegrees() + " | calculated value: " + calc);
 
     if (vision.hasTarget())
       getTargetSetpoint();
 
-    drivetrain.drive(0, 0, calc);
+    drivetrain.drive(0, 0, Units.degreesToRadians(calc));
     /*
      * yPID.calculate(robotPose.getY()),
-     * -1 * rPID.calculate(robotPose.getRotation().getRadians()));
+     * -1 * rPID.calculate(robotPose.getRotation().getDegrees()));
      */
   }
 
   @Override
   public void end(boolean interrupted) {
     drivetrain.drive(0, 0, 0);
-    // System.out.println("Done!");
+    System.out.println("Done!");
   }
 
   @Override
@@ -97,12 +97,12 @@ public class DriveVision extends Command {
 
   private void getTargetSetpoint() {
     robotPose = drivetrain.getPose();
-    target = vision.getTarget();
+    target = vision.getPose();
 
     /* The PID controllers use the robot's pose, not the target pose. */
     // xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
     // yPID.setSetpoint(robotPose.getY() + target.getY() + yOffset);
-    rPID.setSetpoint(robotPose.getRotation().getRadians() + target.getRotation().getRadians() + rOffset);
+    rPID.setSetpoint(robotPose.getRotation().getDegrees() + target.getRotation().getDegrees() + rOffset);
 
     Constants.sendNumberToElastic("Drivetrain PID Setpoint", rPID.getSetpoint(), 3);
   }

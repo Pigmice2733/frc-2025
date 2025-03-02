@@ -113,7 +113,7 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    driver.x().onTrue(new DriveVision(drivetrain, vision, 2, 0));
+    driver.x().onTrue(new DriveVision(drivetrain, vision, 2, 0, 0));
 
     // OPERATOR
     // operator.a().onTrue(new InstantCommand(() ->
