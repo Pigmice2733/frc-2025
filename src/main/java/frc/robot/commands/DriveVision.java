@@ -18,6 +18,7 @@ public class DriveVision extends Command {
 
   private PIDController xPID, yPID, rPID;
   private PIDConstants manualConstants, driveConstants, turnConstants;
+  private int id;
 
   private Pose2d target, robotPose;
 
@@ -65,6 +66,7 @@ public class DriveVision extends Command {
 
     // System.out.println("starting auto-alignment, P = " + xPID.getP());
     drivetrain.resetPose(new Pose2d());
+    id = vision.getTargetID();
     getTargetSetpoint();
   }
 
@@ -72,9 +74,10 @@ public class DriveVision extends Command {
   public void execute() {
     robotPose = drivetrain.getPose();
     calc = rPID.calculate(robotPose.getRotation().getDegrees());
-    System.out.println("Position: " + robotPose.getRotation().getDegrees() + " | calculated value: " + calc);
+    System.out.println("Position: " + robotPose.getRotation().getDegrees() + " | calculated value: " + calc
+        + " | position error : " + rPID.getError() + " | velocity error : " + rPID.getErrorDerivative());
 
-    if (vision.hasTarget())
+    if (vision.hasTarget() && vision.getTargetID() == id)
       getTargetSetpoint();
 
     drivetrain.drive(0, 0, Units.degreesToRadians(calc));
@@ -87,6 +90,7 @@ public class DriveVision extends Command {
   @Override
   public void end(boolean interrupted) {
     drivetrain.drive(0, 0, 0);
+    drivetrain.getSwerve().lockPose();
     System.out.println("Done!");
   }
 
@@ -97,7 +101,7 @@ public class DriveVision extends Command {
 
   private void getTargetSetpoint() {
     robotPose = drivetrain.getPose();
-    target = vision.getPose();
+    target = vision.getTargetPose();
 
     /* The PID controllers use the robot's pose, not the target pose. */
     // xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);

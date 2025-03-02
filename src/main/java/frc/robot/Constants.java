@@ -7,7 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -46,15 +45,15 @@ public final class Constants {
   public static class DrivetrainConfig {
     public static final double MAX_DRIVE_SPEED = 10.0; // m/s
     public static final double MAX_TURN_SPEED = 10.0; // rad/s
-    public static final double SLOWMODE_FACTOR = 0.4;
+    public static final double SLOWMODE_FACTOR = 0.1;
 
     public static final PIDConstants DRIVE_PID = new PIDConstants(4.0, 0, 1.3);
     public static final double DRIVE_POSITION_TOLERANCE = 0.05; // m
     public static final double DRIVE_VELOCITY_TOLERANCE = 0.05; // m/s
 
     public static final PIDConstants TURN_PID = new PIDConstants(4.4, 0, 0.32);
-    public static final double TURN_POSITION_TOLERANCE = Units.degreesToRadians(2); // deg
-    public static final double TURN_VELOCITY_TOLERANCE = Units.degreesToRadians(0.5); // deg/s
+    public static final double TURN_POSITION_TOLERANCE = 2; // deg
+    public static final double TURN_VELOCITY_TOLERANCE = 1; // deg/s
   }
 
   public static class ElevatorConfig {
