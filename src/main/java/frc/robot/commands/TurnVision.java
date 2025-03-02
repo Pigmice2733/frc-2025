@@ -4,17 +4,19 @@ import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 
-public class DriveVision extends Command {
+public class TurnVision extends Command {
   private Drivetrain drivetrain;
   private Vision vision;
-  private double xOffset, yOffset;
+  private double rOffset;
 
-  private PIDController xPID, yPID;
+  private PIDController rPID;
   private PIDConstants pidConstants;
   private int id;
 
@@ -27,56 +29,55 @@ public class DriveVision extends Command {
    * 
    * @param drivetrain drivetrain subsystem
    * @param vision     vision subsystem
-   * @param xOffset    target distance from tag in the X direction
-   * @param yOffset    target distance from tag in the Y direction
+   * @param rOffset    target angle relative from tag
    */
-  public DriveVision(Drivetrain drivetrain, Vision vision, double xOffset, double yOffset) {
+  public TurnVision(Drivetrain drivetrain, Vision vision, double rOffset) {
     this.drivetrain = drivetrain;
     this.vision = vision;
 
-    this.xOffset = xOffset;
-    this.yOffset = yOffset;
+    this.rOffset = rOffset;
 
     addRequirements(drivetrain, vision);
   }
 
   @Override
   public void initialize() {
-    pidConstants = DrivetrainConfig.DRIVE_PID;
+    pidConstants = DrivetrainConfig.TURN_PID;
 
-    xPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
-    xPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE, DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
-
-    yPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
-    yPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE, DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
+    rPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
+    rPID.setTolerance(DrivetrainConfig.TURN_POSITION_TOLERANCE, DrivetrainConfig.TURN_VELOCITY_TOLERANCE);
 
     drivetrain.resetPose(new Pose2d());
     id = vision.getTargetID();
     getTargetSetpoint();
 
-    System.out.println("drive started");
+    System.out.println("turn started");
   }
 
   @Override
   public void execute() {
     robotPose = drivetrain.getPose();
+    double calc = rPID.calculate(robotPose.getRotation().getDegrees());
 
     if (vision.hasTarget() && vision.getTargetID() == id)
       getTargetSetpoint();
 
-    drivetrain.drive(xPID.calculate(robotPose.getX()), yPID.calculate(robotPose.getY()), 0);
+    drivetrain.drive(0, 0, Units.degreesToRadians(calc));
+
+    System.out.println("position " + robotPose.getRotation().getDegrees()
+        + " velocity " + calc);
   }
 
   @Override
   public void end(boolean interrupted) {
     drivetrain.drive(0, 0, 0);
     drivetrain.getSwerve().lockPose();
-    System.out.println("drive finished");
+    System.out.println("turn finished");
   }
 
   @Override
   public boolean isFinished() {
-    return xPID.atSetpoint() && yPID.atSetpoint();
+    return rPID.atSetpoint();
   }
 
   private void getTargetSetpoint() {
@@ -84,7 +85,8 @@ public class DriveVision extends Command {
     target = vision.getTargetPose();
 
     /* The PID controllers use the robot's pose, not the target pose. */
-    xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
-    yPID.setSetpoint(robotPose.getY() + target.getY() + yOffset);
+    rPID.setSetpoint(robotPose.getRotation().getDegrees() + target.getRotation().getDegrees() + rOffset);
+
+    Constants.sendNumberToElastic("Turn PID Setpoint", rPID.getSetpoint(), 3);
   }
 }

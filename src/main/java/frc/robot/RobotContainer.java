@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,7 +17,7 @@ import frc.robot.Constants.ArmPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
 import frc.robot.commands.DriveJoysticks;
-import frc.robot.commands.DriveVision;
+import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
@@ -113,7 +114,11 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    driver.x().onTrue(new DriveVision(drivetrain, vision, 2, 0, 0));
+    driver.povDown().whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), 0, 0));
+    driver.povRight()
+        .whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), -Units.inchesToMeters(6.5), 0));
+    driver.povLeft()
+        .whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0));
 
     // OPERATOR
     // operator.a().onTrue(new InstantCommand(() ->
