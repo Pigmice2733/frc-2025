@@ -125,6 +125,10 @@ public class Drivetrain extends SubsystemBase {
     Constants.sendNumberToElastic("Back Left Encoder Output", modules[2].getAbsolutePosition(), 1);
     Constants.sendNumberToElastic("Back Right Encoder Output", modules[3].getAbsolutePosition(), 1);
 
+    Constants.sendNumberToElastic("Drivetrain Linear Speed",
+        Math.hypot(swerve.getFieldVelocity().vxMetersPerSecond, swerve.getFieldVelocity().vyMetersPerSecond), 3);
+    Constants.sendNumberToElastic("Drivetrain Angular Speed", swerve.getFieldVelocity().omegaRadiansPerSecond, 3);
+
     pidConstants = new PIDConstants(SmartDashboard.getNumber("Drivetrain P", 0),
         SmartDashboard.getNumber("Drivetrain I", 0), SmartDashboard.getNumber("Drivetrain D", 0));
 

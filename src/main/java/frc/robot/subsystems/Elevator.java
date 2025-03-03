@@ -42,19 +42,20 @@ public class Elevator extends SubsystemBase {
   private DigitalInput limitSwitch;
   private PIDController pidController;
   private SysIdRoutine routine;
-  private double motorSpeed, upP, downP;
+  private double motorSpeed;
+  private double upP, downP;
 
   public Elevator() {
     leftMotor = new SparkMax(CANConfig.ELEVATOR_LEFT, MotorType.kBrushless);
     rightMotor = new SparkMax(CANConfig.ELEVATOR_RIGHT, MotorType.kBrushless);
 
     leftMotor.configure(
-        new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
+        new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)// .secondaryCurrentLimit(30)
             .apply(new EncoderConfig().positionConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION)
                 .velocityConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION / 60.0)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     rightMotor.configure(
-        new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
+        new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)// .secondaryCurrentLimit(30)
             .apply(new EncoderConfig().positionConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION)
                 .velocityConversionFactor(ElevatorConfig.ELEVATOR_CONVERSION / 60.0)),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -153,6 +154,8 @@ public class Elevator extends SubsystemBase {
 
   /** Returns the calculated output based on the current height and velocity. */
   public double calculate() {
+    motorSpeed = pidController.calculate(getHeight()) + ElevatorConfig.ELEVATOR_KG;
+
     if ((motorSpeed < 0 && getSwitch())) {
       System.out.println("CANNOT GO BELOW MINIMUM HEIGHT.");
       return ElevatorConfig.ELEVATOR_KG;
@@ -162,7 +165,7 @@ public class Elevator extends SubsystemBase {
       return ElevatorConfig.ELEVATOR_KG;
     }
 
-    return pidController.calculate(getHeight()) + ElevatorConfig.ELEVATOR_KG;
+    return motorSpeed;
   }
 
   public Command stopMotors() {

@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -15,16 +17,17 @@ import frc.robot.Constants.ArmPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterPosition;
 import frc.robot.commands.DriveJoysticks;
+import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
 import frc.robot.commands.SetArmPosition;
-import frc.robot.commands.TestDrive;
-import frc.robot.subsystems.AlgaeGrabber;
-import frc.robot.subsystems.CoralManipulator;
+import frc.robot.subsystems.GrabberWheel;
+import frc.robot.subsystems.CoralGrabber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -37,11 +40,12 @@ import frc.robot.subsystems.Pivot;
  */
 public class RobotContainer {
   private final Drivetrain drivetrain;
-  private final AlgaeGrabber grabber;
+  private final GrabberWheel wheel;
   // private final AlgaeShooter shooter;
-  private final CoralManipulator coral;
+  private final CoralGrabber coral;
   private final Elevator elevator;
   private final Pivot pivot;
+  private final Vision vision;
 
   private final CommandXboxController driver;
   private final CommandXboxController operator;
@@ -60,15 +64,18 @@ public class RobotContainer {
     controls = new Controls(driver, operator);
 
     drivetrain = new Drivetrain();
-    grabber = new AlgaeGrabber();
+    wheel = new GrabberWheel();
     // shooter = new AlgaeShooter();
-    coral = new CoralManipulator();
+    coral = new CoralGrabber();
     elevator = new Elevator();
     pivot = new Pivot();
+    vision = new Vision();
 
     mode = OperatorMode.NONE;
     elevPos = ArmPosition.STOW;
     shootPos = ShooterPosition.STOW;
+
+    SmartDashboard.putString("Elevator Position", "stow");
 
     // Configure the trigger bindings
     configureBindings();
@@ -107,8 +114,11 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    driver.x().onTrue(new TestDrive(drivetrain));
-    // create vision commands once Vision subsystem exists
+    driver.povDown().whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), 0, 0));
+    driver.povRight()
+        .whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), -Units.inchesToMeters(6.5), 0));
+    driver.povLeft()
+        .whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0));
 
     // OPERATOR
     // operator.a().onTrue(new InstantCommand(() ->
@@ -140,9 +150,9 @@ public class RobotContainer {
     operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L3));
     operator.rightBumper().and(() -> (elevPos == ArmPosition.HUMAN_PLAYER))
-        .whileTrue(new IntakeCoral(coral, grabber));
+        .onTrue(new IntakeCoral(coral, wheel));
     operator.rightBumper().and(() -> (elevPos == ArmPosition.ALGAE_L2
-        || elevPos == ArmPosition.ALGAE_L3)).onTrue(grabber.runForward()).onFalse(grabber.stopMotor());
+        || elevPos == ArmPosition.ALGAE_L3)).onTrue(wheel.runForward()).onFalse(wheel.stopMotor());
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
     operator.povDown().and(() -> mode == OperatorMode.REEF)
@@ -156,7 +166,7 @@ public class RobotContainer {
     operator.rightBumper()
         .and(() -> elevPos == ArmPosition.SCORE_L1 || elevPos == ArmPosition.SCORE_L2
             || elevPos == ArmPosition.SCORE_L3 || elevPos == ArmPosition.SCORE_L4)
-        .onTrue(coral.outtake()).onTrue(grabber.runReverse()).onFalse(coral.stopMotor()).onFalse(grabber.stopMotor());
+        .onTrue(coral.outtake()).onTrue(wheel.runReverse()).onFalse(coral.stopMotor()).onFalse(wheel.stopMotor());
 
     // operator.y().onTrue(new SetElevatorPosition(elevator, pivot,
     // ElevatorPosition.CLIMB));
@@ -180,7 +190,7 @@ public class RobotContainer {
   public void onEnable() {
     elevator.setSetpoint(elevator.getHeight());
     pivot.setSetpoint(pivot.getAngle());
-    grabber.setSpeed(0);
+    wheel.setSpeed(0);
     coral.setSpeed(0);
   }
 
@@ -194,5 +204,6 @@ public class RobotContainer {
 
   public static void setElevatorPosition(ArmPosition newPos) {
     elevPos = newPos;
+    SmartDashboard.putString("Elevator Position", newPos.toString().toLowerCase());
   }
 }

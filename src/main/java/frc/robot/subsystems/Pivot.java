@@ -43,7 +43,7 @@ public class Pivot extends SubsystemBase {
 
   public Pivot() {
     motor = new SparkMax(CANConfig.PIVOT, MotorType.kBrushless);
-    motor.configure(new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake)
+    motor.configure(new SparkMaxConfig().inverted(true).idleMode(IdleMode.kBrake).secondaryCurrentLimit(30)
         .apply(new AbsoluteEncoderConfig().positionConversionFactor(ArmConfig.PIVOT_CONVERSION).inverted(true)),
         ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
@@ -107,6 +107,9 @@ public class Pivot extends SubsystemBase {
 
   /** Returns the calculated output based on the current angle and velocity. */
   public double calculate() {
+    motorSpeed = pidController.calculate(getAngle())
+        + ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
+
     if (getAngle() <= ArmConfig.PIVOT_LOWER_LIMIT && motorSpeed < 0) {
       System.out.println("PIVOT LOWER STOP, Angle = " + getAngle());
       return ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
@@ -116,7 +119,7 @@ public class Pivot extends SubsystemBase {
       return ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
     }
 
-    return pidController.calculate(getAngle()) + ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
+    return motorSpeed;
   }
 
   public double getAngle() {

@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
 
-public class AlgaeGrabber extends SubsystemBase {
+public class GrabberWheel extends SubsystemBase {
   private SparkMax motor;
 
-  public AlgaeGrabber() {
+  public GrabberWheel() {
     motor = new SparkMax(CANConfig.ALGAE_GRABBER, MotorType.kBrushless);
-    motor.configure(new SparkMaxConfig().inverted(false), ResetMode.kNoResetSafeParameters,
+    motor.configure(new SparkMaxConfig().inverted(false).secondaryCurrentLimit(15), ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
   }
 
@@ -39,10 +39,10 @@ public class AlgaeGrabber extends SubsystemBase {
   }
 
   public Command runForward() {
-    return new InstantCommand(() -> setSpeed(ArmConfig.GRABBER_SPEED));
+    return new InstantCommand(() -> setSpeed(ArmConfig.WHEEL_SPEED));
   }
 
   public Command runReverse() {
-    return new InstantCommand(() -> setSpeed(-1 * ArmConfig.GRABBER_SPEED));
+    return new InstantCommand(() -> setSpeed(-1 * ArmConfig.WHEEL_SPEED));
   }
 }

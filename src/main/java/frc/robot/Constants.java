@@ -7,8 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -46,23 +44,24 @@ public final class Constants {
 
   public static class DrivetrainConfig {
     public static final double MAX_DRIVE_SPEED = 10.0; // m/s
-    public static final double MAX_TURN_SPEED = 20.0; // rad/s
-    public static final double SLOWMODE_FACTOR = 0.4;
-    public static final PIDConstants DRIVE_PID = new PIDConstants(0.5, 0, 0);
-    public static final PIDConstants TURN_PID = new PIDConstants(0.5, 0, 0);
-    public static final double DRIVE_TOLERANCE = 0.05; // m
-    public static final double TURN_TOLERANCE = 0.5; // deg
+    public static final double MAX_TURN_SPEED = 10.0; // rad/s
+    public static final double SLOWMODE_FACTOR = 0.1;
 
-    /** Transform from camera to center of robot. */
-    public static final Transform2d CAMERA_OFFSET = new Transform2d(0, 0, new Rotation2d(0));
+    public static final PIDConstants DRIVE_PID = new PIDConstants(4.0, 0, 1.3);
+    public static final double DRIVE_POSITION_TOLERANCE = 0.05; // m
+    public static final double DRIVE_VELOCITY_TOLERANCE = 0.05; // m/s
+
+    public static final PIDConstants TURN_PID = new PIDConstants(4.4, 0, 0.32);
+    public static final double TURN_POSITION_TOLERANCE = 2; // deg
+    public static final double TURN_VELOCITY_TOLERANCE = 1; // deg/s
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.15, 0.0, 0.02);
+    public static final PIDController ELEVATOR_PID = new PIDController(0.17, 0.0, 0.01);
     public static final double ELEVATOR_P_UP = 1.4;
-    public static final double ELEVATOR_P_DOWN = 0.15;
-    public static final double ELEVATOR_TOLERANCE = 0.1; // in.
-    public static final double ELEVATOR_KG = 0.04;
+    public static final double ELEVATOR_P_DOWN = 0.17;
+    public static final double ELEVATOR_TOLERANCE = 0.2; // in.
+    public static final double ELEVATOR_KG = 0.0;
 
     public static final double MAX_ELEVATOR_DELTA = 2;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
@@ -70,12 +69,10 @@ public final class Constants {
   }
 
   public static class ArmConfig {
-    // TODO nothing should run for a set amount of time, stuff should generally be
-    // toggle or while held. --Nathan (see also ShooterConfig)
     public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
     public static final double PIVOT_KG = 0.033;
 
-    public static final double PIVOT_TOLERANCE = 2; // deg
+    public static final double PIVOT_TOLERANCE = 4; // deg
     public static final double MAX_PIVOT_DELTA = 20;
     public static final double PIVOT_CONVERSION = 360; // degrees per rotation
     public static final double PIVOT_ANGLE_OFFSET = -137.18; // makes 0 down
@@ -84,13 +81,13 @@ public final class Constants {
 
     public static final double CORAL_INTAKE_SPEED = 1.0;
     public static final double CORAL_OUTTAKE_SPEED = -1.0;
-    public static final double CORAL_INTAKE_TIME = 1.0;
-    public static final double CORAL_OUTTAKE_TIME = 1.0;
-
-    public static final double GRABBER_SPEED = 1.0;
+    public static final double WHEEL_SPEED = 1.0;
   }
 
   public static class ShooterConfig {
+    // TODO nothing should run for a set amount of time, stuff should generally be
+    // toggle or while held. --Nathan
+
     public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
     public static final double PIVOT_TOLERANCE = 2; // deg
     public static final double MAX_PIVOT_SPEED = 0.5;
@@ -117,7 +114,7 @@ public final class Constants {
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
     SCORE_L3(215, 0),
-    SCORE_L4(210, 21.5),
+    SCORE_L4(195, 21.5),
     STOW(10, 0),
     CLIMB(10, 4),
     ALGAE_L3(230, 12),
