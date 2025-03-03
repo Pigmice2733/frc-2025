@@ -88,7 +88,6 @@ public final class Constants {
     public static final double CORAL_OUTTAKE_TIME = 1.0;
 
     public static final double GRABBER_SPEED = 1.0;
-    public static final double GRABBER_TIME = 7.0;
   }
 
   public static class ShooterConfig {

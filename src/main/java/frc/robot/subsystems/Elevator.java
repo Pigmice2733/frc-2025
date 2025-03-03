@@ -22,6 +22,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -41,7 +42,7 @@ public class Elevator extends SubsystemBase {
   private DigitalInput limitSwitch;
   private PIDController pidController;
   private SysIdRoutine routine;
-  private double motorSpeed;
+  private double motorSpeed, upP, downP;
 
   public Elevator() {
     leftMotor = new SparkMax(CANConfig.ELEVATOR_LEFT, MotorType.kBrushless);
@@ -70,10 +71,10 @@ public class Elevator extends SubsystemBase {
 
     motorSpeed = 0;
 
-    // Constants.sendNumberToElastic("Elevator Up-P", 0, 3);
-    // Constants.sendNumberToElastic("Elevator Down-P", 0, 3);
-    // Constants.sendNumberToElastic("Elevator I", 0, 3);
-    // Constants.sendNumberToElastic("Elevator D", 0, 3);
+    Constants.sendNumberToElastic("Elevator Up-P", 0, 3);
+    Constants.sendNumberToElastic("Elevator Down-P", 0, 3);
+    Constants.sendNumberToElastic("Elevator I", 0, 3);
+    Constants.sendNumberToElastic("Elevator D", 0, 3);
   }
 
   @Override
@@ -99,10 +100,10 @@ public class Elevator extends SubsystemBase {
 
     Constants.sendNumberToElastic("Elevator Setpoint", pidController.getSetpoint(), 2);
 
-    // upP = SmartDashboard.getNumber("Elevator Up-P", 0);
-    // downP = SmartDashboard.getNumber("Elevator Down-P", 0);
-    // pidController.setI(SmartDashboard.getNumber("Elevator I", 0));
-    // pidController.setD(SmartDashboard.getNumber("Elevator D", 0));
+    upP = SmartDashboard.getNumber("Elevator Up-P", 0);
+    downP = SmartDashboard.getNumber("Elevator Down-P", 0);
+    pidController.setI(SmartDashboard.getNumber("Elevator I", 0));
+    pidController.setD(SmartDashboard.getNumber("Elevator D", 0));
   }
 
   public void setSpeeds(double speed) {
@@ -123,9 +124,9 @@ public class Elevator extends SubsystemBase {
   public void setSetpoint(double setpoint) {
     // use different p-values up and down
     if (setpoint > getHeight()) {
-      pidController.setP(ElevatorConfig.ELEVATOR_P_UP);
+      pidController.setP(upP);// ElevatorConfig.ELEVATOR_P_UP);
     } else if (setpoint < getHeight()) {
-      pidController.setP(ElevatorConfig.ELEVATOR_P_DOWN);
+      pidController.setP(downP);// ElevatorConfig.ELEVATOR_P_DOWN);
     } else {
       pidController.setP(0);
     }
