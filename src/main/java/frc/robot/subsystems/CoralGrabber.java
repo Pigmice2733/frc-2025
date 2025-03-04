@@ -35,7 +35,7 @@ public class CoralGrabber extends SubsystemBase {
   private void updateEntries() {
     Constants.sendNumberToElastic("Coral Intake Motor Speed", motor.get(), 2);
     Constants.sendBooleanToElastic("Coral Beam Break Raw", beamBreak.get());
-    Constants.sendBooleanToElastic("Has Coral", !beamBreak.get());
+    Constants.sendBooleanToElastic("Has Coral", hasCoral());
   }
 
   public boolean hasCoral() {

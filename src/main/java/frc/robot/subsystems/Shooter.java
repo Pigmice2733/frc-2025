@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,6 +18,7 @@ import frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private SparkMax leftPivot, rightPivot, leftFlywheels, rightFlywheels, indexerMotor;
   private PIDController pivotController;
+  private DigitalInput beamBreak;
 
   public Shooter() {
     leftPivot = new SparkMax(CANConfig.SHOOTER_PIVOT_LEFT, MotorType.kBrushless);
@@ -40,6 +42,7 @@ public class Shooter extends SubsystemBase {
     pivotController = ShooterConfig.PIVOT_PID;
     pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
 
+    beamBreak = new DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
   }
 
   @Override
@@ -58,6 +61,8 @@ public class Shooter extends SubsystemBase {
     Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheels.get(), 2);
     Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheels.get(), 2);
     Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
+
+    Constants.sendBooleanToElastic("Has Algae", hasAlgae());
   }
 
   public void setPivot(double speed) {
@@ -88,6 +93,18 @@ public class Shooter extends SubsystemBase {
     return pivotController;
   }
 
+  public boolean flywheelsAtProcessorSpeed() {
+    return leftFlywheels.get() >= ShooterConfig.FLYWHEEL_PROCESSOR_SPEED;
+  }
+
+  public boolean flywheelsAtNetSpeed() {
+    return leftFlywheels.get() >= ShooterConfig.FLYWHEEL_NET_SPEED;
+  }
+
+  public boolean hasAlgae() {
+    return !beamBreak.get();
+  }
+
   public Command stopMotors() {
     return new InstantCommand(() -> {
       setPivot(0);
@@ -96,11 +113,18 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  public Command manualSpeed(double speed) {
+  /**
+   * 
+   * @param pivot   speed for pivot motors
+   * @param wheels  speed for flywheel motors
+   * @param indexer speed for indexer motor
+   * @return command to set speeds
+   */
+  public Command manualSpeed(double pivot, double wheels, double indexer) {
     return new InstantCommand(() -> {
-      setPivot(speed);
-      setFlywheels(speed);
-      setIndexer(speed);
+      setPivot(pivot);
+      setFlywheels(wheels);
+      setIndexer(indexer);
     });
   }
 

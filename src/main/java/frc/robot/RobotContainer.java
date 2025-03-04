@@ -19,14 +19,19 @@ import frc.robot.Constants.ShooterPosition;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.ElevatorControl;
+import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
 import frc.robot.commands.SetArmPosition;
+import frc.robot.commands.SetShooterPosition;
+import frc.robot.commands.ShootNet;
+import frc.robot.commands.ShootProcessor;
 import frc.robot.subsystems.GrabberWheel;
 import frc.robot.subsystems.CoralGrabber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 
 /**
@@ -41,7 +46,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
   private final Drivetrain drivetrain;
   private final GrabberWheel wheel;
-  // private final AlgaeShooter shooter;
+  private final Shooter shooter;
   private final CoralGrabber coral;
   private final Elevator elevator;
   private final Pivot pivot;
@@ -65,7 +70,7 @@ public class RobotContainer {
 
     drivetrain = new Drivetrain();
     wheel = new GrabberWheel();
-    // shooter = new AlgaeShooter();
+    shooter = new Shooter();
     coral = new CoralGrabber();
     elevator = new Elevator();
     pivot = new Pivot();
@@ -121,22 +126,18 @@ public class RobotContainer {
         .whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0));
 
     // OPERATOR
-    // operator.a().onTrue(new InstantCommand(() ->
-    // changeMode(OperatorMode.SHOOTER)));
-    // operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
-    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.INTAKE));
-    // operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
-    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.PROCESSOR));
-    // operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
-    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.NET));
-    // operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.STOW));
-    // operator.leftBumper().and(() -> (shootPos == ShooterPosition.INTAKE))
-    // .onTrue(new IntakeAlgae(shooter));
-    // operator.leftBumper().and(() -> (shootPos == ShooterPosition.NET)).onTrue(new
-    // ShootNet(shooter));
-    // operator.leftBumper().and(() -> (shootPos == ShooterPosition.PROCESSOR))
-    // .onTrue(new ShootProcessor(shooter));
+    operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
+    operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(new SetShooterPosition(shooter, ShooterPosition.INTAKE));
+    operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(new SetShooterPosition(shooter, ShooterPosition.PROCESSOR));
+    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(new SetShooterPosition(shooter, ShooterPosition.NET));
+    operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(new SetShooterPosition(shooter, ShooterPosition.STOW));
+    operator.leftBumper().and(() -> (shootPos == ShooterPosition.INTAKE)).onTrue(new IntakeAlgae(shooter));
+    operator.leftBumper().and(() -> (shootPos == ShooterPosition.NET)).onTrue(new ShootNet(shooter));
+    operator.leftBumper().and(() -> (shootPos == ShooterPosition.PROCESSOR)).onTrue(new ShootProcessor(shooter));
 
     operator.b().onTrue(new InstantCommand(() -> changeMode(OperatorMode.ELEVATOR)));
     operator.povDown().and(() -> mode == OperatorMode.ELEVATOR)
@@ -166,10 +167,9 @@ public class RobotContainer {
     operator.rightBumper()
         .and(() -> elevPos == ArmPosition.SCORE_L1 || elevPos == ArmPosition.SCORE_L2
             || elevPos == ArmPosition.SCORE_L3 || elevPos == ArmPosition.SCORE_L4)
-        .onTrue(coral.outtake()).onTrue(wheel.runReverse()).onFalse(coral.stopMotor()).onFalse(wheel.stopMotor());
+        .onTrue(coral.outtake()).onTrue(wheel.runForward()).onFalse(coral.stopMotor()).onFalse(wheel.stopMotor());
 
-    // operator.y().onTrue(new SetElevatorPosition(elevator, pivot,
-    // ElevatorPosition.CLIMB));
+    operator.y().whileTrue(new SetArmPosition(elevator, pivot, ArmPosition.CLIMB));
 
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.kReverse));
@@ -199,10 +199,11 @@ public class RobotContainer {
   }
 
   public static void setShooterPosition(ShooterPosition newPos) {
+    SmartDashboard.putString("Shooter Position", newPos.toString().toLowerCase());
     shootPos = newPos;
   }
 
-  public static void setElevatorPosition(ArmPosition newPos) {
+  public static void setArmPosition(ArmPosition newPos) {
     elevPos = newPos;
     SmartDashboard.putString("Elevator Position", newPos.toString().toLowerCase());
   }

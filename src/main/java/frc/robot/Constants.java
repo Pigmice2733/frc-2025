@@ -57,9 +57,9 @@ public final class Constants {
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.17, 0.0, 0.01);
-    public static final double ELEVATOR_P_UP = 1.4;
-    public static final double ELEVATOR_P_DOWN = 0.17;
+    public static final PIDController ELEVATOR_PID = new PIDController(0.1, 0.0, 0.0);
+    public static final double ELEVATOR_P_UP = 0.5;
+    public static final double ELEVATOR_P_DOWN = 0.1;
     public static final double ELEVATOR_TOLERANCE = 0.2; // in.
     public static final double ELEVATOR_KG = 0.0;
 
@@ -76,7 +76,7 @@ public final class Constants {
     public static final double MAX_PIVOT_DELTA = 20;
     public static final double PIVOT_CONVERSION = 360; // degrees per rotation
     public static final double PIVOT_ANGLE_OFFSET = -137.18; // makes 0 down
-    public static final double PIVOT_LOWER_LIMIT = 15; // deg
+    public static final double PIVOT_LOWER_LIMIT = 20; // deg
     public static final double PIVOT_UPPER_LIMIT = 270; // deg
 
     public static final double CORAL_INTAKE_SPEED = 1.0;
@@ -85,9 +85,6 @@ public final class Constants {
   }
 
   public static class ShooterConfig {
-    // TODO nothing should run for a set amount of time, stuff should generally be
-    // toggle or while held. --Nathan
-
     public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
     public static final double PIVOT_TOLERANCE = 2; // deg
     public static final double MAX_PIVOT_SPEED = 0.5;
@@ -98,10 +95,6 @@ public final class Constants {
     public static final double FLYWHEEL_PROCESSOR_SPEED = 0.2;
     public static final double FLYWHEEL_NET_SPEED = 0.8;
     public static final double INDEXER_SPEED = 0.5;
-
-    public static final double SPINUP_TIME = 2.0;
-    public static final double SHOOT_TIME = 2.0;
-    public static final double INTAKE_TIME = 0.5;
   }
 
   public static class ClimberConfig {
@@ -110,13 +103,13 @@ public final class Constants {
   }
 
   public static enum ArmPosition {
-    HUMAN_PLAYER(35, 20),
+    HUMAN_PLAYER(35, 20.75),
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
-    SCORE_L3(215, 0),
+    SCORE_L3(215, 1),
     SCORE_L4(195, 21.5),
-    STOW(10, 0),
-    CLIMB(10, 4),
+    STOW(20, 0),
+    CLIMB(270, 10),
     ALGAE_L3(230, 12),
     ALGAE_L2(240, 1.5);
 

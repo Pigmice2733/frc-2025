@@ -31,15 +31,16 @@ public class SetArmPosition extends Command {
 
     pivot.setSetpoint(endPosition.getPivotAngle());
     elevator.setSetpoint(endPosition.getElevatorHeight());
-    System.out.println(
-        "Setting Setpoint to Elev: " + endPosition.getElevatorHeight() + ", Pivot: " + endPosition.getPivotAngle());
+    // System.out.println(
+    // "Setting Setpoint to Elev: " + endPosition.getElevatorHeight() + ", Pivot: "
+    // + endPosition.getPivotAngle());
   }
 
   @Override
   public void end(boolean interrupted) {
     pivot.setSpeed(0);
     elevator.setSpeeds(0);
-    RobotContainer.setElevatorPosition(endPosition);
+    RobotContainer.setArmPosition(endPosition);
   }
 
   @Override

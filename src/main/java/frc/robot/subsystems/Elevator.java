@@ -125,9 +125,9 @@ public class Elevator extends SubsystemBase {
   public void setSetpoint(double setpoint) {
     // use different p-values up and down
     if (setpoint > getHeight()) {
-      pidController.setP(upP);// ElevatorConfig.ELEVATOR_P_UP);
+      pidController.setP(upP); // ElevatorConfig.ELEVATOR_P_UP);
     } else if (setpoint < getHeight()) {
-      pidController.setP(downP);// ElevatorConfig.ELEVATOR_P_DOWN);
+      pidController.setP(downP); // ElevatorConfig.ELEVATOR_P_DOWN);
     } else {
       pidController.setP(0);
     }
