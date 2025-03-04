@@ -15,7 +15,8 @@ public class DriveToTarget extends SequentialCommandGroup {
    * @param rOffset    target angle offset from tag (deg)
    */
   public DriveToTarget(Drivetrain drivetrain, Vision vision, double xOffset, double yOffset, double rOffset) {
-    addCommands(new TurnVision(drivetrain, vision, rOffset), new DriveVision(drivetrain, vision, xOffset, yOffset));
+    addCommands(
+        /* new TurnVision(drivetrain, vision, rOffset), */ new DriveVision(drivetrain, vision, xOffset, yOffset));
     addRequirements(drivetrain, vision);
   }
 }

@@ -46,7 +46,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
   private final Drivetrain drivetrain;
   private final GrabberWheel wheel;
-  private final Shooter shooter;
+  // private final Shooter shooter;
   private final CoralGrabber coral;
   private final Elevator elevator;
   private final Pivot pivot;
@@ -70,7 +70,7 @@ public class RobotContainer {
 
     drivetrain = new Drivetrain();
     wheel = new GrabberWheel();
-    shooter = new Shooter();
+    // shooter = new Shooter();
     coral = new CoralGrabber();
     elevator = new Elevator();
     pivot = new Pivot();
@@ -126,18 +126,22 @@ public class RobotContainer {
         .whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0));
 
     // OPERATOR
-    operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
-    operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new SetShooterPosition(shooter, ShooterPosition.INTAKE));
-    operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new SetShooterPosition(shooter, ShooterPosition.PROCESSOR));
-    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new SetShooterPosition(shooter, ShooterPosition.NET));
-    operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new SetShooterPosition(shooter, ShooterPosition.STOW));
-    operator.leftBumper().and(() -> (shootPos == ShooterPosition.INTAKE)).onTrue(new IntakeAlgae(shooter));
-    operator.leftBumper().and(() -> (shootPos == ShooterPosition.NET)).onTrue(new ShootNet(shooter));
-    operator.leftBumper().and(() -> (shootPos == ShooterPosition.PROCESSOR)).onTrue(new ShootProcessor(shooter));
+    // operator.a().onTrue(new InstantCommand(() ->
+    // changeMode(OperatorMode.SHOOTER)));
+    // operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
+    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.INTAKE));
+    // operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
+    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.PROCESSOR));
+    // operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
+    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.NET));
+    // operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
+    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.STOW));
+    // operator.leftBumper().and(() -> (shootPos ==
+    // ShooterPosition.INTAKE)).onTrue(new IntakeAlgae(shooter));
+    // operator.leftBumper().and(() -> (shootPos == ShooterPosition.NET)).onTrue(new
+    // ShootNet(shooter));
+    // operator.leftBumper().and(() -> (shootPos ==
+    // ShooterPosition.PROCESSOR)).onTrue(new ShootProcessor(shooter));
 
     operator.b().onTrue(new InstantCommand(() -> changeMode(OperatorMode.ELEVATOR)));
     operator.povDown().and(() -> mode == OperatorMode.ELEVATOR)

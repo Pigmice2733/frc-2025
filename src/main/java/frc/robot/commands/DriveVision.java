@@ -61,8 +61,8 @@ public class DriveVision extends Command {
   public void execute() {
     robotPose = drivetrain.getPose();
 
-    if (vision.hasTarget() && vision.getTargetID() == id)
-      getTargetSetpoint();
+    // if (vision.hasTarget() && vision.getTargetID() == id)
+    // getTargetSetpoint();
 
     drivetrain.drive(xPID.calculate(robotPose.getX()), yPID.calculate(robotPose.getY()), 0);
   }
@@ -85,6 +85,6 @@ public class DriveVision extends Command {
 
     /* The PID controllers use the robot's pose, not the target pose. */
     xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
-    yPID.setSetpoint(robotPose.getY() + target.getY() + yOffset);
+    yPID.setSetpoint(robotPose.getY() - target.getY() + yOffset);
   }
 }

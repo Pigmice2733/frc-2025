@@ -53,11 +53,11 @@ public final class Constants {
 
     public static final PIDConstants TURN_PID = new PIDConstants(4.4, 0, 0.32);
     public static final double TURN_POSITION_TOLERANCE = 2; // deg
-    public static final double TURN_VELOCITY_TOLERANCE = 1; // deg/s
+    public static final double TURN_VELOCITY_TOLERANCE = 0.01; // deg/s
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.1, 0.0, 0.0);
+    public static final PIDController ELEVATOR_PID = new PIDController(0.1, 0.0, 0.088);
     public static final double ELEVATOR_P_UP = 0.5;
     public static final double ELEVATOR_P_DOWN = 0.1;
     public static final double ELEVATOR_TOLERANCE = 0.2; // in.
