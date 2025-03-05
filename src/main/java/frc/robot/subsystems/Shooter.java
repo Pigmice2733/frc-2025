@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
     indexerMotor = new SparkMax(CANConfig.INDEXER, MotorType.kBrushless);
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
     pivotConfig.inverted(false);
-    pivotConfig.encoder.positionConversionFactor(4.8);
+    pivotConfig.encoder.positionConversionFactor(ShooterConfig.PIVOT_CONVERSION);
     pivot.configure(pivotConfig,
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     leftFlywheels.configure(new SparkMaxConfig().inverted(false),
@@ -40,24 +40,22 @@ public class Shooter extends SubsystemBase {
 
     pivotController = ShooterConfig.PIVOT_PID;
     pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
-
+    targetPivotPosition = 0.0;
     // beamBreak = new
     // DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
   }
 
   @Override
   public void periodic() {
-    if ((pivot.get() < 0 && getPivotPosition() <= ShooterConfig.PIVOT_LOWER_LIMIT)
-        || (pivot.get() > 0 && getPivotPosition() >= ShooterConfig.PIVOT_UPPER_LIMIT)) {
-      setPivot(0);
-    }
-
+    double pivotSpeed = pivotController.calculate(getPivotPosition());
+    setPivot(pivotSpeed);
     updateEntries();
   }
 
   private void updateEntries() {
     Constants.sendNumberToElastic("Shooter Pivot Speed", pivot.get(), 2);
     Constants.sendNumberToElastic("Shooter Pivot Position", pivot.getEncoder().getPosition(), 2);
+    Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
     Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheels.get(), 2);
     Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheels.get(), 2);
     Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
@@ -65,7 +63,18 @@ public class Shooter extends SubsystemBase {
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
   }
 
+  public void setPivotPositionSetpoint(double targetPivotPosition) {
+    this.targetPivotPosition = targetPivotPosition;
+    pivotController.setSetpoint(targetPivotPosition);
+  }
+
   public void setPivot(double speed) {
+
+    if ((speed < 0 && getPivotPosition() <= ShooterConfig.PIVOT_LOWER_LIMIT)
+        || (speed > 0 && getPivotPosition() >= ShooterConfig.PIVOT_UPPER_LIMIT)) {
+      speed = 0;
+    }
+
     pivot.set(speed);
   }
 

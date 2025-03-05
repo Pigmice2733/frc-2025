@@ -87,7 +87,7 @@ public final class Constants {
     public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
     public static final double PIVOT_TOLERANCE = 2; // deg
     public static final double MAX_PIVOT_SPEED = 0.5;
-    public static final double PIVOT_CONVERSION = 1;
+    public static final double PIVOT_CONVERSION = 4.8;
     public static final double PIVOT_LOWER_LIMIT = -12; // deg
     public static final double PIVOT_UPPER_LIMIT = 90; // deg
 
@@ -135,7 +135,7 @@ public final class Constants {
   }
 
   public static enum ShooterPosition {
-    INTAKE(-8), PROCESSOR(0), NET(40), STOW(90);
+    INTAKE(90), PROCESSOR(70), NET(35), STOW(0);
 
     private double angle;
 

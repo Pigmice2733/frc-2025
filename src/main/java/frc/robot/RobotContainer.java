@@ -23,7 +23,6 @@ import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
 import frc.robot.commands.SetArmPosition;
-import frc.robot.commands.SetShooterPosition;
 import frc.robot.commands.ShootNet;
 import frc.robot.commands.ShootProcessor;
 import frc.robot.subsystems.GrabberWheel;
@@ -177,6 +176,16 @@ public class RobotContainer {
         .onTrue(coral.outtake()).onTrue(wheel.runForward()).onFalse(coral.stopMotor()).onFalse(wheel.stopMotor());
 
     operator.y().whileTrue(new SetArmPosition(elevator, pivot, ArmPosition.CLIMB));
+
+    operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
+    operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.INTAKE.getAngle())));
+    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.NET.getAngle())));
+    operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.PROCESSOR.getAngle())));
+    operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.STOW.getAngle())));
 
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.kReverse));
