@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.ArmPosition;
 import frc.robot.Constants.OperatorMode;
+import frc.robot.Constants.ShooterConfig;
 import frc.robot.Constants.ShooterPosition;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.DriveToTarget;
@@ -180,15 +181,23 @@ public class RobotContainer {
     operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
     operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.INTAKE.getAngle())));
-    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.NET.getAngle())));
     operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.NET.getAngle())));
+    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.PROCESSOR.getAngle())));
     operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.STOW.getAngle())));
+    operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
+        .whileTrue(Commands.runOnce(() -> shooter.setIndexer(-ShooterConfig.INDEXER_SPEED)));
+    operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
+        .onFalse(Commands.runOnce(() -> shooter.setIndexer(0.0)));
+    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
+        .whileTrue(Commands.runOnce(() -> shooter.setIndexer(ShooterConfig.INDEXER_SPEED)));
+    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
+        .onFalse(Commands.runOnce(() -> shooter.setIndexer(0.0)));
 
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
-    // operator.b().whileTrue(pivot.sysIdDynamic(Direction.kReverse));
+    // operator.b().whileTrue(pivot.sysIdDynamic(Direction.k
     // operator.x().whileTrue(pivot.sysIdQuasistatic(Direction.kForward));
     // operator.y().whileTrue(pivot.sysIdQuasistatic(Direction.kReverse));
   }

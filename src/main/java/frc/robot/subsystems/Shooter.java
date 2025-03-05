@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
@@ -19,6 +20,7 @@ public class Shooter extends SubsystemBase {
   private SparkMax pivot, leftFlywheels, rightFlywheels, indexerMotor;
   private PIDController pivotController;
   double targetPivotPosition;
+  double indexerSpeed = 0.0;
   // private DigitalInput beamBreak;
 
   public Shooter() {
@@ -35,12 +37,13 @@ public class Shooter extends SubsystemBase {
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     rightFlywheels.configure(new SparkMaxConfig().inverted(true).follow(CANConfig.SHOOTER_FLYWHEELS_LEFT),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    indexerMotor.configure(new SparkMaxConfig().inverted(false),
+    indexerMotor.configure(new SparkMaxConfig().inverted(false).idleMode(IdleMode.kBrake),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
     pivotController = ShooterConfig.PIVOT_PID;
     pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
     targetPivotPosition = 0.0;
+    indexerSpeed = 0.0;
     // beamBreak = new
     // DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
   }
