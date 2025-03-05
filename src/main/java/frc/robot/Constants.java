@@ -30,11 +30,10 @@ public final class Constants {
     public static final int PIVOT = 16;
     public static final int ALGAE_GRABBER = 17;
     public static final int CORAL_GRABBER = 18;
-    public static final int SHOOTER_FLYWHEELS_LEFT = 20;
-    public static final int SHOOTER_FLYWHEELS_RIGHT = 21;
-    public static final int SHOOTER_PIVOT_LEFT = 22;
-    public static final int SHOOTER_PIVOT_RIGHT = 23;
-    public static final int INDEXER = 24;
+    public static final int SHOOTER_FLYWHEELS_LEFT = 19;
+    public static final int SHOOTER_FLYWHEELS_RIGHT = 20;
+    public static final int SHOOTER_PIVOT = 22;
+    public static final int INDEXER = 21;
   }
 
   public static class SensorConfig {

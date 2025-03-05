@@ -27,7 +27,7 @@ public class SetShooterPosition extends Command {
 
   @Override
   public void execute() {
-    shooter.setPivot(controller.calculate(shooter.getPivot()));
+    shooter.setPivot(controller.calculate(shooter.getPivotPosition()));
   }
 
   @Override

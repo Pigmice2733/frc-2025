@@ -32,6 +32,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Underglow;
 import frc.robot.subsystems.Vision;
 
 /**
@@ -46,11 +47,12 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
   private final Drivetrain drivetrain;
   private final GrabberWheel wheel;
-  // private final Shooter shooter;
+  private final Shooter shooter;
   private final CoralGrabber coral;
   private final Elevator elevator;
   private final Pivot pivot;
   private final Vision vision;
+  private final Underglow underglow;
 
   private final CommandXboxController driver;
   private final CommandXboxController operator;
@@ -70,12 +72,13 @@ public class RobotContainer {
 
     drivetrain = new Drivetrain();
     wheel = new GrabberWheel();
-    // shooter = new Shooter();
+    shooter = new Shooter();
     coral = new CoralGrabber();
     elevator = new Elevator();
     pivot = new Pivot();
     vision = new Vision();
-
+    underglow = new Underglow();
+    underglow.displayPigmicePurple();
     mode = OperatorMode.NONE;
     elevPos = ArmPosition.STOW;
     shootPos = ShooterPosition.STOW;
