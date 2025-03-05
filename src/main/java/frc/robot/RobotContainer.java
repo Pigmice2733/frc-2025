@@ -196,6 +196,15 @@ public class RobotContainer {
     operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
         .onFalse(Commands.runOnce(() -> shooter.setIndexer(0.0)));
 
+    operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
+        .whileTrue(Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(1000)));
+    operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
+        .onFalse(Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(0.0)));
+    operator.rightTrigger().and(() -> mode == OperatorMode.SHOOTER)
+        .whileTrue(Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(-100)));
+    operator.rightTrigger().and(() -> mode == OperatorMode.SHOOTER)
+        .onFalse(Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(0.0)));
+
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.k
     // operator.x().whileTrue(pivot.sysIdQuasistatic(Direction.kForward));

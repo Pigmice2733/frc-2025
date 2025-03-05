@@ -91,8 +91,9 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = -12; // deg
     public static final double PIVOT_UPPER_LIMIT = 90; // deg
 
-    public static final double FLYWHEEL_PROCESSOR_SPEED = 0.2;
-    public static final double FLYWHEEL_NET_SPEED = 0.8;
+    public static final PIDController FLYWHEEL_PID = new PIDController(0.01, 0, 0);
+    public static final double FLYWHEEL_TOLERANCE = 100; // rpm
+
     public static final double INDEXER_SPEED = 0.5;
   }
 

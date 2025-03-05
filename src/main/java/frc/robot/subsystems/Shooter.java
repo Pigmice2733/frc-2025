@@ -17,33 +17,38 @@ import frc.robot.Constants;
 import frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
-  private SparkMax pivot, leftFlywheels, rightFlywheels, indexerMotor;
+  private SparkMax pivot, leftFlywheel, rightFlywheel, indexerMotor;
   private PIDController pivotController;
+  private PIDController flywheelController;
   double targetPivotPosition;
-  double indexerSpeed = 0.0;
+  double targetFlywheelSpeed;
   // private DigitalInput beamBreak;
 
   public Shooter() {
     pivot = new SparkMax(CANConfig.SHOOTER_PIVOT, MotorType.kBrushless);
-    leftFlywheels = new SparkMax(CANConfig.SHOOTER_FLYWHEELS_LEFT, MotorType.kBrushless);
-    rightFlywheels = new SparkMax(CANConfig.SHOOTER_FLYWHEELS_RIGHT, MotorType.kBrushless);
+    leftFlywheel = new SparkMax(CANConfig.SHOOTER_FLYWHEELS_LEFT, MotorType.kBrushless);
+    rightFlywheel = new SparkMax(CANConfig.SHOOTER_FLYWHEELS_RIGHT, MotorType.kBrushless);
     indexerMotor = new SparkMax(CANConfig.INDEXER, MotorType.kBrushless);
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
     pivotConfig.inverted(false);
     pivotConfig.encoder.positionConversionFactor(ShooterConfig.PIVOT_CONVERSION);
     pivot.configure(pivotConfig,
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    leftFlywheels.configure(new SparkMaxConfig().inverted(false),
+    leftFlywheel.configure(new SparkMaxConfig().inverted(true).idleMode(IdleMode.kCoast),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    rightFlywheels.configure(new SparkMaxConfig().inverted(true).follow(CANConfig.SHOOTER_FLYWHEELS_LEFT),
+
+    rightFlywheel.configure(
+        new SparkMaxConfig().idleMode(IdleMode.kCoast).follow(CANConfig.SHOOTER_FLYWHEELS_LEFT, true),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     indexerMotor.configure(new SparkMaxConfig().inverted(false).idleMode(IdleMode.kBrake),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
     pivotController = ShooterConfig.PIVOT_PID;
     pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
+    flywheelController = ShooterConfig.FLYWHEEL_PID;
+    flywheelController.setTolerance(ShooterConfig.FLYWHEEL_TOLERANCE);
     targetPivotPosition = 0.0;
-    indexerSpeed = 0.0;
+    targetFlywheelSpeed = 0.0;
     // beamBreak = new
     // DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
   }
@@ -52,6 +57,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     double pivotSpeed = pivotController.calculate(getPivotPosition());
     setPivot(pivotSpeed);
+    double flywheelSpeed = flywheelController.calculate(leftFlywheel.getEncoder().getVelocity());
+    setFlywheels(flywheelSpeed);
     updateEntries();
   }
 
@@ -59,8 +66,9 @@ public class Shooter extends SubsystemBase {
     Constants.sendNumberToElastic("Shooter Pivot Speed", pivot.get(), 2);
     Constants.sendNumberToElastic("Shooter Pivot Position", pivot.getEncoder().getPosition(), 2);
     Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
-    Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheels.get(), 2);
-    Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheels.get(), 2);
+    Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheel.get(), 2);
+    Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheel.get(), 2);
+    Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
     Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
 
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
@@ -81,8 +89,13 @@ public class Shooter extends SubsystemBase {
     pivot.set(speed);
   }
 
-  public void setFlywheels(double speed) {
-    leftFlywheels.set(speed);
+  public void setTargetFlywheelSpeed(double targetSpeed) {
+    targetFlywheelSpeed = targetSpeed;
+    flywheelController.setSetpoint(targetFlywheelSpeed);
+  }
+
+  private void setFlywheels(double speed) {
+    leftFlywheel.set(speed);
   }
 
   public void setIndexer(double speed) {
@@ -93,24 +106,8 @@ public class Shooter extends SubsystemBase {
     return pivot.getEncoder().getPosition();
   }
 
-  public double getFlywheels() {
-    return leftFlywheels.getEncoder().getPosition();
-  }
-
-  public double getIndexer() {
-    return indexerMotor.getEncoder().getPosition();
-  }
-
-  public PIDController getController() {
-    return pivotController;
-  }
-
-  public boolean flywheelsAtProcessorSpeed() {
-    return leftFlywheels.get() >= ShooterConfig.FLYWHEEL_PROCESSOR_SPEED;
-  }
-
-  public boolean flywheelsAtNetSpeed() {
-    return leftFlywheels.get() >= ShooterConfig.FLYWHEEL_NET_SPEED;
+  public boolean flywheelsAtSpeed() {
+    return flywheelController.atSetpoint();
   }
 
   public boolean hasAlgae() {
