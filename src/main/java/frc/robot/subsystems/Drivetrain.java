@@ -175,11 +175,22 @@ public class Drivetrain extends SubsystemBase {
     return Commands.run(() -> drive(driveSpeedX, driveSpeedY, turnSpeed), this);
   }
 
+  public Command stop() {
+    return Commands.runOnce(() -> drive(0, 0, 0), this);
+  }
+
   public PIDConstants getPidConstants() {
     return pidConstants;
   }
 
   public void setPidConstants(PIDConstants pidConstants) {
     this.pidConstants = pidConstants;
+  }
+
+  public Command simpleAuto() {
+    return Commands.sequence(
+        driveCommand(DrivetrainConfig.MAX_DRIVE_SPEED, 0, 0),
+        Commands.waitUntil(() -> (robotPose.getX() > 2)),
+        stop());
   }
 }

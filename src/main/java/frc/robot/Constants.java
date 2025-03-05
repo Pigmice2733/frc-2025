@@ -89,8 +89,15 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = -12; // deg
     public static final double PIVOT_UPPER_LIMIT = 90; // deg
 
+    public static final double PIVOT_INTAKE_ANGLE = 0; // deg
+    public static final double PIVOT_STOW_ANGLE = 0; // deg
+    public static final double PIVOT_NET_ANGLE = 0; // deg
+    public static final double PIVOT_PROCESSOR_ANGLE = 0; // deg
+
     public static final PIDController FLYWHEEL_PID = new PIDController(0.01, 0, 0);
     public static final double FLYWHEEL_TOLERANCE = 100; // rpm
+    public static final double FLYWHEEL_LOW_SPEED = 200; // rpm
+    public static final double FLYWHEEL_HIGH_SPEED = 1000; // rpm
 
     public static final double INDEXER_SPEED = 0.5;
   }
@@ -136,20 +143,6 @@ public final class Constants {
 
     public double getElevatorHeight() {
       return elevatorHeight;
-    }
-  }
-
-  public static enum ShooterPosition {
-    INTAKE(90), PROCESSOR(70), NET(35), STOW(0);
-
-    private double angle;
-
-    private ShooterPosition(double angle) {
-      this.angle = angle;
-    }
-
-    public double getAngle() {
-      return angle;
     }
   }
 

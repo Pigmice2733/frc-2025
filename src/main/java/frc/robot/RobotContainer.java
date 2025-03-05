@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -13,16 +14,18 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import frc.robot.Constants.ArmPosition;
-import frc.robot.Constants.OperatorMode;
-import frc.robot.Constants.ShooterConfig;
-import frc.robot.Constants.ShooterPosition;
+import frc.robot.Constants.*;
+import frc.robot.commands.CoralAuto;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.ElevatorControl;
+import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
+import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SetArmPosition;
+import frc.robot.commands.ShootNet;
+import frc.robot.commands.ShootProcessor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
@@ -55,7 +58,8 @@ public class RobotContainer {
 
   private OperatorMode mode;
   public static ArmPosition elevPos;
-  public static ShooterPosition shootPos;
+
+  private SendableChooser<Command> autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -74,7 +78,6 @@ public class RobotContainer {
     underglow = new Underglow();
     mode = OperatorMode.NONE;
     elevPos = ArmPosition.STOW;
-    shootPos = ShooterPosition.STOW;
 
     underglow.displayPigmicePurple();
 
@@ -83,10 +86,15 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     configureDefaultCommands();
+    buildAutoChooser();
 
     DriverStation.silenceJoystickConnectionWarning(true);
   }
 
+  /**
+   * Sets up commands to run for various subsystems when nothing else is
+   * happening.
+   */
   private void configureDefaultCommands() {
     drivetrain.setDefaultCommand(new DriveJoysticks(
         drivetrain,
@@ -96,7 +104,7 @@ public class RobotContainer {
 
     elevator.setDefaultCommand(new ElevatorControl(elevator, controls::getElevatorSpeed));
     pivot.setDefaultCommand(new PivotControl(pivot, controls::getPivotSpeed));
-    // shooter.setDefaultCommand(shooter.manualSpeed(controls.getShooterSpeed()));
+    shooter.setDefaultCommand(shooter.changePivotSetpoint(controls::getPivotSpeed));
   }
 
   /**
@@ -124,23 +132,6 @@ public class RobotContainer {
         new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0));
 
     // OPERATOR
-    // operator.a().onTrue(new InstantCommand(() ->
-    // changeMode(OperatorMode.SHOOTER)));
-    // operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
-    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.INTAKE));
-    // operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
-    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.PROCESSOR));
-    // operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.NET));
-    // operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
-    // .onTrue(new SetShooterPosition(shooter, ShooterPosition.STOW));
-    // operator.leftBumper().and(() -> (shootPos ==
-    // ShooterPosition.INTAKE)).onTrue(new IntakeAlgae(shooter));
-    // operator.leftBumper().and(() -> (shootPos == ShooterPosition.NET)).onTrue(new
-    // ShootNet(shooter));
-    // operator.leftBumper().and(() -> (shootPos ==
-    // ShooterPosition.PROCESSOR)).onTrue(new ShootProcessor(shooter));
-
     operator.b().onTrue(new InstantCommand(() -> changeMode(OperatorMode.ELEVATOR)));
     operator.povDown().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.STOW));
@@ -176,30 +167,22 @@ public class RobotContainer {
 
     operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
     operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.INTAKE.getAngle())));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_INTAKE_ANGLE)));
     operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.NET.getAngle())));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
     operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.PROCESSOR.getAngle())));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
     operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterPosition.STOW.getAngle())));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
     operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
-        .whileTrue(Commands.runOnce(() -> shooter.setIndexer(-ShooterConfig.INDEXER_SPEED)));
-    operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
-        .onFalse(Commands.runOnce(() -> shooter.setIndexer(0.0)));
+        .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
     operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
-        .whileTrue(Commands.runOnce(() -> shooter.setIndexer(ShooterConfig.INDEXER_SPEED)));
-    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
-        .onFalse(Commands.runOnce(() -> shooter.setIndexer(0.0)));
-
+        .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
     operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
-        .whileTrue(Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(1000)));
-    operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
-        .onFalse(Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(0.0)));
-    operator.rightTrigger().and(() -> mode == OperatorMode.SHOOTER)
-        .whileTrue(Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(-100)));
-    operator.rightTrigger().and(() -> mode == OperatorMode.SHOOTER)
-        .onFalse(Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(0.0)));
+        .onTrue(new PrepareToShoot(shooter, operator))
+        .onFalse(shooter.stopMotors());
+    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger())
+        .onTrue(new ShootNet(shooter));
 
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.k
@@ -208,13 +191,23 @@ public class RobotContainer {
   }
 
   /**
+   * Puts the autonomous-command options in Elastic.
+   */
+  private void buildAutoChooser() {
+    autoChooser.addOption("None", Commands.none());
+    autoChooser.addOption("Drive Only", drivetrain.simpleAuto());
+    autoChooser.addOption("Score L3", new CoralAuto(drivetrain, vision, elevator, pivot, grabber));
+
+    SmartDashboard.putData("Autonomous Command", autoChooser);
+  }
+
+  /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Commands.none();
+    return autoChooser.getSelected();
   }
 
   public void onEnable() {
@@ -225,11 +218,6 @@ public class RobotContainer {
 
   private void changeMode(OperatorMode newMode) {
     mode = newMode;
-  }
-
-  public static void setShooterPosition(ShooterPosition newPos) {
-    SmartDashboard.putString("Shooter Position", newPos.toString().toLowerCase());
-    shootPos = newPos;
   }
 
   public static void setArmPosition(ArmPosition newPos) {
