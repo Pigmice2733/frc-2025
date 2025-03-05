@@ -28,8 +28,7 @@ public final class Constants {
     public static final int ELEVATOR_LEFT = 14;
     public static final int ELEVATOR_RIGHT = 15;
     public static final int PIVOT = 16;
-    public static final int ALGAE_GRABBER = 17;
-    public static final int CORAL_GRABBER = 18;
+    public static final int GRABBER = 17;
     public static final int SHOOTER_FLYWHEELS_LEFT = 19;
     public static final int SHOOTER_FLYWHEELS_RIGHT = 20;
     public static final int SHOOTER_PIVOT = 22;
@@ -56,15 +55,16 @@ public final class Constants {
   }
 
   public static class ElevatorConfig {
-    public static final PIDController ELEVATOR_PID = new PIDController(0.1, 0.0, 0.088);
-    public static final double ELEVATOR_P_UP = 0.5;
-    public static final double ELEVATOR_P_DOWN = 0.1;
+    public static final PIDController ELEVATOR_PID = new PIDController(0.144, 0.0, 0.009);
+    public static final double ELEVATOR_P_UP = 0.6;
+    public static final double ELEVATOR_P_DOWN = 0.144;
     public static final double ELEVATOR_TOLERANCE = 0.2; // in.
+    public static final double ELEVATOR_VELOCITY_TOLERANCE = 0.1; // in./s
     public static final double ELEVATOR_KG = 0.0;
 
     public static final double MAX_ELEVATOR_DELTA = 2;
     public static final double ELEVATOR_CONVERSION = 0.46; // inches per rotation
-    public static final double ELEVATOR_UPPER_LIMIT = 21.5; // in.
+    public static final double ELEVATOR_UPPER_LIMIT = 21.4; // in.
   }
 
   public static class ArmConfig {
@@ -78,9 +78,7 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = 20; // deg
     public static final double PIVOT_UPPER_LIMIT = 270; // deg
 
-    public static final double CORAL_INTAKE_SPEED = 1.0;
-    public static final double CORAL_OUTTAKE_SPEED = -1.0;
-    public static final double WHEEL_SPEED = 1.0;
+    public static final double GRABBER_SPEED = 1.0;
   }
 
   public static class ShooterConfig {
@@ -102,12 +100,18 @@ public final class Constants {
     public static final double CLIMBER_CLIMB_POSITION = 0.5;
   }
 
+  public static class LEDConfig {
+    public static final int LED_PORT = 0;
+    public static final int LED_LEN = 91;
+    // public static final double brightnessFactor = 0.5;
+  }
+
   public static enum ArmPosition {
-    HUMAN_PLAYER(35, 20.75),
+    HUMAN_PLAYER(40, 21.4),
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
     SCORE_L3(215, 1),
-    SCORE_L4(195, 21.5),
+    SCORE_L4(195, 21.4),
     STOW(20, 0),
     CLIMB(270, 10),
     ALGAE_L3(230, 12),

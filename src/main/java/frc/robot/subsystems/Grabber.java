@@ -6,19 +6,24 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
 
-public class GrabberWheel extends SubsystemBase {
+public class Grabber extends SubsystemBase {
   private SparkMax motor;
+  private DigitalInput beamBreak;
 
-  public GrabberWheel() {
-    motor = new SparkMax(CANConfig.ALGAE_GRABBER, MotorType.kBrushless);
-    motor.configure(new SparkMaxConfig().inverted(false).secondaryCurrentLimit(15), ResetMode.kNoResetSafeParameters,
+  public Grabber() {
+    motor = new SparkMax(CANConfig.GRABBER, MotorType.kBrushless);
+    motor.configure(new SparkMaxConfig().inverted(false).secondaryCurrentLimit(12), ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
+
+    beamBreak = new DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
+
   }
 
   @Override
@@ -27,7 +32,12 @@ public class GrabberWheel extends SubsystemBase {
   }
 
   private void updateEntries() {
-    Constants.sendNumberToElastic("Algae Grabber Motor", motor.get(), 2);
+    Constants.sendNumberToElastic("Grabber Motor", motor.get(), 2);
+    Constants.sendBooleanToElastic("Has Coral", hasCoral());
+  }
+
+  public boolean hasCoral() {
+    return !beamBreak.get();
   }
 
   public void setSpeed(double speed) {
@@ -39,10 +49,10 @@ public class GrabberWheel extends SubsystemBase {
   }
 
   public Command runForward() {
-    return new InstantCommand(() -> setSpeed(ArmConfig.WHEEL_SPEED));
+    return new InstantCommand(() -> setSpeed(ArmConfig.GRABBER_SPEED));
   }
 
   public Command runReverse() {
-    return new InstantCommand(() -> setSpeed(-1 * ArmConfig.WHEEL_SPEED));
+    return new InstantCommand(() -> setSpeed(-1 * ArmConfig.GRABBER_SPEED));
   }
 }
