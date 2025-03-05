@@ -1,16 +1,19 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
+
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,8 +23,7 @@ public class Shooter extends SubsystemBase {
   private SparkMax pivot, leftFlywheel, rightFlywheel, indexerMotor;
   private PIDController pivotController;
   private PIDController flywheelController;
-  double targetPivotPosition;
-  double targetFlywheelSpeed;
+  double targetPivotPosition, targetFlywheelSpeed, pivotSpeed, flywheelSpeed;
   // private DigitalInput beamBreak;
 
   public Shooter() {
@@ -55,10 +57,11 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double pivotSpeed = pivotController.calculate(getPivotPosition());
+    pivotSpeed = pivotController.calculate(getPivotPosition());
     setPivot(pivotSpeed);
-    double flywheelSpeed = flywheelController.calculate(leftFlywheel.getEncoder().getVelocity());
+    flywheelSpeed = flywheelController.calculate(leftFlywheel.getEncoder().getVelocity());
     setFlywheels(flywheelSpeed);
+
     updateEntries();
   }
 
@@ -74,13 +77,12 @@ public class Shooter extends SubsystemBase {
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
   }
 
-  public void setPivotPositionSetpoint(double targetPivotPosition) {
-    this.targetPivotPosition = targetPivotPosition;
-    pivotController.setSetpoint(targetPivotPosition);
+  public void setPivotPositionSetpoint(double targetPos) {
+    targetPivotPosition = targetPos;
+    pivotController.setSetpoint(targetPos);
   }
 
-  public void setPivot(double speed) {
-
+  private void setPivot(double speed) {
     if ((speed < 0 && getPivotPosition() <= ShooterConfig.PIVOT_LOWER_LIMIT)
         || (speed > 0 && getPivotPosition() >= ShooterConfig.PIVOT_UPPER_LIMIT)) {
       speed = 0;
@@ -116,8 +118,8 @@ public class Shooter extends SubsystemBase {
 
   public Command stopMotors() {
     return new InstantCommand(() -> {
-      setPivot(0);
-      setFlywheels(0);
+      setPivotPositionSetpoint(0);
+      setTargetFlywheelSpeed(0);
       setIndexer(0);
     });
   }
@@ -131,17 +133,25 @@ public class Shooter extends SubsystemBase {
    */
   public Command manualSpeed(double pivot, double wheels, double indexer) {
     return new InstantCommand(() -> {
-      setPivot(pivot);
-      setFlywheels(wheels);
+      setPivotPositionSetpoint(pivot);
+      setTargetFlywheelSpeed(wheels);
       setIndexer(indexer);
     });
   }
 
-  public Command runIndexerForward() {
-    return new InstantCommand(() -> setIndexer(ShooterConfig.INDEXER_SPEED));
+  public Command runIndexerOut() {
+    return Commands.runOnce(() -> setIndexer(ShooterConfig.INDEXER_SPEED), this);
   }
 
-  public Command runIndexerReverse() {
-    return new InstantCommand(() -> setIndexer(-ShooterConfig.INDEXER_SPEED));
+  public Command runIndexerIn() {
+    return Commands.runOnce(() -> setIndexer(-ShooterConfig.INDEXER_SPEED), this);
+  }
+
+  public Command stopIndexer() {
+    return Commands.runOnce(() -> setIndexer(0), this);
+  }
+
+  public Command changePivotSetpoint(DoubleSupplier delta) {
+    return Commands.run(() -> setPivotPositionSetpoint(pivotController.getSetpoint() + delta.getAsDouble()), this);
   }
 }
