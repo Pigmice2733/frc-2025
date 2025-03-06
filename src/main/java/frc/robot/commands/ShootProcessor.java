@@ -10,9 +10,10 @@ public class ShootProcessor extends SequentialCommandGroup {
   public ShootProcessor(Shooter shooter) {
     addCommands(
         shooter.runIndexerOut(),
-        Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(ShooterConfig.FLYWHEEL_LOW_SPEED), shooter),
-        Commands.waitUntil(() -> !shooter.hasAlgae()),
-        shooter.stopMotors());
+        Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(ShooterConfig.FLYWHEEL_LOW_SPEED), shooter)
+    // Commands.waitUntil(() -> !shooter.hasAlgae()),
+    // shooter.stopMotors()
+    );
     addRequirements(shooter);
   }
 }

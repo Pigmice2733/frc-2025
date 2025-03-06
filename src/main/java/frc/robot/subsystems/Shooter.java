@@ -55,6 +55,9 @@ public class Shooter extends SubsystemBase {
     // DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
 
     Constants.sendNumberToElastic("Shooter Flywheel Speed", 0, 1);
+    // Constants.sendNumberToElastic("Flywheels P", 0, 0);
+    // Constants.sendNumberToElastic("Flywheels I", 0, 0);
+    // Constants.sendNumberToElastic("Flywheels D", 0, 0);
   }
 
   @Override
@@ -72,14 +75,17 @@ public class Shooter extends SubsystemBase {
     Constants.sendNumberToElastic("Shooter Pivot Speed", pivot.get(), 2);
     Constants.sendNumberToElastic("Shooter Pivot Position", pivot.getEncoder().getPosition(), 2);
     Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
-    Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheel.get(), 2);
-    Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheel.get(), 2);
+    Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheel.getEncoder().getVelocity(), 2);
+    Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheel.getEncoder().getVelocity(), 2);
     Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
     Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
 
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
 
-    flywheelSpeed = SmartDashboard.getNumber("Shooter Flywheel Speed", 0);
+    setTargetFlywheelSpeed(SmartDashboard.getNumber("Shooter Flywheel Speed", 0));
+    // flywheelController.setP(SmartDashboard.getNumber("Flywheels P", 0));
+    // flywheelController.setI(SmartDashboard.getNumber("Flywheels I", 0));
+    // flywheelController.setD(SmartDashboard.getNumber("Flywheels D", 0));
   }
 
   public void setPivotPositionSetpoint(double targetPos) {
@@ -101,7 +107,7 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  public boolean atSetpoint() {
+  public boolean pivotAtSetpoint() {
     return pivotController.atSetpoint();
   }
 
@@ -125,8 +131,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setTargetFlywheelSpeed(double targetSpeed) {
-    // targetFlywheelSpeed = targetSpeed;
-    targetFlywheelSpeed = flywheelSpeed;
+    targetFlywheelSpeed = targetSpeed;
     flywheelController.setSetpoint(targetFlywheelSpeed);
   }
 

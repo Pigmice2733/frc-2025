@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -18,6 +21,7 @@ import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterConfig;
 import frc.robot.commands.CoralAuto;
 import frc.robot.commands.DriveJoysticks;
+import frc.robot.commands.DrivePath;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeAlgae;
@@ -145,12 +149,6 @@ public class RobotContainer {
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L2));
     operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L3));
-    operator.rightBumper().and(() -> (elevPos == ArmPosition.HUMAN_PLAYER)).and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(grabber.runForward()).onFalse(grabber.stopMotor());
-    operator.rightBumper()
-        .and(() -> (elevPos == ArmPosition.ALGAE_L2 || elevPos == ArmPosition.ALGAE_L3))
-        .and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(grabber.runReverse()).onFalse(grabber.stopMotor());
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
     operator.povDown().and(() -> mode == OperatorMode.REEF)
@@ -161,30 +159,41 @@ public class RobotContainer {
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L3));
     operator.povUp().and(() -> mode == OperatorMode.REEF)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L4));
+
+    operator.leftBumper().and(() -> mode == OperatorMode.ELEVATOR || mode == OperatorMode.REEF)
+        .onTrue(grabber.runForward()).onFalse(grabber.stopMotor());
     operator.rightBumper()
-        .and(() -> mode == OperatorMode.REEF)
+        .and(() -> mode == OperatorMode.REEF || mode == OperatorMode.ELEVATOR)
         .onTrue(grabber.runReverse()).onFalse(grabber.stopMotor());
 
     operator.y().whileTrue(new SetArmPosition(elevator, pivot, ArmPosition.CLIMB));
 
-    operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
-    operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_INTAKE_ANGLE)));
-    operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
-    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
-    operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
-    operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
-    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
-    operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new PrepareToShoot(shooter, operator))
-        .onFalse(shooter.stopMotors());
-    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger())
-        .onTrue(new ShootNet(shooter));
+    /*
+     * operator.a().onTrue(new InstantCommand(() ->
+     * changeMode(OperatorMode.SHOOTER)));
+     * operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(Commands.runOnce(() ->
+     * shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_INTAKE_ANGLE)));
+     * operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(Commands.runOnce(() ->
+     * shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
+     * operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(Commands.runOnce(() ->
+     * shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
+     * operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(Commands.runOnce(() ->
+     * shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
+     * operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
+     * operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
+     * operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
+     * .onTrue(new PrepareToShoot(shooter, operator))
+     * .onFalse(shooter.stopMotors());
+     * operator.rightBumper().and(() -> mode ==
+     * OperatorMode.SHOOTER).and(operator.leftTrigger())
+     * .onTrue(new ShootNet(shooter));
+     */
 
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.k
@@ -197,7 +206,7 @@ public class RobotContainer {
    */
   private void buildAutoChooser() {
     autoChooser.addOption("None", Commands.none());
-    autoChooser.addOption("Drive Only", drivetrain.simpleAuto());
+    autoChooser.addOption("Drive Only", new DrivePath(drivetrain, new Transform2d(-2, 0, new Rotation2d())));
     autoChooser.addOption("Score L3", new CoralAuto(drivetrain, vision, elevator, pivot, grabber));
 
     SmartDashboard.putData("Autonomous Command", autoChooser);
@@ -216,6 +225,11 @@ public class RobotContainer {
     elevator.setSetpoint(elevator.getHeight());
     pivot.setSetpoint(pivot.getAngle());
     grabber.setSpeed(0);
+    shooter.setPivotPositionSetpoint(0);
+  }
+
+  public void autoInit() {
+    drivetrain.resetPose(new Pose2d());
   }
 
   private void changeMode(OperatorMode newMode) {

@@ -12,6 +12,6 @@ public class PrepareToShoot extends SequentialCommandGroup {
     addCommands(
         Commands.runOnce(() -> shr.setTargetFlywheelSpeed(ShooterConfig.FLYWHEEL_HIGH_SPEED)),
         Commands.waitUntil(() -> shr.flywheelsAtSpeed()),
-        Commands.runOnce(() -> ctlr.setRumble(RumbleType.kBothRumble, 1)));
+        Commands.runOnce(() -> ctlr.setRumble(RumbleType.kBothRumble, 0.5)).withTimeout(1));
   }
 }

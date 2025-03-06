@@ -8,9 +8,10 @@ public class ShootNet extends SequentialCommandGroup {
   /** Scores an algae in the net. */
   public ShootNet(Shooter shooter) {
     addCommands(
-        shooter.runIndexerOut(),
-        Commands.waitUntil(() -> !shooter.hasAlgae()),
-        shooter.stopMotors());
+        shooter.runIndexerOut()
+    // Commands.waitUntil(() -> !shooter.hasAlgae()),
+    // shooter.stopMotors()
+    );
     addRequirements(shooter);
   }
 }

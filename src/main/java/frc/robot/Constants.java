@@ -90,12 +90,12 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = 0; // deg
     public static final double PIVOT_UPPER_LIMIT = 102; // deg
 
-    public static final double PIVOT_INTAKE_ANGLE = 90; // deg
+    public static final double PIVOT_INTAKE_ANGLE = 80; // deg
     public static final double PIVOT_STOW_ANGLE = 0; // deg
     public static final double PIVOT_NET_ANGLE = 30; // deg
     public static final double PIVOT_PROCESSOR_ANGLE = 65; // deg
 
-    public static final PIDController FLYWHEEL_PID = new PIDController(0.01, 0, 0);
+    public static final PIDController FLYWHEEL_PID = new PIDController(0.00254, 0.00212, 0.0);
     public static final double FLYWHEEL_TOLERANCE = 100; // rpm
     public static final double FLYWHEEL_LOW_SPEED = 200; // rpm
     public static final double FLYWHEEL_HIGH_SPEED = 1000; // rpm
@@ -115,11 +115,11 @@ public final class Constants {
   }
 
   public static enum ArmPosition {
-    HUMAN_PLAYER(40, 21.4),
+    HUMAN_PLAYER(40, 21),
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
     SCORE_L3(215, 1),
-    SCORE_L4(195, 21.4),
+    SCORE_L4(200, 21),
     STOW(20, 0),
     CLIMB(270, 10),
     ALGAE_L3(230, 12),
