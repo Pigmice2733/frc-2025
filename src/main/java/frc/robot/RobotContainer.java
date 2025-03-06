@@ -13,8 +13,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
-import frc.robot.Constants.*;
+import frc.robot.Constants.ArmPosition;
+import frc.robot.Constants.OperatorMode;
+import frc.robot.Constants.ShooterConfig;
 import frc.robot.commands.CoralAuto;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.DriveToTarget;
@@ -79,9 +80,12 @@ public class RobotContainer {
     mode = OperatorMode.NONE;
     elevPos = ArmPosition.STOW;
 
+    autoChooser = new SendableChooser<Command>();
+
     underglow.displayPigmicePurple();
 
     SmartDashboard.putString("Elevator Position", "stow");
+    SmartDashboard.putString("Operator Mode", "");
 
     // Configure the trigger bindings
     configureBindings();
@@ -104,7 +108,7 @@ public class RobotContainer {
 
     elevator.setDefaultCommand(new ElevatorControl(elevator, controls::getElevatorSpeed));
     pivot.setDefaultCommand(new PivotControl(pivot, controls::getPivotSpeed));
-    shooter.setDefaultCommand(shooter.changePivotSetpoint(controls::getPivotSpeed));
+    // shooter.setDefaultCommand(shooter.changePivotSetpoint(controls::getShooterSpeed));
   }
 
   /**
@@ -141,10 +145,11 @@ public class RobotContainer {
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L2));
     operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L3));
-    operator.rightBumper().and(() -> (elevPos == ArmPosition.HUMAN_PLAYER))
-        .onTrue(new IntakeCoral(grabber));
+    operator.rightBumper().and(() -> (elevPos == ArmPosition.HUMAN_PLAYER)).and(() -> mode == OperatorMode.ELEVATOR)
+        .onTrue(grabber.runForward()).onFalse(grabber.stopMotor());
     operator.rightBumper()
         .and(() -> (elevPos == ArmPosition.ALGAE_L2 || elevPos == ArmPosition.ALGAE_L3))
+        .and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(grabber.runReverse()).onFalse(grabber.stopMotor());
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
@@ -157,13 +162,10 @@ public class RobotContainer {
     operator.povUp().and(() -> mode == OperatorMode.REEF)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L4));
     operator.rightBumper()
-        .and(() -> elevPos == ArmPosition.SCORE_L1 || elevPos == ArmPosition.SCORE_L2
-            || elevPos == ArmPosition.SCORE_L3 || elevPos == ArmPosition.SCORE_L4)
+        .and(() -> mode == OperatorMode.REEF)
         .onTrue(grabber.runReverse()).onFalse(grabber.stopMotor());
 
-    // operator.y().whileTrue(new SetArmPosition(elevator, pivot,
-    // ArmPosition.CLIMB));
-    operator.y().onTrue(new IntakeCoral(grabber)).onFalse(grabber.stopMotor());
+    operator.y().whileTrue(new SetArmPosition(elevator, pivot, ArmPosition.CLIMB));
 
     operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
     operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
@@ -218,6 +220,7 @@ public class RobotContainer {
 
   private void changeMode(OperatorMode newMode) {
     mode = newMode;
+    SmartDashboard.putString("Operator Mode", mode.name().toLowerCase());
   }
 
   public static void setArmPosition(ArmPosition newPos) {

@@ -56,7 +56,7 @@ public final class Constants {
 
   public static class ElevatorConfig {
     public static final PIDController ELEVATOR_PID = new PIDController(0.144, 0.0, 0.009);
-    public static final double ELEVATOR_P_UP = 0.6;
+    public static final double ELEVATOR_P_UP = 0.57;
     public static final double ELEVATOR_P_DOWN = 0.144;
     public static final double ELEVATOR_TOLERANCE = 0.2; // in.
     public static final double ELEVATOR_VELOCITY_TOLERANCE = 0.1; // in./s
@@ -83,16 +83,17 @@ public final class Constants {
 
   public static class ShooterConfig {
     public static final PIDController PIVOT_PID = new PIDController(0.01, 0, 0);
+
     public static final double PIVOT_TOLERANCE = 2; // deg
     public static final double MAX_PIVOT_SPEED = 0.5;
-    public static final double PIVOT_CONVERSION = 4.8;
-    public static final double PIVOT_LOWER_LIMIT = -12; // deg
-    public static final double PIVOT_UPPER_LIMIT = 90; // deg
+    public static final double PIVOT_CONVERSION = 4.8; // deg
+    public static final double PIVOT_LOWER_LIMIT = 0; // deg
+    public static final double PIVOT_UPPER_LIMIT = 102; // deg
 
-    public static final double PIVOT_INTAKE_ANGLE = 0; // deg
+    public static final double PIVOT_INTAKE_ANGLE = 90; // deg
     public static final double PIVOT_STOW_ANGLE = 0; // deg
-    public static final double PIVOT_NET_ANGLE = 0; // deg
-    public static final double PIVOT_PROCESSOR_ANGLE = 0; // deg
+    public static final double PIVOT_NET_ANGLE = 30; // deg
+    public static final double PIVOT_PROCESSOR_ANGLE = 65; // deg
 
     public static final PIDController FLYWHEEL_PID = new PIDController(0.01, 0, 0);
     public static final double FLYWHEEL_TOLERANCE = 100; // rpm

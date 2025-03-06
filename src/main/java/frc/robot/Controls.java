@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ArmConfig;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.Constants.ElevatorConfig;
-import frc.robot.Constants.ShooterConfig;
 
 public class Controls {
   private CommandXboxController driver, operator;
@@ -81,9 +80,12 @@ public class Controls {
     return -1 * joystickSpeed * ArmConfig.MAX_PIVOT_DELTA;
   }
 
-  public double getShooterSpeed() {
-    double joystickSpeed = MathUtil.applyDeadband(operator.getRightTriggerAxis(), threshold)
-        - MathUtil.applyDeadband(operator.getLeftTriggerAxis(), threshold);
-    return joystickSpeed * ShooterConfig.MAX_PIVOT_SPEED;
-  }
+  /*
+   * public double getShooterSpeed() {
+   * double joystickSpeed = MathUtil.applyDeadband(operator.getRightTriggerAxis(),
+   * threshold)
+   * - MathUtil.applyDeadband(operator.getLeftTriggerAxis(), threshold);
+   * return joystickSpeed * ShooterConfig.MAX_PIVOT_SPEED;
+   * }
+   */
 }
