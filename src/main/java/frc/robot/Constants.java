@@ -90,15 +90,15 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = 0; // deg
     public static final double PIVOT_UPPER_LIMIT = 102; // deg
 
-    public static final double PIVOT_INTAKE_ANGLE = 80; // deg
+    public static final double PIVOT_INTAKE_ANGLE = 85; // deg
     public static final double PIVOT_STOW_ANGLE = 0; // deg
-    public static final double PIVOT_NET_ANGLE = 30; // deg
+    public static final double PIVOT_NET_ANGLE = 25; // deg
     public static final double PIVOT_PROCESSOR_ANGLE = 65; // deg
 
     public static final PIDController FLYWHEEL_PID = new PIDController(0.00254, 0.00212, 0.0);
-    public static final double FLYWHEEL_TOLERANCE = 100; // rpm
-    public static final double FLYWHEEL_LOW_SPEED = 200; // rpm
-    public static final double FLYWHEEL_HIGH_SPEED = 1000; // rpm
+    public static final double FLYWHEEL_TOLERANCE = 50; // rpm
+    public static final double FLYWHEEL_LOW_SPEED = 300; // rpm
+    public static final double FLYWHEEL_HIGH_SPEED = 2000; // rpm
 
     public static final double INDEXER_SPEED = 0.5;
   }

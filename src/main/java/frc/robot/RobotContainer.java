@@ -167,24 +167,24 @@ public class RobotContainer {
 
     operator.y().whileTrue(new SetArmPosition(elevator, pivot, ArmPosition.CLIMB));
 
-    // operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
-    // operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
-    //     .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_INTAKE_ANGLE)));
-    // operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
-    //     .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
-    // operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-    //     .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
-    // operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
-    //     .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
-    // operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
-    //     .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
-    // operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
-    //     .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
-    // operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
-    //     .onTrue(new PrepareToShoot(shooter, operator))
-    //     .onFalse(shooter.stopMotors());
-    // operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger())
-    //     .onTrue(new ShootNet(shooter));
+    operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
+    operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_INTAKE_ANGLE)));
+    operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
+    operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
+    operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
+    operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
+    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
+    operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
+        .onTrue(new PrepareToShoot(shooter, operator))
+        .onFalse(shooter.stopMotors());
+    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger())
+        .onTrue(new ShootNet(shooter));
 
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.k

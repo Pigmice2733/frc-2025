@@ -64,7 +64,11 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     setPivot(calculatePivot());
 
-    flywheelSpeed = flywheelController.calculate(leftFlywheel.getEncoder().getVelocity());
+    if (targetFlywheelSpeed == 0) {
+      flywheelSpeed = 0;
+    } else {
+      flywheelSpeed = flywheelController.calculate(leftFlywheel.getEncoder().getVelocity());
+    }
     setFlywheels(flywheelSpeed);
 
     updateEntries();
@@ -81,7 +85,8 @@ public class Shooter extends SubsystemBase {
 
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
 
-    setTargetFlywheelSpeed(SmartDashboard.getNumber("Shooter Flywheel Speed", 0));
+    // setTargetFlywheelSpeed(SmartDashboard.getNumber("Shooter Flywheel Speed",
+    // 0));
     // flywheelController.setP(SmartDashboard.getNumber("Flywheels P", 0));
     // flywheelController.setI(SmartDashboard.getNumber("Flywheels I", 0));
     // flywheelController.setD(SmartDashboard.getNumber("Flywheels D", 0));
