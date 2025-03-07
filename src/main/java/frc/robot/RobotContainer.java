@@ -30,6 +30,7 @@ import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SetArmPosition;
 import frc.robot.commands.ShootNet;
 import frc.robot.commands.ShootProcessor;
+import frc.robot.commands.TurnVision;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
@@ -134,9 +135,9 @@ public class RobotContainer {
     driver.y().onTrue(controls.toggleSlowmode());
     driver.povDown().whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), 0, 0));
     driver.povRight().whileTrue(
-        new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), -Units.inchesToMeters(6.5), 0));
-    driver.povLeft().whileTrue(
         new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0));
+    driver.povLeft().whileTrue(
+        new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), -Units.inchesToMeters(6.5), 0));
 
     // OPERATOR
     operator.b().onTrue(new InstantCommand(() -> changeMode(OperatorMode.ELEVATOR)));
@@ -215,8 +216,9 @@ public class RobotContainer {
   public void onEnable() {
     elevator.setSetpoint(elevator.getHeight());
     pivot.setSetpoint(pivot.getAngle());
-    grabber.setSpeed(0);
+    grabber.setSpeed(0, true);
     shooter.setPivotPositionSetpoint(0);
+    controls.setSlowmode(false);
   }
 
   public void autoInit() {

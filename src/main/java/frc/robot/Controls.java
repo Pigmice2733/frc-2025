@@ -58,7 +58,7 @@ public class Controls {
   }
 
   public Command toggleSlowmode() {
-    return new InstantCommand(slowmode ? () -> setSlowmode(false) : () -> setSlowmode(true));
+    return new InstantCommand(() -> setSlowmode(!getSlowmode()));
   }
 
   public void setSlowmode(boolean slow) {

@@ -42,7 +42,7 @@ public class TurnVision extends Command {
 
   @Override
   public void initialize() {
-    pidConstants = drivetrain.getPidConstants(); // DrivetrainConfig.TURN_PID;
+    pidConstants = DrivetrainConfig.TURN_PID;
 
     rPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
     rPID.setTolerance(DrivetrainConfig.TURN_POSITION_TOLERANCE, DrivetrainConfig.TURN_VELOCITY_TOLERANCE);

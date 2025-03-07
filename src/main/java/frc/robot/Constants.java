@@ -46,10 +46,10 @@ public final class Constants {
     public static final double SLOWMODE_FACTOR = 0.1;
 
     public static final PIDConstants DRIVE_PID = new PIDConstants(4.0, 0, 1.3);
-    public static final double DRIVE_POSITION_TOLERANCE = 0.05; // m
-    public static final double DRIVE_VELOCITY_TOLERANCE = 0.05; // m/s
+    public static final double DRIVE_POSITION_TOLERANCE = 0.02; // m
+    public static final double DRIVE_VELOCITY_TOLERANCE = 0.02; // m/s
 
-    public static final PIDConstants TURN_PID = new PIDConstants(4.4, 0, 0.32);
+    public static final PIDConstants TURN_PID = new PIDConstants(2.5, 0, 0.0);
     public static final double TURN_POSITION_TOLERANCE = 2; // deg
     public static final double TURN_VELOCITY_TOLERANCE = 0.01; // deg/s
   }
@@ -97,8 +97,8 @@ public final class Constants {
 
     public static final PIDController FLYWHEEL_PID = new PIDController(0.00254, 0.00212, 0.0);
     public static final double FLYWHEEL_TOLERANCE = 50; // rpm
-    public static final double FLYWHEEL_LOW_SPEED = 300; // rpm
-    public static final double FLYWHEEL_HIGH_SPEED = 2000; // rpm
+    public static final double FLYWHEEL_LOW_SPEED = 500; // rpm
+    public static final double FLYWHEEL_HIGH_SPEED = 5000; // rpm
 
     public static final double INDEXER_SPEED = 0.5;
   }

@@ -4,7 +4,9 @@ import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
@@ -50,7 +52,7 @@ public class DriveVision extends Command {
     yPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
     yPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE, DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
 
-    drivetrain.resetPose(new Pose2d());
+    drivetrain.resetPose(new Pose2d(0, 0, new Rotation2d(Math.PI)));
     id = vision.getTargetID();
     getTargetSetpoint();
 
@@ -86,5 +88,7 @@ public class DriveVision extends Command {
     /* The PID controllers use the robot's pose, not the target pose. */
     xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
     yPID.setSetpoint(robotPose.getY() - target.getY() + yOffset);
+
+    Constants.sendNumberToElastic("Drivetrain PID Setpoint", yPID.getSetpoint(), 3);
   }
 }

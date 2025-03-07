@@ -16,6 +16,9 @@ import frc.robot.Constants.*;
 public class Grabber extends SubsystemBase {
   private SparkMax motor;
   private DigitalInput beamBreak;
+  private int ticks = 0;
+  private boolean tickMode = true;
+  private boolean tickModeRunning = true;
 
   public Grabber() {
     motor = new SparkMax(CANConfig.GRABBER, MotorType.kBrushless);
@@ -23,11 +26,19 @@ public class Grabber extends SubsystemBase {
         PersistMode.kNoPersistParameters);
 
     beamBreak = new DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
-
   }
 
   @Override
   public void periodic() {
+    if (tickMode) {
+      ticks++;
+      if (ticks >= 10) {
+        toggleMotor();
+        ticks = 0;
+        tickModeRunning = !tickModeRunning;
+      }
+    }
+
     updateEntries();
   }
 
@@ -40,19 +51,28 @@ public class Grabber extends SubsystemBase {
     return !beamBreak.get();
   }
 
-  public void setSpeed(double speed) {
+  public void setSpeed(double speed, boolean tickMode) {
+    this.tickMode = tickMode;
     motor.set(speed);
   }
 
+  private void toggleMotor() {
+    if (tickModeRunning) {
+      setSpeed(0.1, true);
+    } else {
+      setSpeed(0, true);
+    }
+  }
+
   public Command stopMotor() {
-    return new InstantCommand(() -> setSpeed(0));
+    return new InstantCommand(() -> setSpeed(0, true));
   }
 
   public Command runForward() {
-    return new InstantCommand(() -> setSpeed(ArmConfig.GRABBER_SPEED));
+    return new InstantCommand(() -> setSpeed(ArmConfig.GRABBER_SPEED, false));
   }
 
   public Command runReverse() {
-    return new InstantCommand(() -> setSpeed(-1 * ArmConfig.GRABBER_SPEED));
+    return new InstantCommand(() -> setSpeed(-1 * ArmConfig.GRABBER_SPEED, false));
   }
 }
