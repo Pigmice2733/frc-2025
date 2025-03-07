@@ -25,7 +25,6 @@ import frc.robot.commands.DrivePath;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeAlgae;
-import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.PivotControl;
 import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SetArmPosition;

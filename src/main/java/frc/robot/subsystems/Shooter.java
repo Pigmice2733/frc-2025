@@ -64,9 +64,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     setPivot(calculatePivot());
 
-    // flywheelSpeed =
-    // flywheelController.calculate(leftFlywheel.getEncoder().getVelocity());
-    // setFlywheels(flywheelSpeed);
+    flywheelSpeed = flywheelController.calculate(leftFlywheel.getEncoder().getVelocity());
+    setFlywheels(flywheelSpeed);
 
     updateEntries();
   }
