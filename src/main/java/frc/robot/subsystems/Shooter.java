@@ -38,7 +38,6 @@ public class Shooter extends SubsystemBase {
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     leftFlywheel.configure(new SparkMaxConfig().inverted(true).idleMode(IdleMode.kCoast),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-
     rightFlywheel.configure(
         new SparkMaxConfig().idleMode(IdleMode.kCoast).follow(CANConfig.SHOOTER_FLYWHEELS_LEFT, true),
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -54,7 +53,7 @@ public class Shooter extends SubsystemBase {
     // beamBreak = new
     // DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
 
-    Constants.sendNumberToElastic("Shooter Flywheel Speed", 0, 1);
+    // Constants.sendNumberToElastic("Shooter Flywheel Speed", 0, 1);
     // Constants.sendNumberToElastic("Flywheels P", 0, 0);
     // Constants.sendNumberToElastic("Flywheels I", 0, 0);
     // Constants.sendNumberToElastic("Flywheels D", 0, 0);

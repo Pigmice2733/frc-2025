@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -90,6 +91,7 @@ public class RobotContainer {
 
     SmartDashboard.putString("Elevator Position", "stow");
     SmartDashboard.putString("Operator Mode", "");
+    CameraServer.startAutomaticCapture();
 
     // Configure the trigger bindings
     configureBindings();
@@ -210,7 +212,7 @@ public class RobotContainer {
   private void buildAutoChooser() {
     autoChooser.addOption("None", Commands.none());
     autoChooser.addOption("Drive Only", new DrivePath(drivetrain, new Transform2d(-2, 0, new Rotation2d())));
-    autoChooser.addOption("Score L3", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
+    autoChooser.addOption("Score L4", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
 
     SmartDashboard.putData("Autonomous Command", autoChooser);
   }

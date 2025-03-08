@@ -84,12 +84,8 @@ public class TurnVision extends Command {
     robotPose = drivetrain.getPose();
     target = vision.getTargetPose();
 
-    if (target.equals(new Pose2d())) {
-      /* The PID controllers use the robot's pose, not the target pose. */
-      rPID.setSetpoint(robotPose.getRotation().getDegrees() + target.getRotation().getDegrees() + rOffset);
-    } else {
-      rPID.setSetpoint(0);
-    }
+    /* The PID controllers use the robot's pose, not the target pose. */
+    rPID.setSetpoint(robotPose.getRotation().getDegrees() + target.getRotation().getDegrees() + rOffset);
 
     Constants.sendNumberToElastic("Turn PID Setpoint", rPID.getSetpoint(), 3);
   }

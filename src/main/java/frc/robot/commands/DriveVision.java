@@ -84,14 +84,9 @@ public class DriveVision extends Command {
     robotPose = drivetrain.getPose();
     target = vision.getTargetPose();
 
-    if (target.equals(new Pose2d())) {
-      /* The PID controllers use the robot's pose, not the target pose. */
-      xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
-      yPID.setSetpoint(robotPose.getY() - target.getY() + yOffset);
-    } else {
-      xPID.setSetpoint(0);
-      yPID.setSetpoint(0);
-    }
+    /* The PID controllers use the robot's pose, not the target pose. */
+    xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
+    yPID.setSetpoint(robotPose.getY() - target.getY() + yOffset);
 
     Constants.sendNumberToElastic("Drivetrain PID Setpoint", yPID.getSetpoint(), 3);
   }
