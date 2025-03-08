@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -21,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmPosition;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterConfig;
+import frc.robot.commands.AlgaeAuto;
 import frc.robot.commands.CoralAuto;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.DrivePath;
@@ -91,7 +91,6 @@ public class RobotContainer {
 
     SmartDashboard.putString("Elevator Position", "stow");
     SmartDashboard.putString("Operator Mode", "");
-    CameraServer.startAutomaticCapture();
 
     // Configure the trigger bindings
     configureBindings();
@@ -198,7 +197,7 @@ public class RobotContainer {
         .onTrue(new PrepareToShoot(shooter, operator))
         .onFalse(shooter.stopMotors());
     operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger())
-        .onTrue(new ShootNet(shooter));
+        .onTrue(new ShootNet(shooter, operator));
 
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.k
@@ -212,7 +211,9 @@ public class RobotContainer {
   private void buildAutoChooser() {
     autoChooser.addOption("None", Commands.none());
     autoChooser.addOption("Drive Only", new DrivePath(drivetrain, new Transform2d(-2, 0, new Rotation2d())));
-    autoChooser.addOption("Score L4", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
+    autoChooser.addOption("Score L3", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
+    autoChooser.addOption("Remove L2 Algae",
+        new AlgaeAuto(drivetrain, vision, elevator, pivot, grabber, shooter, driver));
 
     SmartDashboard.putData("Autonomous Command", autoChooser);
   }

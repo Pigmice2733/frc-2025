@@ -92,10 +92,10 @@ public final class Constants {
 
     public static final double PIVOT_INTAKE_ANGLE = 80; // deg
     public static final double PIVOT_STOW_ANGLE = 0; // deg
-    public static final double PIVOT_NET_ANGLE = 25; // deg
+    public static final double PIVOT_NET_ANGLE = 20; // deg
     public static final double PIVOT_PROCESSOR_ANGLE = 65; // deg
 
-    public static final PIDController FLYWHEEL_PID = new PIDController(0.00254, 0.002, 0.0);
+    public static final PIDController FLYWHEEL_PID = new PIDController(0.002, 0.0015, 0.0);
     public static final double FLYWHEEL_TOLERANCE = 50; // rpm
     public static final double FLYWHEEL_LOW_SPEED = 500; // rpm
     public static final double FLYWHEEL_HIGH_SPEED = 650; // rpm
@@ -119,10 +119,10 @@ public final class Constants {
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
     SCORE_L3(215, 1),
-    SCORE_L4(200, 21),
+    SCORE_L4(193, 21),
     STOW(20, 0),
     CLIMB(270, 10),
-    ALGAE_L3(230, 12),
+    ALGAE_L3(240, 17),
     ALGAE_L2(240, 1.5);
 
     private double pivotAngle, elevatorHeight;
