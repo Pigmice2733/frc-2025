@@ -155,9 +155,11 @@ public class RobotContainer {
     operator.povLeft().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.HUMAN_PLAYER));
     operator.povRight().and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L2));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L2))
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
     operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
-        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L3));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L3))
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
     operator.povDown().and(() -> mode == OperatorMode.REEF)
@@ -186,7 +188,7 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
     operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
-    operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
+    operator.leftBumper()
         .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
     operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
