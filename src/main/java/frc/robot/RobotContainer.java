@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,7 +31,6 @@ import frc.robot.commands.PrepareToShoot;
 import frc.robot.commands.SetArmPosition;
 import frc.robot.commands.ShootNet;
 import frc.robot.commands.ShootProcessor;
-import frc.robot.commands.TurnVision;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
@@ -133,11 +133,20 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    driver.povDown().whileTrue(new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), 0, 0));
+    driver.povDown().whileTrue(new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), 0, 0))
+        .onTrue(Commands.runOnce(drivetrain::savePose))
+        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+        .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povRight().whileTrue(
-        new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0));
+        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0))
+        .onTrue(Commands.runOnce(drivetrain::savePose))
+        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+        .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povLeft().whileTrue(
-        new DriveToTarget(drivetrain, vision, Units.inchesToMeters(17), -Units.inchesToMeters(6.5), 0));
+        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), -Units.inchesToMeters(6.5), 0))
+        .onTrue(Commands.runOnce(drivetrain::savePose))
+        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+        .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
 
     // OPERATOR
     operator.b().onTrue(new InstantCommand(() -> changeMode(OperatorMode.ELEVATOR)));
@@ -199,7 +208,7 @@ public class RobotContainer {
   private void buildAutoChooser() {
     autoChooser.addOption("None", Commands.none());
     autoChooser.addOption("Drive Only", new DrivePath(drivetrain, new Transform2d(-2, 0, new Rotation2d())));
-    autoChooser.addOption("Score L3", new CoralAuto(drivetrain, vision, elevator, pivot, grabber));
+    autoChooser.addOption("Score L3", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
 
     SmartDashboard.putData("Autonomous Command", autoChooser);
   }

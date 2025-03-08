@@ -39,7 +39,7 @@ public class Drivetrain extends SubsystemBase {
   private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
   private SwerveModule[] modules = new SwerveModule[4];
 
-  private Pose2d robotPose;
+  private Pose2d robotPose, savePose;
   private final Field2d fieldWidget;
   private PIDConstants pidConstants;
 
@@ -58,6 +58,7 @@ public class Drivetrain extends SubsystemBase {
     // gyro.setInverted(true);
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation3d().toRotation2d(), modulePositions);
     resetPose(new Pose2d());
+    savePose = new Pose2d();
 
     setUpAuto();
 
@@ -149,6 +150,21 @@ public class Drivetrain extends SubsystemBase {
   /** Sets the robot odometry to the given pose. */
   public void resetPose(Pose2d pose) {
     swerve.resetOdometry(pose);
+  }
+
+  /** Saves the current pose to memory. */
+  public void savePose() {
+    savePose = getPose();
+  }
+
+  /** Returns the pose saved in memory. */
+  public Pose2d getSavedPose() {
+    return savePose;
+  }
+
+  /** Resets the drivetrain's odometry to the pose saved in memory. */
+  public void setSavedPose() {
+    resetPose(savePose);
   }
 
   /**
