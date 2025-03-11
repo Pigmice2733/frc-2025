@@ -114,6 +114,10 @@ public final class Constants {
     // public static final double brightnessFactor = 0.5;
   }
 
+  public static class VisionTargetIds {
+    public static final int REEF = 7;
+  }
+
   public static enum ArmPosition {
     HUMAN_PLAYER(40, 21),
     SCORE_L1(260, 0),
