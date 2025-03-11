@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkMax;
 
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -21,8 +22,7 @@ import frc.robot.Constants.*;
 public class Shooter extends SubsystemBase {
   private SparkMax pivot, leftFlywheel, rightFlywheel, indexerMotor;
   private PIDController pivotController;
-  private PIDController flywheelController;
-  private double targetPivotPosition, targetFlywheelSpeed, pivotSpeed, flywheelSpeed;
+  private double targetPivotPosition, targetFlywheelSpeed, pivotSpeed;
   // private DigitalInput beamBreak;
 
   public Shooter() {
@@ -35,7 +35,10 @@ public class Shooter extends SubsystemBase {
     pivotConfig.encoder.positionConversionFactor(ShooterConfig.PIVOT_CONVERSION);
     pivot.configure(pivotConfig,
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    leftFlywheel.configure(new SparkMaxConfig().inverted(true).idleMode(IdleMode.kCoast),
+    SparkMaxConfig flywheelConfig = new SparkMaxConfig();
+    flywheelConfig.inverted(true).idleMode(IdleMode.kCoast);
+    flywheelConfig.closedLoop.p(0.003).d(0.001).velocityFF(0.0006);
+    leftFlywheel.configure(flywheelConfig,
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     rightFlywheel.configure(
         new SparkMaxConfig().idleMode(IdleMode.kCoast).follow(CANConfig.SHOOTER_FLYWHEELS_LEFT, true),
@@ -45,8 +48,6 @@ public class Shooter extends SubsystemBase {
 
     pivotController = ShooterConfig.PIVOT_PID;
     pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
-    flywheelController = ShooterConfig.FLYWHEEL_PID;
-    flywheelController.setTolerance(ShooterConfig.FLYWHEEL_TOLERANCE);
     targetPivotPosition = 0.0;
     targetFlywheelSpeed = 0.0;
     // beamBreak = new
@@ -63,11 +64,8 @@ public class Shooter extends SubsystemBase {
     setPivot(calculatePivot());
 
     if (targetFlywheelSpeed == 0) {
-      flywheelSpeed = 0;
-    } else {
-      flywheelSpeed = flywheelController.calculate(leftFlywheel.getEncoder().getVelocity());
+      leftFlywheel.getClosedLoopController().setReference(0, ControlType.kVelocity);
     }
-    setFlywheels(flywheelSpeed);
 
     updateEntries();
   }
@@ -134,11 +132,7 @@ public class Shooter extends SubsystemBase {
 
   public void setTargetFlywheelSpeed(double targetSpeed) {
     targetFlywheelSpeed = targetSpeed;
-    flywheelController.setSetpoint(targetFlywheelSpeed);
-  }
-
-  private void setFlywheels(double speed) {
-    leftFlywheel.set(speed);
+    leftFlywheel.getClosedLoopController().setReference(targetFlywheelSpeed, ControlType.kVelocity);
   }
 
   public void setIndexer(double speed) {
@@ -150,7 +144,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean flywheelsAtSpeed() {
-    return flywheelController.atSetpoint();
+    if (targetFlywheelSpeed > 0) {
+      return leftFlywheel.getEncoder().getVelocity() > (targetFlywheelSpeed - ShooterConfig.FLYWHEEL_TOLERANCE);
+    } else {
+      return leftFlywheel.getEncoder().getVelocity() < (targetFlywheelSpeed + ShooterConfig.FLYWHEEL_TOLERANCE);
+    }
   }
 
   public boolean hasAlgae() {
