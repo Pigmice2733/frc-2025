@@ -17,7 +17,7 @@ public class DriveVision extends Command {
 
   private PIDController xPID, yPID;
   private PIDConstants pidConstants;
-  private int id;
+  private int id, counter;
 
   private Pose2d target, robotPose;
 
@@ -37,6 +37,8 @@ public class DriveVision extends Command {
 
     this.xOffset = xOffset;
     this.yOffset = yOffset;
+
+    counter = 0;
 
     addRequirements(drivetrain, vision);
   }
@@ -60,10 +62,14 @@ public class DriveVision extends Command {
 
   @Override
   public void execute() {
+    counter++;
+
     robotPose = drivetrain.getPose();
 
-    // if (vision.hasTarget() && vision.getTargetID() == id)
-    // getTargetSetpoint();
+    if (vision.hasTarget() && vision.getTargetID() == id && counter >= 5) {
+      getTargetSetpoint();
+      counter = 0;
+    }
 
     drivetrain.drive(xPID.calculate(robotPose.getX()), yPID.calculate(robotPose.getY()), 0);
   }

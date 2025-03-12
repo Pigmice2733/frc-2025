@@ -190,7 +190,10 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
         operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
                 .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
-        operator.leftBumper()
+        operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
+                .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
+        operator.leftBumper().and(() -> mode == OperatorMode.ELEVATOR)
+                .and(() -> elevPos == ArmPosition.ALGAE_L2 || elevPos == ArmPosition.ALGAE_L3)
                 .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
         operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
                 .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
@@ -236,6 +239,7 @@ public class RobotContainer {
         grabber.setSpeed(0, true);
         shooter.setPivotPositionSetpoint(0);
         controls.setSlowmode(false);
+        changeMode(OperatorMode.NONE);
     }
 
     public void autoInit() {
