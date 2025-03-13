@@ -93,7 +93,7 @@ public final class Constants {
 
     public static final double PIVOT_INTAKE_ANGLE = 80; // deg
     public static final double PIVOT_STOW_ANGLE = 0; // deg
-    public static final double PIVOT_NET_ANGLE = 20; // deg
+    public static final double PIVOT_NET_ANGLE = 25; // deg
     public static final double PIVOT_PROCESSOR_ANGLE = 65; // deg
 
     public static final PIDController FLYWHEEL_PID = new PIDController(0.002, 0.0015, 0.0);

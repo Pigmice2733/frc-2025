@@ -94,6 +94,7 @@ public class DriveVision extends Command {
     xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
     yPID.setSetpoint(robotPose.getY() - target.getY() + yOffset);
 
-    Constants.sendNumberToElastic("Drivetrain PID Setpoint", yPID.getSetpoint(), 3);
+    Constants.sendNumberToElastic("Drivetrain X Setpoint", xPID.getSetpoint(), 3);
+    Constants.sendNumberToElastic("Drivetrain Y Setpoint", yPID.getSetpoint(), 3);
   }
 }

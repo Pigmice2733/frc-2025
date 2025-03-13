@@ -136,20 +136,19 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    driver.povDown().whileTrue(
-        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), 0, 0))
-        .onTrue(Commands.runOnce(drivetrain::savePose))
-        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
-        .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
+    driver.povDown().whileTrue(new DriveToTarget(drivetrain, vision, driver, 0/* Units.inchesToMeters(17) */, 0, 0))
+    /*
+     * .onTrue(Commands.runOnce(drivetrain::savePose))
+     * .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+     * .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)))
+     */;
     driver.povRight().whileTrue(
-        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17),
-            Units.inchesToMeters(6.5), 0))
+        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0))
         .onTrue(Commands.runOnce(drivetrain::savePose))
         .onFalse(Commands.runOnce(drivetrain::setSavedPose))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povLeft().whileTrue(
-        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17),
-            -Units.inchesToMeters(6.5), 0))
+        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), -Units.inchesToMeters(6.5), 0))
         .onTrue(Commands.runOnce(drivetrain::savePose))
         .onFalse(Commands.runOnce(drivetrain::setSavedPose))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
@@ -162,12 +161,10 @@ public class RobotContainer {
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.HUMAN_PLAYER));
     operator.povRight().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L2))
-        .onTrue(Commands.runOnce(
-            () -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
     operator.povUp().and(() -> mode == OperatorMode.ELEVATOR)
         .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.ALGAE_L3))
-        .onTrue(Commands.runOnce(
-            () -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
     operator.povDown().and(() -> mode == OperatorMode.REEF)
@@ -189,27 +186,23 @@ public class RobotContainer {
 
     operator.a().onTrue(new InstantCommand(() -> changeMode(OperatorMode.SHOOTER)));
     operator.povDown().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter
-            .setPivotPositionSetpoint(ShooterConfig.PIVOT_INTAKE_ANGLE)));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_INTAKE_ANGLE)));
     operator.povRight().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(
-            () -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)));
     operator.povLeft().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter
-            .setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)));
     operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(Commands.runOnce(() -> shooter
-            .setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
+        .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
     operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
     operator.leftBumper().and(() -> mode == OperatorMode.ELEVATOR)
         .and(() -> elevPos == ArmPosition.ALGAE_L2 || elevPos == ArmPosition.ALGAE_L3)
         .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
-    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER)
+    operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger().negate())
         .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
     operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(new PrepareToShoot(shooter, operator))
-        .onFalse(shooter.stopMotors());
+        .onFalse(shooter.stopMotors()).onFalse(Commands.runOnce(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
     operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger())
         .onTrue(new ShootNet(shooter, operator));
 
@@ -224,14 +217,12 @@ public class RobotContainer {
    */
   private void buildAutoChooser() {
     autoChooser.addOption("None", Commands.none());
-    autoChooser.addOption("Drive Only",
-        new DrivePath(drivetrain, new Transform2d(-2, 0, new Rotation2d())));
+    autoChooser.addOption("Drive Only", new DrivePath(drivetrain, new Transform2d(-2, 0, new Rotation2d())));
     autoChooser.addOption("Score L3", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
     autoChooser.addOption("Remove L2 Algae",
         new AlgaeAuto(drivetrain, vision, elevator, pivot, grabber, shooter, driver));
     autoChooser.addOption("Spin until facing Reef then move to it",
-        new DriveToTargetId(Constants.VisionTargetIds.REEF, drivetrain, vision, driver, 0, 0,
-            0));
+        new DriveToTargetId(Constants.VisionTargetIds.REEF, drivetrain, vision, driver, 0, 0, 0));
 
     SmartDashboard.putData("Autonomous Command", autoChooser);
   }

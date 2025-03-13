@@ -55,6 +55,7 @@ public class Drivetrain extends SubsystemBase {
     modulePositions = swerve.getModulePositions();
     kinematics = swerve.kinematics;
     gyro = swerve.getGyro();
+    gyro.factoryDefault();
     // gyro.setInverted(true);
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation3d().toRotation2d(), modulePositions);
     resetPose(new Pose2d());

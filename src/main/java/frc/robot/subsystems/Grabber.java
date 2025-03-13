@@ -57,7 +57,7 @@ public class Grabber extends SubsystemBase {
   }
 
   private void toggleMotor() {
-    if (tickModeRunning) {
+    if (tickModeRunning && !hasCoral()) {
       setSpeed(0.1, true);
     } else {
       setSpeed(0, true);

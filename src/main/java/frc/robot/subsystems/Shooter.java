@@ -80,6 +80,7 @@ public class Shooter extends SubsystemBase {
     Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
 
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
+    Constants.sendBooleanToElastic("Shooter Flywheels At Speed", flywheelsAtSpeed());
 
     // setTargetFlywheelSpeed(SmartDashboard.getNumber("Shooter Flywheel Speed",
     // 0));
@@ -144,11 +145,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean flywheelsAtSpeed() {
-    if (targetFlywheelSpeed > 0) {
+    if (targetFlywheelSpeed > 10) {
       return leftFlywheel.getEncoder().getVelocity() > (targetFlywheelSpeed - ShooterConfig.FLYWHEEL_TOLERANCE);
-    } else {
+    } else if (targetFlywheelSpeed < -10) {
       return leftFlywheel.getEncoder().getVelocity() < (targetFlywheelSpeed + ShooterConfig.FLYWHEEL_TOLERANCE);
     }
+    return false;
   }
 
   public boolean hasAlgae() {
