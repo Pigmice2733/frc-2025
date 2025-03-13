@@ -136,7 +136,8 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    driver.povDown().whileTrue(new DriveToTarget(drivetrain, vision, driver, 0/* Units.inchesToMeters(17) */, 0, 0))
+    driver.povDown().whileTrue(new DriveToTarget(
+        drivetrain, vision, driver, 0, -Units.inchesToMeters(6.5), 0))
     /*
      * .onTrue(Commands.runOnce(drivetrain::savePose))
      * .onFalse(Commands.runOnce(drivetrain::setSavedPose))
@@ -202,7 +203,8 @@ public class RobotContainer {
         .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
     operator.leftTrigger().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(new PrepareToShoot(shooter, operator))
-        .onFalse(shooter.stopMotors()).onFalse(Commands.runOnce(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+        .onFalse(shooter.stopMotors())
+        .onFalse(Commands.runOnce(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
     operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger())
         .onTrue(new ShootNet(shooter, operator));
 

@@ -10,7 +10,7 @@ import frc.robot.subsystems.*;
 public class CoralAuto extends SequentialCommandGroup {
   public CoralAuto(Drivetrain dvt, Vision vis, Elevator elv, Pivot pivot, Grabber gbr, CommandXboxController ctlr) {
     addCommands(
-        Commands.parallel(new DriveToTarget(dvt, vis, ctlr, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0),
+        Commands.parallel(new DriveToTarget(dvt, vis, ctlr, 0, Units.inchesToMeters(6.5), 0),
             new SetArmPosition(elv, pivot, ArmPosition.SCORE_L3)).withTimeout(8),
         gbr.runReverse(),
         Commands.waitSeconds(2),

@@ -4,6 +4,7 @@ import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConfig;
@@ -67,7 +68,7 @@ public class DriveVision extends Command {
     robotPose = drivetrain.getPose();
 
     if (vision.hasTarget() && vision.getTargetID() == id && counter >= 5) {
-      // getTargetSetpoint();
+      getTargetSetpoint();
       counter = 0;
     }
 
@@ -83,7 +84,9 @@ public class DriveVision extends Command {
 
   @Override
   public boolean isFinished() {
-    return xPID.atSetpoint() && yPID.atSetpoint();
+    ChassisSpeeds speed = drivetrain.getSwerve().getFieldVelocity();
+    return (xPID.atSetpoint() && yPID.atSetpoint()) || (speed.vxMetersPerSecond < 0.003 &&
+        speed.vyMetersPerSecond < 0.003 && speed.omegaRadiansPerSecond < 0.01 && !vision.hasTarget());
   }
 
   private void getTargetSetpoint() {
@@ -91,7 +94,7 @@ public class DriveVision extends Command {
     target = vision.getTargetPose();
 
     /* The PID controllers use the robot's pose, not the target pose. */
-    xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
+    xPID.setSetpoint(robotPose.getX() + (0.5 * target.getX()) + xOffset);
     yPID.setSetpoint(robotPose.getY() - target.getY() + yOffset);
 
     Constants.sendNumberToElastic("Drivetrain X Setpoint", xPID.getSetpoint(), 3);
