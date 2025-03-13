@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmPosition;
+import frc.robot.Constants.LEDConfig;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterConfig;
 import frc.robot.commands.AlgaeAuto;
@@ -88,7 +89,7 @@ public class RobotContainer {
 
     autoChooser = new SendableChooser<Command>();
 
-    underglow.displayPigmicePurple();
+    underglow.setSolidColor(LEDConfig.PURPLE);
 
     SmartDashboard.putString("Elevator Position", "stow");
     SmartDashboard.putString("Operator Mode", "");
