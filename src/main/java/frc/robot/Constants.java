@@ -8,6 +8,7 @@ import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -111,7 +112,11 @@ public final class Constants {
   public static class LEDConfig {
     public static final int LED_PORT = 0;
     public static final int LED_LEN = 91;
-    // public static final double brightnessFactor = 0.5;
+
+    public static final Color OFF = new Color(0, 0, 0);
+    public static final Color PURPLE = new Color(180, 0, 255);
+    public static final Color RED = new Color(255, 0, 0);
+    public static final Color BLUE = new Color(0, 0, 255);
   }
 
   public static class VisionTargetIds {
