@@ -67,7 +67,7 @@ public class DriveVision extends Command {
     robotPose = drivetrain.getPose();
 
     if (vision.hasTarget() && vision.getTargetID() == id && counter >= 5) {
-      getTargetSetpoint();
+      // getTargetSetpoint();
       counter = 0;
     }
 
