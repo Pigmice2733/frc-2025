@@ -11,8 +11,6 @@ public class IntakeAlgae extends SequentialCommandGroup {
     addCommands(
         shooter.runIndexerIn(),
         Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(-ShooterConfig.FLYWHEEL_LOW_SPEED), shooter)
-    // Commands.waitUntil(() -> shooter.hasAlgae()),
-    // shooter.stopMotors()
     );
     addRequirements(shooter);
   }

@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -23,7 +24,7 @@ public class Shooter extends SubsystemBase {
   private SparkMax pivot, leftFlywheel, rightFlywheel, indexerMotor;
   private PIDController pivotController;
   private double targetPivotPosition, targetFlywheelSpeed, pivotSpeed;
-  // private DigitalInput beamBreak;
+  private DigitalInput upperAlgaeLimitSwitch, lowerAlgaeLimitSwitch;
 
   public Shooter() {
     pivot = new SparkMax(CANConfig.SHOOTER_PIVOT, MotorType.kBrushless);
@@ -50,8 +51,8 @@ public class Shooter extends SubsystemBase {
     pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
     targetPivotPosition = 0.0;
     targetFlywheelSpeed = 0.0;
-    // beamBreak = new
-    // DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
+    upperAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_UPPER_ALGAE_LIMIT_CHANNEL);
+    lowerAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_LOWER_ALGAE_LIMIT_CHANNEL);
 
     // Constants.sendNumberToElastic("Shooter Flywheel Speed", 0, 1);
     // Constants.sendNumberToElastic("Flywheels P", 0, 0);
@@ -80,6 +81,8 @@ public class Shooter extends SubsystemBase {
     Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
 
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
+    Constants.sendBooleanToElastic("Shooter Upper Limit Switch", isUpperAlgaeLimitSwitchPressed());
+    Constants.sendBooleanToElastic("Shooter Lower Limit Switch", isLowerAlgaeLimitSwitchPressed());
     Constants.sendBooleanToElastic("Shooter Flywheels At Speed", flywheelsAtSpeed());
 
     // setTargetFlywheelSpeed(SmartDashboard.getNumber("Shooter Flywheel Speed",
@@ -154,7 +157,19 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean hasAlgae() {
-    return false;// !beamBreak.get();
+    return isUpperAlgaeLimitSwitchPressed() || isLowerAlgaeLimitSwitchPressed();
+  }
+
+  public boolean isAlgaeCentered() {
+    return isUpperAlgaeLimitSwitchPressed() && isLowerAlgaeLimitSwitchPressed();
+  }
+
+  public boolean isUpperAlgaeLimitSwitchPressed() {
+    return !upperAlgaeLimitSwitch.get();
+  }
+
+  public boolean isLowerAlgaeLimitSwitchPressed() {
+    return !lowerAlgaeLimitSwitch.get();
   }
 
   public Command stopMotors() {

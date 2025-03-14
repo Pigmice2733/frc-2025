@@ -39,6 +39,8 @@ public final class Constants {
   public static class SensorConfig {
     public static final int ELEVATOR_LIMIT_SWITCH_CHANNEL = 0;
     public static final int CORAL_BEAM_BREAK_CHANNEL = 1;
+    public static final int SHOOTER_UPPER_ALGAE_LIMIT_CHANNEL = 2;
+    public static final int SHOOTER_LOWER_ALGAE_LIMIT_CHANNEL = 3;
   }
 
   public static class DrivetrainConfig {
@@ -91,15 +93,15 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = 0; // deg
     public static final double PIVOT_UPPER_LIMIT = 102; // deg
 
-    public static final double PIVOT_INTAKE_ANGLE = 80; // deg
+    public static final double PIVOT_INTAKE_ANGLE = 90; // deg
     public static final double PIVOT_STOW_ANGLE = 0; // deg
     public static final double PIVOT_NET_ANGLE = 25; // deg
     public static final double PIVOT_PROCESSOR_ANGLE = 65; // deg
 
     public static final PIDController FLYWHEEL_PID = new PIDController(0.002, 0.0015, 0.0);
-    public static final double FLYWHEEL_TOLERANCE = 50; // rpm
+    public static final double FLYWHEEL_TOLERANCE = 30; // rpm
     public static final double FLYWHEEL_LOW_SPEED = 500; // rpm
-    public static final double FLYWHEEL_HIGH_SPEED = 650; // rpm
+    public static final double FLYWHEEL_HIGH_SPEED = 800; // rpm
 
     public static final double INDEXER_SPEED = 0.5;
   }
