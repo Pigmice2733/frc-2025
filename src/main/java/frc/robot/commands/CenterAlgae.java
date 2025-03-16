@@ -10,7 +10,7 @@ public class CenterAlgae extends SequentialCommandGroup {
   public CenterAlgae(Shooter shooter) {
     addCommands(
         Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)),
-        Commands.waitUntil(() -> shooter.pivotAtSetpoint()),
+        Commands.waitSeconds(0.3),
         new CenterAlgaeOnce(shooter).repeatedly()
             .until(() -> shooter.isAlgaeCentered() || shooter.isLowerAlgaeLimitSwitchPressed()).withTimeout(5.0),
         Commands.runOnce(() -> shooter.stopMotors()));

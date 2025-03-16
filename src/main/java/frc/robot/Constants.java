@@ -130,7 +130,7 @@ public final class Constants {
     HUMAN_PLAYER(40, 21),
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
-    SCORE_L3(215, 1),
+    SCORE_L3(215, 0),
     SCORE_L4(187, 21),
     STOW(20, 0),
     CLIMB(270, 10),
