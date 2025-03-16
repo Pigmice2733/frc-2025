@@ -36,6 +36,7 @@ public class Shooter extends SubsystemBase {
     pivotConfig.encoder.positionConversionFactor(ShooterConfig.PIVOT_CONVERSION);
     pivot.configure(pivotConfig,
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    pivot.getEncoder().setPosition(ShooterConfig.PIVOT_START_ANGLE);
     SparkMaxConfig flywheelConfig = new SparkMaxConfig();
     flywheelConfig.inverted(true).idleMode(IdleMode.kCoast);
     flywheelConfig.closedLoop.p(0.003).d(0.001).velocityFF(0.0006);
@@ -49,7 +50,7 @@ public class Shooter extends SubsystemBase {
 
     pivotController = ShooterConfig.PIVOT_PID;
     pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
-    targetPivotPosition = 0.0;
+    targetPivotPosition = ShooterConfig.PIVOT_START_ANGLE;
     targetFlywheelSpeed = 0.0;
     upperAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_UPPER_ALGAE_LIMIT_CHANNEL);
     lowerAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_LOWER_ALGAE_LIMIT_CHANNEL);

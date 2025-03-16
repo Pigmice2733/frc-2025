@@ -9,7 +9,7 @@ public class CenterAlgae extends SequentialCommandGroup {
   /** Intakes an algae from the ground. */
   public CenterAlgae(Shooter shooter) {
     addCommands(
-        Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_NET_ANGLE)),
+        Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_PROCESSOR_ANGLE)),
         Commands.waitUntil(() -> shooter.pivotAtSetpoint()),
         new CenterAlgaeOnce(shooter).repeatedly()
             .until(() -> shooter.isAlgaeCentered() || shooter.isLowerAlgaeLimitSwitchPressed()).withTimeout(5.0),

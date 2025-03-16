@@ -22,6 +22,7 @@ import frc.robot.Constants.LEDConfig;
 import frc.robot.Constants.OperatorMode;
 import frc.robot.Constants.ShooterConfig;
 import frc.robot.commands.AlgaeAuto;
+import frc.robot.commands.CenterAlgae;
 import frc.robot.commands.CoralAuto;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.DrivePath;
@@ -207,6 +208,7 @@ public class RobotContainer {
         .onFalse(Commands.runOnce(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
     operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger())
         .onTrue(new ShootNet(shooter, operator));
+    operator.rightTrigger().and(() -> mode == OperatorMode.SHOOTER).onTrue(new CenterAlgae(shooter));
 
     // operator.a().whileTrue(pivot.sysIdDynamic(Direction.kForward));
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.k
