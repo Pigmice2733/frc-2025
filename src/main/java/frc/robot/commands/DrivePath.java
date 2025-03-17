@@ -55,7 +55,7 @@ public class DrivePath extends Command {
   @Override
   public void execute() {
     currentPose = drivetrain.getPose();
-    drivetrain.drive(
+    drivetrain.driveField(
         xPID.calculate(currentPose.getX()),
         yPID.calculate(currentPose.getY()),
         rPID.calculate(currentPose.getRotation().getRadians()));
@@ -63,7 +63,7 @@ public class DrivePath extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    drivetrain.drive(0, 0, 0);
+    drivetrain.driveField(0, 0, 0);
   }
 
   @Override

@@ -112,7 +112,8 @@ public class RobotContainer {
         drivetrain,
         controls::getDriveSpeedX,
         controls::getDriveSpeedY,
-        controls::getTurnSpeed));
+        controls::getTurnSpeed,
+        controls::getRobotOrientedMode));
 
     elevator.setDefaultCommand(new ElevatorControl(elevator, controls::getElevatorSpeed));
     pivot.setDefaultCommand(new PivotControl(pivot, controls::getPivotSpeed));
@@ -138,12 +139,10 @@ public class RobotContainer {
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
     driver.povDown().whileTrue(new DriveToTarget(
-        drivetrain, vision, driver, 0, -Units.inchesToMeters(6.5), 0))
-    /*
-     * .onTrue(Commands.runOnce(drivetrain::savePose))
-     * .onFalse(Commands.runOnce(drivetrain::setSavedPose))
-     * .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)))
-     */;
+        drivetrain, vision, driver, Units.inchesToMeters(17), 0, 0))
+        .onTrue(Commands.runOnce(drivetrain::savePose))
+        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+        .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povRight().whileTrue(
         new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0))
         .onTrue(Commands.runOnce(drivetrain::savePose))

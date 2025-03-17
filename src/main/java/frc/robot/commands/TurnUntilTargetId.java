@@ -30,12 +30,12 @@ public class TurnUntilTargetId extends Command {
 
   @Override
   public void execute() {
-    dvt.drive(0, 0, Units.degreesToRadians(speed));
+    dvt.driveField(0, 0, Units.degreesToRadians(speed));
   }
 
   @Override
   public void end(boolean interrupted) {
-    dvt.drive(0, 0, 0);
+    dvt.driveField(0, 0, 0);
   }
 
   @Override

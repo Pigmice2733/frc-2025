@@ -48,13 +48,13 @@ public final class Constants {
     public static final double MAX_TURN_SPEED = 10.0; // rad/s
     public static final double SLOWMODE_FACTOR = 0.1;
 
-    public static final PIDConstants DRIVE_PID = new PIDConstants(4.0, 0, 1.3);
-    public static final double DRIVE_POSITION_TOLERANCE = 0.02; // m
-    public static final double DRIVE_VELOCITY_TOLERANCE = 0.02; // m/s
+    public static final PIDConstants DRIVE_PID = new PIDConstants(3.5, 0, 1.3);
+    public static final double DRIVE_POSITION_TOLERANCE = 0.01; // m
+    public static final double DRIVE_VELOCITY_TOLERANCE = 0.01; // m/s
 
     public static final PIDConstants TURN_PID = new PIDConstants(2.5, 0, 0.0);
     public static final double TURN_POSITION_TOLERANCE = 2; // deg
-    public static final double TURN_VELOCITY_TOLERANCE = 0.01; // deg/s
+    public static final double TURN_VELOCITY_TOLERANCE = 0.1; // deg/s
   }
 
   public static class ElevatorConfig {

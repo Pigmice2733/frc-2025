@@ -5,6 +5,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConfig;
@@ -14,11 +15,11 @@ import frc.robot.subsystems.Vision;
 public class TurnVision extends Command {
   private Drivetrain drivetrain;
   private Vision vision;
-  private double rOffset;
+  private double rOffset, calc;
 
   private PIDController rPID;
   private PIDConstants pidConstants;
-  private int id;
+  private int id, counter;
 
   private Pose2d target, robotPose;
 
@@ -36,6 +37,9 @@ public class TurnVision extends Command {
     this.vision = vision;
 
     this.rOffset = rOffset;
+    counter = 0;
+
+    SmartDashboard.putData("Drivetrain Turn PID", new PIDController(0, 0, 0));
 
     addRequirements(drivetrain, vision);
   }
@@ -44,7 +48,8 @@ public class TurnVision extends Command {
   public void initialize() {
     pidConstants = DrivetrainConfig.TURN_PID;
 
-    rPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
+    rPID = (PIDController) SmartDashboard.getData("Drivetrain Turn PID"); // new PIDController(pidConstants.kP,
+                                                                          // pidConstants.kI, pidConstants.kD);
     rPID.setTolerance(DrivetrainConfig.TURN_POSITION_TOLERANCE, DrivetrainConfig.TURN_VELOCITY_TOLERANCE);
 
     drivetrain.resetPose(new Pose2d());
@@ -56,28 +61,32 @@ public class TurnVision extends Command {
 
   @Override
   public void execute() {
+    counter++;
     robotPose = drivetrain.getPose();
-    double calc = rPID.calculate(robotPose.getRotation().getDegrees());
+    calc = rPID.calculate(robotPose.getRotation().getDegrees());
 
-    if (vision.hasTarget() && vision.getTargetID() == id)
+    if (vision.hasTarget() && vision.getTargetID() == id && counter >= 5) {
       getTargetSetpoint();
+      counter = 0;
+    }
+    drivetrain.driveField(0, 0, Units.degreesToRadians(calc));
 
-    drivetrain.drive(0, 0, Units.degreesToRadians(calc));
-
-    System.out.println("position " + robotPose.getRotation().getDegrees()
-        + " velocity " + calc);
+    // System.out.println("position " + robotPose.getRotation().getDegrees()
+    // + " velocity " + calc);
   }
 
   @Override
   public void end(boolean interrupted) {
-    drivetrain.drive(0, 0, 0);
+    drivetrain.driveField(0, 0, 0);
     // drivetrain.getSwerve().lockPose();
     System.out.println("turn finished");
   }
 
   @Override
   public boolean isFinished() {
-    return rPID.atSetpoint();
+    return rPID.atSetpoint()
+        || (drivetrain.getSwerve().getFieldVelocity().omegaRadiansPerSecond < DrivetrainConfig.TURN_VELOCITY_TOLERANCE
+            && vision.getTargetID() != id);
   }
 
   private void getTargetSetpoint() {

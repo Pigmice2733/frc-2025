@@ -28,7 +28,7 @@ public class DriveToTarget extends SequentialCommandGroup {
             ctlr.setRumble(RumbleType.kBothRumble, 0.5);
         }),
         Commands.runOnce(() -> initialPose = drivetrain.getPose()),
-        new TurnVision(drivetrain, vision, rOffset),
+        new TurnVision(drivetrain, vision, rOffset).withTimeout(2),
         new DriveVision(drivetrain, vision, xOffset, yOffset),
         Commands.runOnce(() -> drivetrain.resetPose(initialPose)));
     addRequirements(drivetrain, vision);

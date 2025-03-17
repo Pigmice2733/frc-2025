@@ -98,7 +98,7 @@ public class Drivetrain extends SubsystemBase {
     },
         (pose) -> swerve.resetOdometry(pose),
         swerve::getRobotVelocity,
-        (speed) -> drive(speed.vxMetersPerSecond, speed.vyMetersPerSecond, speed.omegaRadiansPerSecond),
+        (speed) -> driveField(speed.vxMetersPerSecond, speed.vyMetersPerSecond, speed.omegaRadiansPerSecond),
         new PPHolonomicDriveController(DrivetrainConfig.DRIVE_PID, DrivetrainConfig.TURN_PID),
         config,
         () -> (DriverStation.getAlliance().get() == Alliance.Red),
@@ -173,10 +173,18 @@ public class Drivetrain extends SubsystemBase {
    * Positive X is away from the alliance wall; positive Y is left from the
    * driver's perspective.
    */
-  public void drive(double driveSpeedX, double driveSpeedY, double turnSpeed) {
+  public void driveField(double driveSpeedX, double driveSpeedY, double turnSpeed) {
     // System.out.println("Driving. x speed " + driveSpeedX + ", y speed " +
     // driveSpeedY + ", turn speed " + turnSpeed);
     swerve.driveFieldOriented(new ChassisSpeeds(driveSpeedX, driveSpeedY, turnSpeed));
+  }
+
+  /**
+   * Drives the robot in robot-oriented mode by creating a ChassisSpeeds object.
+   * Positive X is robot's forward; positive Y is robot's left.
+   */
+  public void driveRobot(double driveSpeedX, double driveSpeedY, double turnSpeed) {
+    swerve.drive(new ChassisSpeeds(driveSpeedX, driveSpeedY, turnSpeed));
   }
 
   public Command reset() {
@@ -189,11 +197,11 @@ public class Drivetrain extends SubsystemBase {
    * driver's perspective.
    */
   public Command driveCommand(double driveSpeedX, double driveSpeedY, double turnSpeed) {
-    return Commands.run(() -> drive(driveSpeedX, driveSpeedY, turnSpeed), this);
+    return Commands.run(() -> driveField(driveSpeedX, driveSpeedY, turnSpeed), this);
   }
 
   public Command stop() {
-    return Commands.runOnce(() -> drive(0, 0, 0), this);
+    return Commands.runOnce(() -> driveField(0, 0, 0), this);
   }
 
   public PIDConstants getPidConstants() {

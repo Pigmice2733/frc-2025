@@ -72,12 +72,12 @@ public class DriveVision extends Command {
       counter = 0;
     }
 
-    drivetrain.drive(xPID.calculate(robotPose.getX()), yPID.calculate(robotPose.getY()), 0);
+    drivetrain.driveField(xPID.calculate(robotPose.getX()), yPID.calculate(robotPose.getY()), 0);
   }
 
   @Override
   public void end(boolean interrupted) {
-    drivetrain.drive(0, 0, 0);
+    drivetrain.driveField(0, 0, 0);
     drivetrain.getSwerve().lockPose();
     System.out.println("drive finished");
   }
@@ -85,8 +85,9 @@ public class DriveVision extends Command {
   @Override
   public boolean isFinished() {
     ChassisSpeeds speed = drivetrain.getSwerve().getFieldVelocity();
-    return (xPID.atSetpoint() && yPID.atSetpoint()) || (speed.vxMetersPerSecond < 0.003 &&
-        speed.vyMetersPerSecond < 0.003 && speed.omegaRadiansPerSecond < 0.01 && !vision.hasTarget());
+    return (xPID.atSetpoint() && yPID.atSetpoint())
+        || (speed.vxMetersPerSecond < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE &&
+            speed.vyMetersPerSecond < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE && !vision.hasTarget());
   }
 
   private void getTargetSetpoint() {
@@ -94,8 +95,11 @@ public class DriveVision extends Command {
     target = vision.getTargetPose();
 
     /* The PID controllers use the robot's pose, not the target pose. */
-    xPID.setSetpoint(robotPose.getX() + (0.5 * target.getX()) + xOffset);
+    xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
     yPID.setSetpoint(robotPose.getY() - target.getY() + yOffset);
+
+    System.out.println("robot position: " + robotPose.getX() + " target offset: " + target.getX() + " setpoint: "
+        + xPID.getSetpoint() + " error: " + (xPID.getSetpoint() - target.getX() - robotPose.getX()));
 
     Constants.sendNumberToElastic("Drivetrain X Setpoint", xPID.getSetpoint(), 3);
     Constants.sendNumberToElastic("Drivetrain Y Setpoint", yPID.getSetpoint(), 3);
