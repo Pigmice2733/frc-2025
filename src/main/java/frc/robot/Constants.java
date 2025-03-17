@@ -52,7 +52,7 @@ public final class Constants {
     public static final double DRIVE_POSITION_TOLERANCE = 0.01; // m
     public static final double DRIVE_VELOCITY_TOLERANCE = 0.01; // m/s
 
-    public static final PIDConstants TURN_PID = new PIDConstants(2.5, 0, 0.0);
+    public static final PIDConstants TURN_PID = new PIDConstants(3.5, 0, 0.1);
     public static final double TURN_POSITION_TOLERANCE = 2; // deg
     public static final double TURN_VELOCITY_TOLERANCE = 0.1; // deg/s
   }

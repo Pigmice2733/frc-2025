@@ -39,7 +39,7 @@ public class TurnVision extends Command {
     this.rOffset = rOffset;
     counter = 0;
 
-    SmartDashboard.putData("Drivetrain Turn PID", new PIDController(0, 0, 0));
+    // SmartDashboard.putData("Drivetrain Turn PID", new PIDController(0, 0, 0));
 
     addRequirements(drivetrain, vision);
   }
@@ -48,8 +48,8 @@ public class TurnVision extends Command {
   public void initialize() {
     pidConstants = DrivetrainConfig.TURN_PID;
 
-    rPID = (PIDController) SmartDashboard.getData("Drivetrain Turn PID"); // new PIDController(pidConstants.kP,
-                                                                          // pidConstants.kI, pidConstants.kD);
+    // rPID = (PIDController) SmartDashboard.getData("Drivetrain Turn PID");
+    rPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
     rPID.setTolerance(DrivetrainConfig.TURN_POSITION_TOLERANCE, DrivetrainConfig.TURN_VELOCITY_TOLERANCE);
 
     drivetrain.resetPose(new Pose2d());
