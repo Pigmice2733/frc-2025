@@ -140,18 +140,18 @@ public class RobotContainer {
     driver.y().onTrue(controls.toggleSlowmode());
     driver.povDown().whileTrue(new DriveToTarget(
         drivetrain, vision, driver, Units.inchesToMeters(17), 0, 0))
-        .onTrue(Commands.runOnce(drivetrain::savePose))
-        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+        // .onTrue(Commands.runOnce(drivetrain::savePose))
+        // .onFalse(Commands.runOnce(drivetrain::setSavedPose))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povRight().whileTrue(
-        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), Units.inchesToMeters(6.5), 0))
-        .onTrue(Commands.runOnce(drivetrain::savePose))
-        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), Units.inchesToMeters(7), 0))
+        // .onTrue(Commands.runOnce(drivetrain::savePose))
+        // .onFalse(Commands.runOnce(drivetrain::setSavedPose))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povLeft().whileTrue(
-        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), -Units.inchesToMeters(6.5), 0))
-        .onTrue(Commands.runOnce(drivetrain::savePose))
-        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), -Units.inchesToMeters(7), 0))
+        // .onTrue(Commands.runOnce(drivetrain::savePose))
+        // .onFalse(Commands.runOnce(drivetrain::setSavedPose))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
 
     // OPERATOR

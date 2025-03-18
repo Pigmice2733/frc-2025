@@ -5,6 +5,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConfig;
@@ -14,13 +15,15 @@ import frc.robot.subsystems.Vision;
 public class DriveVision extends Command {
   private Drivetrain drivetrain;
   private Vision vision;
-  private double xOffset, yOffset;
+  private double xOffset, yOffset, kP;
+  private double xSetpoint, xError, ySetpoint, yError;
 
-  private PIDController xPID, yPID;
-  private PIDConstants pidConstants;
+  // private PIDController xPID, yPID, testPID;
+  // private PIDConstants pidConstants;
   private int id, counter;
 
   private Pose2d target, robotPose;
+  private ChassisSpeeds speed;
 
   /**
    * A command that drives the robot to the given position with respect to the
@@ -39,20 +42,31 @@ public class DriveVision extends Command {
     this.xOffset = xOffset;
     this.yOffset = yOffset;
 
+    xSetpoint = ySetpoint = xError = yError = 0;
     counter = 0;
+    speed = new ChassisSpeeds();
+
+    Constants.sendNumberToElastic("Drive kP", DrivetrainConfig.DRIVE_P, 2);
 
     addRequirements(drivetrain, vision);
   }
 
   @Override
   public void initialize() {
-    pidConstants = DrivetrainConfig.DRIVE_PID;
+    // pidConstants = DrivetrainConfig.DRIVE_PID;
 
-    xPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
-    xPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE, DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
+    // testPID = (PIDController) SmartDashboard.getData("Drivetrain Drive PID");
+    // xPID = new PIDController(testPID.getP(), testPID.getI(), testPID.getD());
+    // xPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
+    // xPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE,
+    // DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
 
-    yPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
-    yPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE, DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
+    // yPID = new PIDController(testPID.getP(), testPID.getI(), testPID.getD());
+    // yPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
+    // yPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE,
+    // DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
+
+    kP = SmartDashboard.getNumber("Drive kP", 0);
 
     drivetrain.resetPose(new Pose2d());
     id = vision.getTargetID();
@@ -66,13 +80,18 @@ public class DriveVision extends Command {
     counter++;
 
     robotPose = drivetrain.getPose();
+    speed = drivetrain.getSwerve().getFieldVelocity();
+    System.out.println(speed.toString());
 
     if (vision.hasTarget() && vision.getTargetID() == id && counter >= 5) {
       getTargetSetpoint();
       counter = 0;
     }
 
-    drivetrain.driveField(xPID.calculate(robotPose.getX()), yPID.calculate(robotPose.getY()), 0);
+    xError = xSetpoint - robotPose.getX();
+    yError = ySetpoint - robotPose.getY();
+
+    drivetrain.driveField(xError * kP, yError * kP, 0);
   }
 
   @Override
@@ -84,24 +103,24 @@ public class DriveVision extends Command {
 
   @Override
   public boolean isFinished() {
-    ChassisSpeeds speed = drivetrain.getSwerve().getFieldVelocity();
-    return (xPID.atSetpoint() && yPID.atSetpoint())
-        || (speed.vxMetersPerSecond < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE &&
-            speed.vyMetersPerSecond < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE && !vision.hasTarget());
+    return Math.abs(speed.vxMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE &&
+        Math.abs(speed.vyMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE
+        && ((Math.abs(xError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE
+            && Math.abs(yError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE)
+            || !vision.hasTarget());
   }
 
   private void getTargetSetpoint() {
-    robotPose = drivetrain.getPose();
+    drivetrain.resetPose(new Pose2d());
     target = vision.getTargetPose();
 
-    /* The PID controllers use the robot's pose, not the target pose. */
-    xPID.setSetpoint(robotPose.getX() + target.getX() + xOffset);
-    yPID.setSetpoint(robotPose.getY() - target.getY() + yOffset);
+    xSetpoint = target.getX() + xOffset;
+    ySetpoint = -1 * target.getY() + yOffset;
 
-    System.out.println("robot position: " + robotPose.getX() + " target offset: " + target.getX() + " setpoint: "
-        + xPID.getSetpoint() + " error: " + (xPID.getSetpoint() - target.getX() - robotPose.getX()));
+    // System.out.println("target offset: " + target.getX() + " setpoint: "
+    // + xPID.getSetpoint() + " error: " + (xPID.getSetpoint() - target.getX()));
 
-    Constants.sendNumberToElastic("Drivetrain X Setpoint", xPID.getSetpoint(), 3);
-    Constants.sendNumberToElastic("Drivetrain Y Setpoint", yPID.getSetpoint(), 3);
+    Constants.sendNumberToElastic("Drivetrain X Setpoint", xSetpoint, 3);
+    Constants.sendNumberToElastic("Drivetrain Y Setpoint", ySetpoint, 3);
   }
 }

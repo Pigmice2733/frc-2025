@@ -118,8 +118,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   private void updateEntries() {
-    Constants.sendNumberToElastic("Robot X", robotPose.getX(), 2);
-    Constants.sendNumberToElastic("Robot Y", robotPose.getY(), 2);
+    Constants.sendNumberToElastic("Robot X", robotPose.getX(), 3);
+    Constants.sendNumberToElastic("Robot Y", robotPose.getY(), 3);
     Constants.sendNumberToElastic("Robot Angle", robotPose.getRotation().getDegrees(), 1);
 
     Constants.sendNumberToElastic("Front Left Encoder Output", modules[0].getAbsolutePosition(), 1);

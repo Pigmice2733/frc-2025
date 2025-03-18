@@ -15,10 +15,10 @@ import frc.robot.subsystems.Vision;
 public class TurnVision extends Command {
   private Drivetrain drivetrain;
   private Vision vision;
-  private double rOffset, calc;
+  private double rOffset, setpoint, error, kP;
 
-  private PIDController rPID;
-  private PIDConstants pidConstants;
+  // private PIDController rPID;
+  // private PIDConstants pidConstants;
   private int id, counter;
 
   private Pose2d target, robotPose;
@@ -37,24 +37,29 @@ public class TurnVision extends Command {
     this.vision = vision;
 
     this.rOffset = rOffset;
+
+    setpoint = error = 0;
     counter = 0;
 
-    // SmartDashboard.putData("Drivetrain Turn PID", new PIDController(0, 0, 0));
+    Constants.sendNumberToElastic("Turn kP", 3.5, 2);
 
     addRequirements(drivetrain, vision);
   }
 
   @Override
   public void initialize() {
-    pidConstants = DrivetrainConfig.TURN_PID;
+    // pidConstants = DrivetrainConfig.TURN_PID;
 
     // rPID = (PIDController) SmartDashboard.getData("Drivetrain Turn PID");
-    rPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
-    rPID.setTolerance(DrivetrainConfig.TURN_POSITION_TOLERANCE, DrivetrainConfig.TURN_VELOCITY_TOLERANCE);
+    // rPID = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
+    // rPID.setTolerance(DrivetrainConfig.TURN_POSITION_TOLERANCE,
+    // DrivetrainConfig.TURN_VELOCITY_TOLERANCE);
 
     drivetrain.resetPose(new Pose2d());
     id = vision.getTargetID();
     getTargetSetpoint();
+
+    kP = SmartDashboard.getNumber("Turn kP", 0);
 
     System.out.println("turn started");
   }
@@ -63,13 +68,15 @@ public class TurnVision extends Command {
   public void execute() {
     counter++;
     robotPose = drivetrain.getPose();
-    calc = rPID.calculate(robotPose.getRotation().getDegrees());
 
     if (vision.hasTarget() && vision.getTargetID() == id && counter >= 5) {
       getTargetSetpoint();
       counter = 0;
     }
-    drivetrain.driveField(0, 0, Units.degreesToRadians(calc));
+
+    error = setpoint - robotPose.getRotation().getDegrees();
+
+    drivetrain.driveField(0, 0, Units.degreesToRadians(error) * kP);
 
     // System.out.println("position " + robotPose.getRotation().getDegrees()
     // + " velocity " + calc);
@@ -84,18 +91,19 @@ public class TurnVision extends Command {
 
   @Override
   public boolean isFinished() {
-    return rPID.atSetpoint()
-        || (drivetrain.getSwerve().getFieldVelocity().omegaRadiansPerSecond < DrivetrainConfig.TURN_VELOCITY_TOLERANCE
-            && vision.getTargetID() != id);
+    return Math
+        .abs(drivetrain.getSwerve().getFieldVelocity().omegaRadiansPerSecond) < DrivetrainConfig.TURN_VELOCITY_TOLERANCE
+        &&
+        (Math.abs(error) < DrivetrainConfig.TURN_POSITION_TOLERANCE || vision.getTargetID() != id);
   }
 
   private void getTargetSetpoint() {
-    robotPose = drivetrain.getPose();
+    drivetrain.resetPose(new Pose2d());
     target = vision.getTargetPose();
 
     /* The PID controllers use the robot's pose, not the target pose. */
-    rPID.setSetpoint(robotPose.getRotation().getDegrees() + target.getRotation().getDegrees() + rOffset);
+    setpoint = target.getRotation().getDegrees() + rOffset;
 
-    Constants.sendNumberToElastic("Turn PID Setpoint", rPID.getSetpoint(), 3);
+    Constants.sendNumberToElastic("Turn PID Setpoint", setpoint, 3);
   }
 }
