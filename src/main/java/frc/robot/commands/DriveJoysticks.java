@@ -25,7 +25,7 @@ public class DriveJoysticks extends Command {
   @Override
   public void execute() {
     if (robotOriented.getAsBoolean()) {
-      dvt.driveRobot(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
+      dvt.driveRobot(-x.getAsDouble(), -y.getAsDouble(), r.getAsDouble());
     } else {
       dvt.driveField(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
     }

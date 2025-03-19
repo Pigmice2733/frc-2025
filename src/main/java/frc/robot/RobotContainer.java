@@ -24,10 +24,9 @@ import frc.robot.Constants.ShooterConfig;
 import frc.robot.commands.AlgaeAuto;
 import frc.robot.commands.CenterAlgae;
 import frc.robot.commands.CoralAuto;
+import frc.robot.commands.DriveAndTurn;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.DrivePath;
-import frc.robot.commands.DriveToTarget;
-import frc.robot.commands.DriveToTargetId;
 import frc.robot.commands.ElevatorControl;
 import frc.robot.commands.IntakeAlgae;
 import frc.robot.commands.PivotControl;
@@ -67,6 +66,7 @@ public class RobotContainer {
 
   private OperatorMode mode;
   public static ArmPosition elevPos;
+  private boolean robotOriented, slowSave;
 
   private SendableChooser<Command> autoChooser;
 
@@ -87,6 +87,9 @@ public class RobotContainer {
     underglow = new Underglow();
     mode = OperatorMode.NONE;
     elevPos = ArmPosition.STOW;
+
+    robotOriented = false;
+    slowSave = false;
 
     autoChooser = new SendableChooser<Command>();
 
@@ -113,7 +116,7 @@ public class RobotContainer {
         controls::getDriveSpeedX,
         controls::getDriveSpeedY,
         controls::getTurnSpeed,
-        controls::getRobotOrientedMode));
+        () -> robotOriented));
 
     elevator.setDefaultCommand(new ElevatorControl(elevator, controls::getElevatorSpeed));
     pivot.setDefaultCommand(new PivotControl(pivot, controls::getPivotSpeed));
@@ -138,20 +141,22 @@ public class RobotContainer {
     // DRIVER
     driver.a().onTrue(drivetrain.reset());
     driver.y().onTrue(controls.toggleSlowmode());
-    driver.povDown().whileTrue(new DriveToTarget(
-        drivetrain, vision, driver, Units.inchesToMeters(17), 0, 0))
-        // .onTrue(Commands.runOnce(drivetrain::savePose))
-        // .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+    driver.rightBumper().onTrue(new InstantCommand(() -> {
+      slowSave = controls.getSlowmode();
+      controls.setSlowmode(true);
+      robotOriented = true;
+    })).onFalse(new InstantCommand(() -> {
+      controls.setSlowmode(slowSave);
+      robotOriented = false;
+    }));
+    driver.povDown()
+        .whileTrue(new DriveAndTurn(drivetrain, vision, driver, Units.inchesToMeters(17), 0, 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
-    driver.povRight().whileTrue(
-        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), Units.inchesToMeters(7), 0))
-        // .onTrue(Commands.runOnce(drivetrain::savePose))
-        // .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+    driver.povRight()
+        .whileTrue(new DriveAndTurn(drivetrain, vision, driver, Units.inchesToMeters(17), Units.inchesToMeters(7), 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
-    driver.povLeft().whileTrue(
-        new DriveToTarget(drivetrain, vision, driver, Units.inchesToMeters(17), -Units.inchesToMeters(7), 0))
-        // .onTrue(Commands.runOnce(drivetrain::savePose))
-        // .onFalse(Commands.runOnce(drivetrain::setSavedPose))
+    driver.povLeft()
+        .whileTrue(new DriveAndTurn(drivetrain, vision, driver, Units.inchesToMeters(17), -Units.inchesToMeters(7), 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
 
     // OPERATOR
@@ -221,11 +226,12 @@ public class RobotContainer {
   private void buildAutoChooser() {
     autoChooser.addOption("None", Commands.none());
     autoChooser.addOption("Drive Only", new DrivePath(drivetrain, new Transform2d(-2, 0, new Rotation2d())));
-    autoChooser.addOption("Score L3", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
+    autoChooser.addOption("Score L4", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
     autoChooser.addOption("Remove L2 Algae",
         new AlgaeAuto(drivetrain, vision, elevator, pivot, grabber, shooter, driver));
-    autoChooser.addOption("Spin until facing Reef then move to it",
-        new DriveToTargetId(Constants.VisionTargetIds.REEF, drivetrain, vision, driver, 0, 0, 0));
+    // autoChooser.addOption("Spin until facing Reef then move to it",
+    // new DriveToTargetId(Constants.VisionTargetIds.REEF, drivetrain, vision,
+    // driver, 0, 0, 0));
 
     SmartDashboard.putData("Autonomous Command", autoChooser);
   }

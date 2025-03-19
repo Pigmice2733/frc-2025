@@ -54,6 +54,7 @@ public final class Constants {
     public static final double DRIVE_VELOCITY_TOLERANCE = 0.01; // m/s
 
     public static final PIDConstants TURN_PID = new PIDConstants(3.5, 0, 0.1);
+    public static final double TURN_P = 3.5;
     public static final double TURN_POSITION_TOLERANCE = 1; // deg
     public static final double TURN_VELOCITY_TOLERANCE = 0.5; // deg/s
   }
@@ -114,7 +115,7 @@ public final class Constants {
   }
 
   public static class LEDConfig {
-    public static final int LED_PORT = 0;
+    public static final int LED_PORT = 9;
     public static final int LED_LEN = 91;
 
     public static final Color OFF = new Color(0, 0, 0);
@@ -132,7 +133,7 @@ public final class Constants {
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
     SCORE_L3(215, 0),
-    SCORE_L4(187, 21),
+    SCORE_L4(192, 20),
     STOW(20, 0),
     CLIMB(270, 10),
     ALGAE_L3(240, 17),
