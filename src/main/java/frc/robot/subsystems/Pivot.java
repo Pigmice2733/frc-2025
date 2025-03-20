@@ -111,11 +111,9 @@ public class Pivot extends SubsystemBase {
         + ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
 
     if (getAngle() <= ArmConfig.PIVOT_LOWER_LIMIT && motorSpeed < 0) {
-      System.out.println("PIVOT LOWER STOP, Angle = " + getAngle());
       return ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
     }
     if (getAngle() >= ArmConfig.PIVOT_UPPER_LIMIT && motorSpeed > 0) {
-      System.out.println("PIVOT UPPER STOP, Angle = " + getAngle());
       return ArmConfig.PIVOT_KG * Math.sin(Units.degreesToRadians(getAngle()));
     }
 

@@ -38,7 +38,9 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
-    CameraServer.startAutomaticCapture("Grabber Camera 0", 0).setVideoMode(PixelFormat.kMJPEG, 360, 240, 30);
+    CameraServer.startAutomaticCapture("Grabber Camera 0", 0).setVideoMode(PixelFormat.kMJPEG, 360, 240, 10);
+    // CameraServer.startAutomaticCapture("Grabber Camera 1",
+    // 1).setVideoMode(PixelFormat.kMJPEG, 360, 240, 10);
     // CameraServer.startAutomaticCapture("Grabber Camera 1",
     // 1).setVideoMode(PixelFormat.kMJPEG, 360, 240, 30);
   }
