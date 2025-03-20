@@ -227,11 +227,10 @@ public class RobotContainer {
     autoChooser.addOption("None", Commands.none());
     autoChooser.addOption("Drive Only", new DrivePath(drivetrain, new Transform2d(-2, 0, new Rotation2d())));
     autoChooser.addOption("Score L4", new CoralAuto(drivetrain, vision, elevator, pivot, grabber, driver));
-    autoChooser.addOption("Remove L2 Algae",
-        new AlgaeAuto(drivetrain, vision, elevator, pivot, grabber, shooter, driver));
-    // autoChooser.addOption("Spin until facing Reef then move to it",
-    // new DriveToTargetId(Constants.VisionTargetIds.REEF, drivetrain, vision,
-    // driver, 0, 0, 0));
+    autoChooser.addOption("Score & L2 Algae",
+        new AlgaeAuto(drivetrain, vision, elevator, pivot, grabber, shooter, driver, false));
+    autoChooser.addOption("Score & L3 Algae",
+        new AlgaeAuto(drivetrain, vision, elevator, pivot, grabber, shooter, driver, true));
 
     SmartDashboard.putData("Autonomous Command", autoChooser);
   }

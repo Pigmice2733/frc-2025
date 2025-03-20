@@ -119,7 +119,7 @@ public final class Constants {
     public static final int LED_LEN = 91;
 
     public static final Color OFF = new Color(0, 0, 0);
-    public static final Color PURPLE = new Color(180, 0, 255);
+    public static final Color PURPLE = new Color(100, 0, 150);
     public static final Color RED = new Color(255, 0, 0);
     public static final Color BLUE = new Color(0, 0, 255);
   }
@@ -133,7 +133,7 @@ public final class Constants {
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
     SCORE_L3(215, 0),
-    SCORE_L4(192, 20),
+    SCORE_L4(192, 21),
     STOW(20, 0),
     CLIMB(270, 10),
     ALGAE_L3(240, 17),
