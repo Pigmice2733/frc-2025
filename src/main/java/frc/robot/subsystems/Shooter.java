@@ -56,9 +56,9 @@ public class Shooter extends SubsystemBase {
     lowerAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_LOWER_ALGAE_LIMIT_CHANNEL);
 
     // Constants.sendNumberToElastic("Shooter Flywheel Speed", 0, 1);
-    // Constants.sendNumberToElastic("Flywheels P", 0, 0);
-    // Constants.sendNumberToElastic("Flywheels I", 0, 0);
-    // Constants.sendNumberToElastic("Flywheels D", 0, 0);
+    Constants.sendNumberToElastic("Flywheels P", pivotController.getP(), 0);
+    Constants.sendNumberToElastic("Flywheels I", pivotController.getI(), 0);
+    Constants.sendNumberToElastic("Flywheels D", pivotController.getD(), 0);
   }
 
   @Override

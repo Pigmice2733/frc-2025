@@ -151,6 +151,8 @@ public class RobotContainer {
     }));
     driver.povDown()
         .whileTrue(new DriveAndTurn(drivetrain, vision, driver, Units.inchesToMeters(17), 0, 0))
+        .onTrue(Commands.runOnce(drivetrain::savePose))
+        .onFalse(Commands.runOnce(drivetrain::setSavedPose))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povRight()
         .whileTrue(new DriveAndTurn(drivetrain, vision, driver, Units.inchesToMeters(17), Units.inchesToMeters(7), 0))
