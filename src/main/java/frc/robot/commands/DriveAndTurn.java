@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -20,6 +21,8 @@ public class DriveAndTurn extends Command {
       xSetpoint, ySetpoint, rSetpoint,
       xError, yError, rError,
       driveP, turnP;
+  private double initialTargetAngle;
+  private Pose2d initialRobotPose;
   // private PIDController xPID, yPID, testPID;
   // private PIDConstants pidConstants;
   private int id, counter;
@@ -53,6 +56,8 @@ public class DriveAndTurn extends Command {
     counter = 0;
     speed = new ChassisSpeeds();
 
+    initialTargetAngle = vision.getTargetPose().getRotation().getDegrees();
+    initialRobotPose = drivetrain.getPose();
     addRequirements(drivetrain, vision);
   }
 
@@ -100,6 +105,8 @@ public class DriveAndTurn extends Command {
     xError = xSetpoint - robotPose.getX();
     yError = ySetpoint - robotPose.getY();
     rError = rSetpoint - robotPose.getRotation().getDegrees();
+    Constants.sendNumberToElastic("Drive And Turn Initial Angle", initialTargetAngle, 3);
+    Constants.sendNumberToElastic("Drive And Turn rError", rError, 3);
 
     drivetrain.driveField(xError * driveP, yError * driveP, Units.degreesToRadians(rError) * turnP);
   }
@@ -109,7 +116,17 @@ public class DriveAndTurn extends Command {
     drivetrain.driveField(0, 0, 0);
     drivetrain.getSwerve().lockPose();
     controller.setRumble(RumbleType.kBothRumble, 0);
+    initialRobotPose.rotateBy(new Rotation2d(getAngleDelta()));
+    drivetrain.resetPose(initialRobotPose);
     System.out.println("joint finished");
+  }
+
+  public double getInitialTargetAngle() {
+    return initialTargetAngle;
+  }
+
+  public double getAngleDelta() {
+    return initialTargetAngle - rError;
   }
 
   @Override
