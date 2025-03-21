@@ -260,18 +260,6 @@
               "true_icon": "None",
               "false_icon": "None"
             }
-          },
-          {
-            "title": "Drivetrain Turn PID",
-            "x": 1024.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "PIDController",
-            "properties": {
-              "topic": "/SmartDashboard/Drivetrain Turn PID",
-              "period": 0.06
-            }
           }
         ]
       }
@@ -780,19 +768,6 @@
             }
           },
           {
-            "title": "Grabber Camera",
-            "x": 768.0,
-            "y": 0.0,
-            "width": 512.0,
-            "height": 512.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/Grabber Camera",
-              "period": 0.06,
-              "rotation_turns": 0
-            }
-          },
-          {
             "title": "limelight",
             "x": 256.0,
             "y": 0.0,
@@ -801,7 +776,20 @@
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight",
-              "period": 0.06,
+              "period": 0.05,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "Grabber Camera 0",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 512.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/Grabber Camera 0",
+              "period": 0.05,
               "rotation_turns": 0
             }
           }
