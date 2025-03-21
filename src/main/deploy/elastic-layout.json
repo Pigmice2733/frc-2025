@@ -260,6 +260,34 @@
               "true_icon": "None",
               "false_icon": "None"
             }
+          },
+          {
+            "title": "Drive And Turn Initial Angle",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Drive And Turn Initial Angle",
+              "period": 0.05,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Drive And Turn rError",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Drive And Turn rError",
+              "period": 0.05,
+              "data_type": "double",
+              "show_submit_button": false
+            }
           }
         ]
       }
@@ -469,26 +497,12 @@
             "x": 768.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 512.0,
+            "height": 640.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
-              {
-                "title": "Shooter Flywheel Target Speed",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Shooter Flywheel Target Speed",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
               {
                 "title": "Shooter Indexer Speed",
                 "x": 0.0,
@@ -554,6 +568,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Shooter Pivot Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Shooter Flywheel Target Speed",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Shooter Flywheel Target Speed",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -791,6 +819,19 @@
               "topic": "/CameraPublisher/Grabber Camera 0",
               "period": 0.05,
               "rotation_turns": 0
+            }
+          },
+          {
+            "title": "Autonomous Command",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Autonomous Command",
+              "period": 0.05,
+              "sort_options": false
             }
           }
         ]

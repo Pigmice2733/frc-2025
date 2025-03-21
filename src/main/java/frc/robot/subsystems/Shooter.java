@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -59,6 +60,10 @@ public class Shooter extends SubsystemBase {
     Constants.sendNumberToElastic("Flywheels P", pivotController.getP(), 0);
     Constants.sendNumberToElastic("Flywheels I", pivotController.getI(), 0);
     Constants.sendNumberToElastic("Flywheels D", pivotController.getD(), 0);
+
+    Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
+    Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
+
   }
 
   @Override
@@ -75,19 +80,18 @@ public class Shooter extends SubsystemBase {
   private void updateEntries() {
     Constants.sendNumberToElastic("Shooter Pivot Speed", pivot.get(), 2);
     Constants.sendNumberToElastic("Shooter Pivot Position", pivot.getEncoder().getPosition(), 2);
-    Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
+
     Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheel.getEncoder().getVelocity(), 2);
     Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheel.getEncoder().getVelocity(), 2);
-    Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
     Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
 
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
     Constants.sendBooleanToElastic("Shooter Upper Limit Switch", isUpperAlgaeLimitSwitchPressed());
     Constants.sendBooleanToElastic("Shooter Lower Limit Switch", isLowerAlgaeLimitSwitchPressed());
     Constants.sendBooleanToElastic("Shooter Flywheels At Speed", flywheelsAtSpeed());
+    Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
+    Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
 
-    // setTargetFlywheelSpeed(SmartDashboard.getNumber("Shooter Flywheel Speed",
-    // 0));
     // flywheelController.setP(SmartDashboard.getNumber("Flywheels P", 0));
     // flywheelController.setI(SmartDashboard.getNumber("Flywheels I", 0));
     // flywheelController.setD(SmartDashboard.getNumber("Flywheels D", 0));

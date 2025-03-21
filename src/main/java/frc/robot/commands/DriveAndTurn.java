@@ -107,6 +107,7 @@ public class DriveAndTurn extends Command {
     rError = rSetpoint - robotPose.getRotation().getDegrees();
     Constants.sendNumberToElastic("Drive And Turn Initial Angle", initialTargetAngle, 3);
     Constants.sendNumberToElastic("Drive And Turn rError", rError, 3);
+    Constants.sendNumberToElastic("Drive And Turn angleDelta", getAngleDelta(), 3);
 
     drivetrain.driveField(xError * driveP, yError * driveP, Units.degreesToRadians(rError) * turnP);
   }
@@ -116,8 +117,8 @@ public class DriveAndTurn extends Command {
     drivetrain.driveField(0, 0, 0);
     drivetrain.getSwerve().lockPose();
     controller.setRumble(RumbleType.kBothRumble, 0);
-    initialRobotPose.rotateBy(new Rotation2d(getAngleDelta()));
-    drivetrain.resetPose(initialRobotPose);
+    Pose2d rotatedPose = initialRobotPose.rotateBy(new Rotation2d(initialTargetAngle));
+    drivetrain.resetPose(rotatedPose);
     System.out.println("joint finished");
   }
 
