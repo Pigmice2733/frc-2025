@@ -31,12 +31,7 @@ public class Grabber extends SubsystemBase {
   @Override
   public void periodic() {
     if (tickMode) {
-      ticks++;
-      if (ticks >= 10) {
-        toggleMotor();
-        ticks = 0;
-        tickModeRunning = !tickModeRunning;
-      }
+      toggleMotor();
     }
 
     updateEntries();
@@ -53,12 +48,13 @@ public class Grabber extends SubsystemBase {
 
   public void setSpeed(double speed, boolean tickMode) {
     this.tickMode = tickMode;
+    this.tickModeRunning = tickMode;
     motor.set(speed);
   }
 
   private void toggleMotor() {
     if (tickModeRunning && !hasCoral()) {
-      setSpeed(0.2, true);
+      setSpeed(0.25, true);
     } else {
       setSpeed(0, true);
     }

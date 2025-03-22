@@ -155,11 +155,11 @@ public class RobotContainer {
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povRight()
         .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(13),
-            Units.inchesToMeters(7), 0))
+            Units.inchesToMeters(8), 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povLeft()
         .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(13),
-            -Units.inchesToMeters(7), 0))
+            -Units.inchesToMeters(4), 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
 
     // OPERATOR

@@ -731,20 +731,6 @@
             }
           },
           {
-            "title": "Shooter Left Flywheel Speed",
-            "x": 1280.0,
-            "y": 384.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Shooter Left Flywheel Speed",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Shooter Upper Limit Switch",
             "x": 1280.0,
             "y": 128.0,
@@ -800,7 +786,7 @@
             "x": 256.0,
             "y": 0.0,
             "width": 512.0,
-            "height": 512.0,
+            "height": 384.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight",
@@ -818,48 +804,26 @@
             "properties": {
               "topic": "/CameraPublisher/Grabber Camera 0",
               "period": 0.05,
-              "rotation_turns": 0
+              "rotation_turns": 0,
+              "compression": 47,
+              "fps": 20,
+              "resolution": [
+                320.0,
+                240.0
+              ]
             }
           },
           {
             "title": "Autonomous Command",
-            "x": 512.0,
-            "y": 512.0,
-            "width": 384.0,
+            "x": 256.0,
+            "y": 384.0,
+            "width": 512.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/Autonomous Command",
               "period": 0.05,
               "sort_options": false
-            }
-          },
-          {
-            "title": "Pivot Angle",
-            "x": 1152.0,
-            "y": 512.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Pivot Angle",
-              "period": 0.05,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Pivot Setpoint",
-            "x": 1280.0,
-            "y": 512.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Pivot Setpoint",
-              "period": 0.05,
-              "data_type": "double",
-              "show_submit_button": false
             }
           }
         ]
