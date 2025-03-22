@@ -734,7 +734,7 @@
             "title": "Shooter Left Flywheel Speed",
             "x": 1280.0,
             "y": 384.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -748,7 +748,7 @@
             "title": "Shooter Upper Limit Switch",
             "x": 1280.0,
             "y": 128.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -765,7 +765,7 @@
             "title": "Shooter Lower Limit Switch",
             "x": 1280.0,
             "y": 256.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -832,6 +832,34 @@
               "topic": "/SmartDashboard/Autonomous Command",
               "period": 0.05,
               "sort_options": false
+            }
+          },
+          {
+            "title": "Pivot Angle",
+            "x": 1152.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Pivot Angle",
+              "period": 0.05,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Pivot Setpoint",
+            "x": 1280.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Pivot Setpoint",
+              "period": 0.05,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]

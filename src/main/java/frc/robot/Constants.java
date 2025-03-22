@@ -46,7 +46,7 @@ public final class Constants {
   public static class DrivetrainConfig {
     public static final double MAX_DRIVE_SPEED = 10.0; // m/s
     public static final double MAX_TURN_SPEED = 10.0; // rad/s
-    public static final double SLOWMODE_FACTOR = 0.1;
+    public static final double SLOWMODE_FACTOR = 0.25;
 
     public static final PIDConstants DRIVE_PID = new PIDConstants(3.5, 0, 1.3);
     public static final double DRIVE_P = 2.9;
@@ -96,11 +96,11 @@ public final class Constants {
     public static final double PIVOT_UPPER_LIMIT = 102; // deg
 
     public static final double PIVOT_START_ANGLE = -45; // deg
-    public static final double PIVOT_INTAKE_ANGLE = 85; // deg
+    public static final double PIVOT_INTAKE_ANGLE = 90; // deg
     public static final double PIVOT_REEF_INTAKE_ANGLE = 33; // deg
     public static final double PIVOT_STOW_ANGLE = 0; // deg
     public static final double PIVOT_NET_ANGLE = 25; // deg
-    public static final double PIVOT_PROCESSOR_ANGLE = 720; // deg
+    public static final double PIVOT_PROCESSOR_ANGLE = 65; // deg
 
     public static final PIDController FLYWHEEL_PID = new PIDController(0.002, 0.001, 0.0);
     public static final double FLYWHEEL_TOLERANCE = 30; // rpm
@@ -134,7 +134,7 @@ public final class Constants {
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
     SCORE_L3(215, 0),
-    SCORE_L4(196, 21),
+    SCORE_L4(191, 21),
     STOW(20, 0),
     CLIMB(270, 10),
     ALGAE_L3(240, 17),

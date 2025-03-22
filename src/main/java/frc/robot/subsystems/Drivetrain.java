@@ -154,8 +154,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /** Saves the current pose to memory. */
-  public void savePose(Vision vision) {
-
+  public void savePose() {
     savePose = getPose();
   }
 

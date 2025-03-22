@@ -110,6 +110,12 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+  public void stowPivotIfNoAlgae() {
+    if (!hasAlgae()) {
+      setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE);
+    }
+  }
+
   public void changeSetpoint(double delta) {
     if (delta != 0) {
       setPivotPositionSetpoint(getPivotPosition() + delta);

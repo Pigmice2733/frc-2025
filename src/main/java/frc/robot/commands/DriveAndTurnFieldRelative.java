@@ -24,7 +24,6 @@ public class DriveAndTurnFieldRelative extends Command {
   private int id, counter;
 
   private Pose2d target;
-  private ChassisSpeeds speed;
   private Transform2d offsetTransform;
 
   /**
@@ -50,20 +49,22 @@ public class DriveAndTurnFieldRelative extends Command {
 
     xError = yError = rError = 0;
     counter = 0;
-    speed = new ChassisSpeeds();
 
     addRequirements(drivetrain, vision);
   }
 
   @Override
   public void initialize() {
-    if (!vision.hasTarget())
-      controller.setRumble(RumbleType.kBothRumble, 0.5);
 
     driveP = DrivetrainConfig.DRIVE_P;
     turnP = DrivetrainConfig.TURN_P;
-    id = vision.getTargetID();
-    getTargetSetpoint();
+    id = -1;
+    if (!vision.hasTarget()) {
+      controller.setRumble(RumbleType.kBothRumble, 0.5);
+    } else {
+      id = vision.getTargetID();
+      getTargetSetpoint();
+    }
 
     System.out.println("DriveAndTurnFieldRelative started");
   }
@@ -71,13 +72,15 @@ public class DriveAndTurnFieldRelative extends Command {
   @Override
   public void execute() {
     counter++;
-
-    Pose2d robotPose = drivetrain.getPose();
+    if (id < 0) {
+      return;
+    }
     if (vision.hasTarget() && vision.getTargetID() == id && counter >= 5) {
       getTargetSetpoint();
       counter = 0;
     }
 
+    Pose2d robotPose = drivetrain.getPose();
     xError = target.getX() - robotPose.getX();
     yError = target.getY() - robotPose.getY();
     rError = target.getRotation().getDegrees() - robotPose.getRotation().getDegrees();
@@ -102,17 +105,27 @@ public class DriveAndTurnFieldRelative extends Command {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(speed.vxMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE &&
-        Math.abs(speed.vyMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE &&
-        Math.abs(speed.omegaRadiansPerSecond) < DrivetrainConfig.TURN_VELOCITY_TOLERANCE &&
-        ((Math.abs(xError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE
-            && Math.abs(yError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE
-            && Math.abs(rError) < DrivetrainConfig.TURN_POSITION_TOLERANCE)
-            || !vision.hasTarget());
+    ChassisSpeeds speed = drivetrain.getSwerve().getFieldVelocity();
+    boolean stoppedX = Math.abs(speed.vxMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE;
+    boolean stoppedY = Math.abs(speed.vyMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE;
+    boolean stoppedTurn = Math.abs(speed.omegaRadiansPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE;
+    boolean stoppedXError = Math.abs(xError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE;
+    boolean stoppedYError = Math.abs(yError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE;
+    boolean stoppedRError = Math.abs(rError) < DrivetrainConfig.TURN_POSITION_TOLERANCE;
+    boolean visionHasTarget = vision.hasTarget();
+    boolean stop = stoppedX && stoppedY && stoppedTurn
+        && ((stoppedXError && stoppedYError && stoppedRError) || !visionHasTarget);
+    if (stop) {
+      System.out.println("Stopping: stopX: " + stoppedX + " stopY" + stoppedY + " stopTurn" + stoppedTurn +
+          " stopXError" + stoppedXError + " stopYError" + stoppedYError + " stopTurnError" + stoppedRError
+          + " visionhastarget: " + visionHasTarget);
+    }
+    return stop;
   }
 
   private Pose2d getTargetPose(Pose2d robotPose, Pose2d visionTarget, Transform2d offsetTransform) {
-    Pose2d robotPoseAtTag = robotPose.plus(new Transform2d(visionTarget.getTranslation(), visionTarget.getRotation()));
+    Pose2d robotPoseAtTag = robotPose
+        .transformBy(new Transform2d(visionTarget.getTranslation(), visionTarget.getRotation()));
     return robotPoseAtTag.plus(offsetTransform);
   }
 

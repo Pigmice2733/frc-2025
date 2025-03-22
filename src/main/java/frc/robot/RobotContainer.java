@@ -151,14 +151,14 @@ public class RobotContainer {
       robotOriented = false;
     }));
     driver.povDown()
-        .whileTrue(new DriveAndTurnFieldRelative(drivetrain, vision, driver, Units.inchesToMeters(17), 0, 0))
+        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(13), 0, 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povRight()
-        .whileTrue(new DriveAndTurnFieldRelative(drivetrain, vision, driver, Units.inchesToMeters(17),
+        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(13),
             Units.inchesToMeters(7), 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povLeft()
-        .whileTrue(new DriveAndTurnFieldRelative(drivetrain, vision, driver, Units.inchesToMeters(17),
+        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(13),
             -Units.inchesToMeters(7), 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
 
@@ -177,13 +177,18 @@ public class RobotContainer {
 
     operator.x().onTrue(new InstantCommand(() -> changeMode(OperatorMode.REEF)));
     operator.povDown().and(() -> mode == OperatorMode.REEF)
-        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L1));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L1))
+        .onTrue(Commands.runOnce(() -> shooter.stowPivotIfNoAlgae()));
+
     operator.povLeft().and(() -> mode == OperatorMode.REEF)
-        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L2));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L2))
+        .onTrue(Commands.runOnce(() -> shooter.stowPivotIfNoAlgae()));
     operator.povRight().and(() -> mode == OperatorMode.REEF)
-        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L3));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L3))
+        .onTrue(Commands.runOnce(() -> shooter.stowPivotIfNoAlgae()));
     operator.povUp().and(() -> mode == OperatorMode.REEF)
-        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L4));
+        .onTrue(new SetArmPosition(elevator, pivot, ArmPosition.SCORE_L4))
+        .onTrue(Commands.runOnce(() -> shooter.stowPivotIfNoAlgae()));
 
     operator.leftBumper().and(() -> mode == OperatorMode.ELEVATOR || mode == OperatorMode.REEF)
         .onTrue(grabber.runForward()).onFalse(grabber.stopMotor());
@@ -203,10 +208,12 @@ public class RobotContainer {
     operator.povUp().and(() -> mode == OperatorMode.SHOOTER)
         .onTrue(Commands.runOnce(() -> shooter.setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE)));
     operator.leftBumper().and(() -> mode == OperatorMode.SHOOTER)
-        .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
+        .onTrue(new IntakeAlgae(shooter))
+        .onFalse(shooter.stopMotors());
     operator.leftBumper().and(() -> mode == OperatorMode.ELEVATOR)
         .and(() -> elevPos == ArmPosition.ALGAE_L2 || elevPos == ArmPosition.ALGAE_L3)
-        .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors());
+        .onTrue(new IntakeAlgae(shooter)).onFalse(shooter.stopMotors())
+        .onFalse(Commands.runOnce(() -> shooter.stowPivotIfNoAlgae()));
 
     operator.rightBumper().and(() -> mode == OperatorMode.SHOOTER).and(operator.leftTrigger().negate())
         .onTrue(new ShootProcessor(shooter)).onFalse(shooter.stopMotors());
@@ -222,6 +229,12 @@ public class RobotContainer {
     // operator.b().whileTrue(pivot.sysIdDynamic(Direction.k
     // operator.x().whileTrue(pivot.sysIdQuasistatic(Direction.kForward));
     // operator.y().whileTrue(pivot.sysIdQuasistatic(Direction.kReverse));
+  }
+
+  public static Command getDriveVisionCommand(Drivetrain drivetrain, Vision vision, CommandXboxController controller,
+      double xOffset,
+      double yOffset, double rOffset) {
+    return new DriveAndTurnFieldRelative(drivetrain, vision, controller, xOffset, yOffset, rOffset);
   }
 
   /**

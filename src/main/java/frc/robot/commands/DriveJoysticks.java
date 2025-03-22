@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveJoysticks extends Command {
@@ -25,7 +26,8 @@ public class DriveJoysticks extends Command {
   @Override
   public void execute() {
     if (robotOriented.getAsBoolean()) {
-      dvt.driveRobot(-x.getAsDouble(), -y.getAsDouble(), r.getAsDouble());
+      dvt.driveRobot(-x.getAsDouble() * DrivetrainConfig.SLOWMODE_FACTOR, -y.getAsDouble()
+          * DrivetrainConfig.SLOWMODE_FACTOR, r.getAsDouble() * DrivetrainConfig.SLOWMODE_FACTOR);
     } else {
       dvt.driveField(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
     }
