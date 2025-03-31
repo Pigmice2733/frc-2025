@@ -18,7 +18,7 @@ public class Underglow extends SubsystemBase {
 
   public Underglow() {
     led = new AddressableLED(LEDConfig.LED_PORT);
-    halfLength = LEDConfig.LED_LEN / 2; // TODO the length being odd may cause problems
+    halfLength = (int) Math.round(LEDConfig.LED_LEN / 2.0);
     led_buffer = new AddressableLEDBuffer(halfLength * 2);
     led.setLength(led_buffer.getLength());
     led.start();
