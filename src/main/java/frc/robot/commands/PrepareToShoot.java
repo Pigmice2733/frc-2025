@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.ShooterConfig;
 import frc.robot.subsystems.Shooter;
 
 public class PrepareToShoot extends SequentialCommandGroup {

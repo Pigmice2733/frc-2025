@@ -17,7 +17,7 @@ import frc.robot.Constants.*;
 public class Grabber extends SubsystemBase {
   private SparkMax motor;
   private DigitalInput beamBreak;
-  private int ticks = 0;
+  // private int ticks = 0;
   private boolean tickMode = true;
   private boolean tickModeRunning = true;
   private double grabberSpeed = ArmConfig.GRABBER_SPEED;
