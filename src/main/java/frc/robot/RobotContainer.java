@@ -24,7 +24,6 @@ import frc.robot.Constants.ShooterConfig;
 import frc.robot.commands.AlgaeAuto;
 import frc.robot.commands.CenterAlgae;
 import frc.robot.commands.CoralAuto;
-import frc.robot.commands.DriveAndTurn;
 import frc.robot.commands.DriveAndTurnFieldRelative;
 import frc.robot.commands.DriveJoysticks;
 import frc.robot.commands.DrivePath;
