@@ -26,6 +26,7 @@ public class Shooter extends SubsystemBase {
   private PIDController pivotController;
   private double targetPivotPosition, targetFlywheelSpeed, pivotSpeed;
   private DigitalInput upperAlgaeLimitSwitch, lowerAlgaeLimitSwitch;
+  private double shooterHighSpeed;
 
   public Shooter() {
     pivot = new SparkMax(CANConfig.SHOOTER_PIVOT, MotorType.kBrushless);
@@ -55,7 +56,7 @@ public class Shooter extends SubsystemBase {
     targetFlywheelSpeed = 0.0;
     upperAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_UPPER_ALGAE_LIMIT_CHANNEL);
     lowerAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_LOWER_ALGAE_LIMIT_CHANNEL);
-
+    shooterHighSpeed = ShooterConfig.FLYWHEEL_HIGH_SPEED;
     // Constants.sendNumberToElastic("Shooter Flywheel Speed", 0, 1);
     Constants.sendNumberToElastic("Flywheels P", pivotController.getP(), 0);
     Constants.sendNumberToElastic("Flywheels I", pivotController.getI(), 0);
@@ -63,6 +64,7 @@ public class Shooter extends SubsystemBase {
 
     Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
     Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
+    Constants.sendNumberToElastic("Shooter High Speed", shooterHighSpeed, 2);
 
   }
 
@@ -78,6 +80,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void updateEntries() {
+    shooterHighSpeed = SmartDashboard.getNumber("Shooter High Speed", shooterHighSpeed);
     Constants.sendNumberToElastic("Shooter Pivot Speed", pivot.get(), 2);
     Constants.sendNumberToElastic("Shooter Pivot Position", pivot.getEncoder().getPosition(), 2);
 
@@ -143,6 +146,10 @@ public class Shooter extends SubsystemBase {
   private void setPivot(double speed) {
     pivotSpeed = speed;
     pivot.set(speed);
+  }
+
+  public double getShooterHighSpeed() {
+    return shooterHighSpeed;
   }
 
   public void setTargetFlywheelSpeed(double targetSpeed) {

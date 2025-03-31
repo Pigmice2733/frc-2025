@@ -10,7 +10,7 @@ import frc.robot.subsystems.Shooter;
 public class PrepareToShoot extends SequentialCommandGroup {
   public PrepareToShoot(Shooter shr, CommandXboxController ctlr) {
     addCommands(
-        Commands.runOnce(() -> shr.setTargetFlywheelSpeed(ShooterConfig.FLYWHEEL_HIGH_SPEED)),
+        Commands.runOnce(() -> shr.setTargetFlywheelSpeed(shr.getShooterHighSpeed())),
         Commands.waitUntil(() -> shr.flywheelsAtSpeed()),
         Commands.runOnce(() -> ctlr.setRumble(RumbleType.kBothRumble, 0.5)),
         Commands.waitSeconds(0.25),

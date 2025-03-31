@@ -151,14 +151,17 @@ public class RobotContainer {
       robotOriented = false;
     }));
     driver.povDown()
-        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(13), 0, 0))
+        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(
+            16.5), 0, 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povRight()
-        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(13),
+        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(
+            16.5),
             Units.inchesToMeters(8), 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
     driver.povLeft()
-        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(13),
+        .whileTrue(getDriveVisionCommand(drivetrain, vision, driver, Units.inchesToMeters(
+            16.5),
             -Units.inchesToMeters(4), 0))
         .onFalse(Commands.runOnce(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
 

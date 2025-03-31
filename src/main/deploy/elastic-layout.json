@@ -489,6 +489,23 @@
                   "true_icon": "None",
                   "false_icon": "None"
                 }
+              },
+              {
+                "title": "Grabber Speed",
+                "x": 512.0,
+                "y": 128.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Number Slider",
+                "properties": {
+                  "topic": "/SmartDashboard/Grabber Speed",
+                  "period": 0.1,
+                  "data_type": "double",
+                  "min_value": 0.0,
+                  "max_value": 1.0,
+                  "divisions": 5,
+                  "update_continuously": false
+                }
               }
             ]
           },
@@ -590,21 +607,7 @@
             ]
           }
         ],
-        "containers": [
-          {
-            "title": "Autonomous Command",
-            "x": 1024.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Autonomous Command",
-              "period": 0.06,
-              "sort_options": false
-            }
-          }
-        ]
+        "containers": []
       }
     },
     {
@@ -699,7 +702,7 @@
           {
             "title": "Has Algae",
             "x": 1280.0,
-            "y": 0.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -732,7 +735,7 @@
           },
           {
             "title": "Shooter Upper Limit Switch",
-            "x": 1280.0,
+            "x": 1408.0,
             "y": 128.0,
             "width": 128.0,
             "height": 128.0,
@@ -749,7 +752,7 @@
           },
           {
             "title": "Shooter Lower Limit Switch",
-            "x": 1280.0,
+            "x": 1408.0,
             "y": 256.0,
             "width": 128.0,
             "height": 128.0,
@@ -805,8 +808,8 @@
               "topic": "/CameraPublisher/Grabber Camera 0",
               "period": 0.05,
               "rotation_turns": 0,
-              "compression": 47,
-              "fps": 20,
+              "compression": 40,
+              "fps": 30,
               "resolution": [
                 320.0,
                 240.0
@@ -824,6 +827,54 @@
               "topic": "/SmartDashboard/Autonomous Command",
               "period": 0.05,
               "sort_options": false
+            }
+          },
+          {
+            "title": "Grabber Speed",
+            "x": 1280.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Grabber Speed",
+              "period": 0.1,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 1.0,
+              "divisions": 5,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Shooter High Speed",
+            "x": 1280.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Slider",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter High Speed",
+              "period": 0.05,
+              "data_type": "double",
+              "min_value": 500.0,
+              "max_value": 1500.0,
+              "divisions": 4,
+              "update_continuously": false
+            }
+          },
+          {
+            "title": "Shooter Left Flywheel Speed",
+            "x": 1280.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter Left Flywheel Speed",
+              "period": 0.05,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]

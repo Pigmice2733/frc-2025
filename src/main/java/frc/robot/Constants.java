@@ -46,7 +46,7 @@ public final class Constants {
   public static class DrivetrainConfig {
     public static final double MAX_DRIVE_SPEED = 10.0; // m/s
     public static final double MAX_TURN_SPEED = 10.0; // rad/s
-    public static final double SLOWMODE_FACTOR = 0.25;
+    public static final double SLOWMODE_FACTOR = 0.2;
 
     public static final PIDConstants DRIVE_PID = new PIDConstants(3.5, 0, 1.3);
     public static final double DRIVE_P = 2.9;
@@ -83,7 +83,9 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = 20; // deg
     public static final double PIVOT_UPPER_LIMIT = 270; // deg
 
+    // public static final double GRABBER_SPEED = 0.6;
     public static final double GRABBER_SPEED = 1.0;
+    public static final double GRABBER_TICK_MODE_SPEED = 0.25;
   }
 
   public static class ShooterConfig {

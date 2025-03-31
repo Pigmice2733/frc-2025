@@ -23,7 +23,7 @@ public class CoralAuto extends SequentialCommandGroup {
   public CoralAuto(Drivetrain dvt, Vision vis, Elevator elv, Pivot piv, Grabber gbr, CommandXboxController ctlr) {
     addCommands(
         Commands.parallel(
-            RobotContainer.getDriveVisionCommand(dvt, vis, ctlr, Units.inchesToMeters(13), Units.inchesToMeters(8.2),
+            RobotContainer.getDriveVisionCommand(dvt, vis, ctlr, Units.inchesToMeters(15.5), Units.inchesToMeters(8.2),
                 0),
             new SetArmPosition(elv, piv, ArmPosition.SCORE_L4)).withTimeout(8),
         Commands.waitSeconds(1.5),
