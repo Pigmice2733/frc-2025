@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
+import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.imu.SwerveIMU;
@@ -50,7 +51,6 @@ public class Drivetrain extends SubsystemBase {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
     modules = swerve.getModules();
     modulePositions = swerve.getModulePositions();
     kinematics = swerve.kinematics;
@@ -74,6 +74,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     robotPose = getPose();
+    LimelightHelpers.SetRobotOrientation("", gyro.getRotation3d().getAngle(), 0, 0, 0, 0, 0);
 
     updateEntries();
 
