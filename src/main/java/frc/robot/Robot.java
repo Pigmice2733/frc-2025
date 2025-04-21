@@ -72,8 +72,15 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
   }
 
+  private int aNumber = 0;
+
   @Override
   public void disabledPeriodic() {
+    if (aNumber % 100 == 0) {
+      System.out.println("<Robot>: Press the enable button... NOW!");
+      aNumber = 1;
+    }
+    aNumber++;
   }
 
   /**
@@ -93,15 +100,8 @@ public class Robot extends TimedRobot {
   }
 
   /** This function is called periodically during autonomous. */
-  private int aNumber = 0;
-
   @Override
   public void autonomousPeriodic() {
-    if (aNumber % 100 == 0) {
-      System.out.println("<Robot>: Press the enable button... NOW!");
-      aNumber = 1;
-    }
-    aNumber++;
   }
 
   @Override
