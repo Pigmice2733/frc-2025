@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    if (aNumber % 100 == 0) {
+    if (aNumber % 2000 == 0) {
       System.out.println("<Robot>: Press the enable button... NOW!");
       aNumber = 1;
     }
