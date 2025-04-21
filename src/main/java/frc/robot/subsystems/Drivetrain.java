@@ -74,7 +74,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     robotPose = getPose();
-    LimelightHelpers.SetRobotOrientation("", gyro.getRotation3d().getAngle(), 0, 0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation("", robotPose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
 
     updateEntries();
 
