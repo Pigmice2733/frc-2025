@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.imu.SwerveIMU;
@@ -73,6 +75,8 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    updateVision();
+
     robotPose = getPose();
     LimelightHelpers.SetRobotOrientation("", robotPose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
 
@@ -80,6 +84,14 @@ public class Drivetrain extends SubsystemBase {
 
     updateModulePositions();
     odometry.update(gyro.getRotation3d().toRotation2d(), modulePositions);
+  }
+
+  private void updateVision() {
+    if (!LimelightHelpers.getTV("")) {
+      return;
+    }
+    PoseEstimate botPos = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    swerve.addVisionMeasurement(botPos.pose, botPos.timestampSeconds);
   }
 
   /**
