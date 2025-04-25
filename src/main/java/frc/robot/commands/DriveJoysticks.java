@@ -26,10 +26,10 @@ public class DriveJoysticks extends Command {
   @Override
   public void execute() {
     if (robotOriented.getAsBoolean()) {
-      dvt.driveRobot(-x.getAsDouble() * DrivetrainConfig.SLOWMODE_FACTOR, -y.getAsDouble()
+      dvt.driveRobot(x.getAsDouble() * DrivetrainConfig.SLOWMODE_FACTOR, y.getAsDouble()
           * DrivetrainConfig.SLOWMODE_FACTOR, r.getAsDouble() * DrivetrainConfig.SLOWMODE_FACTOR);
     } else {
-      dvt.driveField(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
+      dvt.driveField(-x.getAsDouble(), -y.getAsDouble(), r.getAsDouble());
     }
   }
 }
