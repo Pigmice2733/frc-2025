@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Meter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -18,6 +19,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,9 +42,11 @@ public class Drivetrain extends SubsystemBase {
   private Pose2d robotPose;
   private final Field2d fieldWidget;
   private PIDConstants pidConstants;
+  private boolean blueAlliance;
+  private PathConstraints constraints;
 
   public Drivetrain() {
-    boolean blueAlliance = false;
+    isBlueAlliance();
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
         Meter.of(4)),
         Rotation2d.fromDegrees(0))
@@ -69,11 +73,12 @@ public class Drivetrain extends SubsystemBase {
 
     fieldWidget = new Field2d();
     PathPlannerLogging.setLogActivePathCallback((pose) -> fieldWidget.getObject("target pose").setPoses(pose));
+    constraints = new PathConstraints(swerve.getMaximumChassisVelocity(), 4.0,
+        swerve.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
     Constants.sendNumberToElastic("Drivetrain P", 0, 3);
     Constants.sendNumberToElastic("Drivetrain I", 0, 3);
     Constants.sendNumberToElastic("Drivetrain D", 0, 3);
-
   }
 
   @Override
@@ -135,7 +140,7 @@ public class Drivetrain extends SubsystemBase {
           ),
           config,
           // The robot configuration
-          this::isRedAlliance,
+          this::isBlueAlliance,
           this
       // Reference to this subsystem to set requirements
       );
@@ -201,9 +206,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Command driveToPose(Pose2d pose) {
-    PathConstraints constraints = new PathConstraints(swerve.getMaximumChassisVelocity(), 4.0,
-        swerve.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
-
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
         pose,
@@ -239,9 +241,10 @@ public class Drivetrain extends SubsystemBase {
         stop());
   }
 
-  private boolean isRedAlliance() {
-    var alliance = DriverStation.getAlliance();
-    return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+  public boolean isBlueAlliance() {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    blueAlliance = alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Blue : false;
+    return blueAlliance;
   }
 
   public void zeroGyro() {
@@ -249,12 +252,12 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void zeroGyroWithAlliance() {
-    if (isRedAlliance()) {
+    if (isBlueAlliance()) {
       zeroGyro();
-      // Set the pose 180 degrees
-      swerve.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
     } else {
       zeroGyro();
+      // Rotate the pose 180 degrees
+      swerve.resetOdometry(getPose().rotateAround(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
     }
   }
 }
