@@ -14,9 +14,6 @@ import edu.wpi.first.wpilibj.RobotBase;
  * call.
  */
 public final class Main {
-  private Main() {
-  }
-
   /**
    * Main initialization function. Do not perform any initialization here.
    *
@@ -24,9 +21,6 @@ public final class Main {
    * If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
-    for (int i = 0; i < 100; i++) {
-      System.out.println("ERROR");
-    }
     RobotBase.startRobot(Robot::new);
   }
 }
