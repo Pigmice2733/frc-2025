@@ -42,17 +42,17 @@ public class Drivetrain extends SubsystemBase {
   private Pose2d robotPose;
   private final Field2d fieldWidget;
   private PIDConstants pidConstants;
-  private boolean blueAlliance;
+  private boolean redAlliance;
   private PathConstraints constraints;
 
   public Drivetrain() {
-    isBlueAlliance();
-    Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
+    isRedAlliance();
+    Pose2d startingPose = redAlliance ? new Pose2d(new Translation2d(Meter.of(16),
         Meter.of(4)),
-        Rotation2d.fromDegrees(0))
-        : new Pose2d(new Translation2d(Meter.of(16),
+        Rotation2d.fromDegrees(180))
+        : new Pose2d(new Translation2d(Meter.of(1),
             Meter.of(4)),
-            Rotation2d.fromDegrees(180));
+            Rotation2d.fromDegrees(0));
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
     // objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -140,7 +140,7 @@ public class Drivetrain extends SubsystemBase {
           ),
           config,
           // The robot configuration
-          this::isBlueAlliance,
+          this::isRedAlliance,
           this
       // Reference to this subsystem to set requirements
       );
@@ -241,10 +241,10 @@ public class Drivetrain extends SubsystemBase {
         stop());
   }
 
-  public boolean isBlueAlliance() {
+  public boolean isRedAlliance() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
-    blueAlliance = alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Blue : false;
-    return blueAlliance;
+    redAlliance = alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+    return redAlliance;
   }
 
   public void zeroGyro() {
@@ -252,12 +252,16 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void zeroGyroWithAlliance() {
-    if (isBlueAlliance()) {
-      zeroGyro();
-    } else {
+    if (isRedAlliance()) {
       zeroGyro();
       // Rotate the pose 180 degrees
       swerve.resetOdometry(getPose().rotateAround(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+    } else {
+      zeroGyro();
     }
+  }
+
+  public PathConstraints getConstraints() {
+    return constraints;
   }
 }
