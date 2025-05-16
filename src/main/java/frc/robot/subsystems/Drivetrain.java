@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -46,7 +47,7 @@ public class Drivetrain extends SubsystemBase {
   private PathConstraints constraints;
 
   public Drivetrain() {
-    isRedAlliance();
+    // isRedAlliance();
     Pose2d startingPose = redAlliance ? new Pose2d(new Translation2d(Meter.of(16),
         Meter.of(4)),
         Rotation2d.fromDegrees(180))
@@ -149,6 +150,8 @@ public class Drivetrain extends SubsystemBase {
       // Handle exception as needed
       e.printStackTrace();
     }
+
+    PathfindingCommand.warmupCommand().schedule();
   }
 
   private void updateEntries() {
