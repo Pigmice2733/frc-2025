@@ -9,11 +9,8 @@ public class IntakeAlgae extends SequentialCommandGroup {
   /** Intakes an algae from the ground. */
   public IntakeAlgae(Shooter shooter) {
     addCommands(
-        shooter.runIndexerIn(),
-        Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(-ShooterConfig.FLYWHEEL_LOW_SPEED), shooter)
-    // Commands.waitUntil(() -> shooter.hasAlgae()),
-    // shooter.stopMotors()
-    );
+        Commands.runOnce(() -> shooter.setTargetFlywheelSpeed(-ShooterConfig.FLYWHEEL_LOW_SPEED), shooter),
+        shooter.runIndexerIn());
     addRequirements(shooter);
   }
 }

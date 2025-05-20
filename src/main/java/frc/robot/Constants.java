@@ -8,6 +8,7 @@ import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -38,20 +39,24 @@ public final class Constants {
   public static class SensorConfig {
     public static final int ELEVATOR_LIMIT_SWITCH_CHANNEL = 0;
     public static final int CORAL_BEAM_BREAK_CHANNEL = 1;
+    public static final int SHOOTER_UPPER_ALGAE_LIMIT_CHANNEL = 2;
+    public static final int SHOOTER_LOWER_ALGAE_LIMIT_CHANNEL = 3;
   }
 
   public static class DrivetrainConfig {
     public static final double MAX_DRIVE_SPEED = 10.0; // m/s
     public static final double MAX_TURN_SPEED = 10.0; // rad/s
-    public static final double SLOWMODE_FACTOR = 0.1;
+    public static final double SLOWMODE_FACTOR = 0.2;
 
-    public static final PIDConstants DRIVE_PID = new PIDConstants(4.0, 0, 1.3);
-    public static final double DRIVE_POSITION_TOLERANCE = 0.02; // m
-    public static final double DRIVE_VELOCITY_TOLERANCE = 0.02; // m/s
+    public static final PIDConstants DRIVE_PID = new PIDConstants(3.5, 0, 1.3);
+    public static final double DRIVE_P = 2.9;
+    public static final double DRIVE_POSITION_TOLERANCE = 0.01; // m
+    public static final double DRIVE_VELOCITY_TOLERANCE = 0.01; // m/s
 
-    public static final PIDConstants TURN_PID = new PIDConstants(2.5, 0, 0.0);
-    public static final double TURN_POSITION_TOLERANCE = 2; // deg
-    public static final double TURN_VELOCITY_TOLERANCE = 0.01; // deg/s
+    public static final PIDConstants TURN_PID = new PIDConstants(3.5, 0, 0.1);
+    public static final double TURN_P = 3.5;
+    public static final double TURN_POSITION_TOLERANCE = 1; // deg
+    public static final double TURN_VELOCITY_TOLERANCE = 0.5; // deg/s
   }
 
   public static class ElevatorConfig {
@@ -78,7 +83,9 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = 20; // deg
     public static final double PIVOT_UPPER_LIMIT = 270; // deg
 
+    // public static final double GRABBER_SPEED = 0.6;
     public static final double GRABBER_SPEED = 1.0;
+    public static final double GRABBER_TICK_MODE_SPEED = 0.25;
   }
 
   public static class ShooterConfig {
@@ -90,15 +97,17 @@ public final class Constants {
     public static final double PIVOT_LOWER_LIMIT = 0; // deg
     public static final double PIVOT_UPPER_LIMIT = 102; // deg
 
-    public static final double PIVOT_INTAKE_ANGLE = 80; // deg
+    public static final double PIVOT_START_ANGLE = -45; // deg
+    public static final double PIVOT_INTAKE_ANGLE = 90; // deg
+    public static final double PIVOT_REEF_INTAKE_ANGLE = 33; // deg
     public static final double PIVOT_STOW_ANGLE = 0; // deg
-    public static final double PIVOT_NET_ANGLE = 20; // deg
+    public static final double PIVOT_NET_ANGLE = 25; // deg
     public static final double PIVOT_PROCESSOR_ANGLE = 65; // deg
 
-    public static final PIDController FLYWHEEL_PID = new PIDController(0.002, 0.0015, 0.0);
-    public static final double FLYWHEEL_TOLERANCE = 50; // rpm
+    public static final PIDController FLYWHEEL_PID = new PIDController(0.002, 0.001, 0.0);
+    public static final double FLYWHEEL_TOLERANCE = 30; // rpm
     public static final double FLYWHEEL_LOW_SPEED = 500; // rpm
-    public static final double FLYWHEEL_HIGH_SPEED = 650; // rpm
+    public static final double FLYWHEEL_HIGH_SPEED = 710; // rpm
 
     public static final double INDEXER_SPEED = 0.5;
   }
@@ -109,9 +118,13 @@ public final class Constants {
   }
 
   public static class LEDConfig {
-    public static final int LED_PORT = 0;
+    public static final int LED_PORT = 9;
     public static final int LED_LEN = 91;
-    // public static final double brightnessFactor = 0.5;
+
+    public static final Color OFF = new Color(0, 0, 0);
+    public static final Color PURPLE = new Color(100, 0, 150);
+    public static final Color RED = new Color(255, 0, 0);
+    public static final Color BLUE = new Color(0, 0, 255);
   }
 
   public static class VisionTargetIds {
@@ -122,8 +135,8 @@ public final class Constants {
     HUMAN_PLAYER(40, 21),
     SCORE_L1(260, 0),
     SCORE_L2(250, 0),
-    SCORE_L3(215, 1),
-    SCORE_L4(193, 21),
+    SCORE_L3(215, 0),
+    SCORE_L4(191, 21),
     STOW(20, 0),
     CLIMB(270, 10),
     ALGAE_L3(240, 17),

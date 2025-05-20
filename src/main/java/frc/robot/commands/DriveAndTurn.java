@@ -2,19 +2,24 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConfig;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 
-public class DriveVision extends Command {
+public class DriveAndTurn extends Command {
   private Drivetrain drivetrain;
   private Vision vision;
-  private double xOffset, yOffset, kP;
-  private double xSetpoint, xError, ySetpoint, yError;
+  private CommandXboxController controller;
 
+  private double xOffset, yOffset, rOffset,
+      xSetpoint, ySetpoint, rSetpoint,
+      xError, yError, rError,
+      driveP, turnP;
   // private PIDController xPID, yPID, testPID;
   // private PIDConstants pidConstants;
   private int id, counter;
@@ -23,33 +28,39 @@ public class DriveVision extends Command {
   private ChassisSpeeds speed;
 
   /**
-   * A command that drives the robot to the given position with respect to the
-   * target. Tolerances have been set generously high to avoid spasmodic behavior,
-   * but such a paradigm intended for precision will need lower tolerances.
+   * A command that drives the robot to the given position and rotation with
+   * respect to the target using simple error correction. If no target is visible,
+   * the given controller rumbles to alert the driver.
    * 
    * @param drivetrain drivetrain subsystem
    * @param vision     vision subsystem
-   * @param xOffset    target distance from tag in the X direction
-   * @param yOffset    target distance from tag in the Y direction
+   * @param controller driver XBox controller
+   * @param xOffset    target distance from tag in the X direction (m)
+   * @param yOffset    target distance from tag in the Y direction (m)
+   * @param rOffset    target rotation from tag (deg)
    */
-  public DriveVision(Drivetrain drivetrain, Vision vision, double xOffset, double yOffset) {
+  public DriveAndTurn(Drivetrain drivetrain, Vision vision, CommandXboxController controller, double xOffset,
+      double yOffset, double rOffset) {
     this.drivetrain = drivetrain;
     this.vision = vision;
+    this.controller = controller;
 
     this.xOffset = xOffset;
     this.yOffset = yOffset;
+    this.rOffset = rOffset;
 
-    xSetpoint = ySetpoint = xError = yError = 0;
+    xSetpoint = ySetpoint = rSetpoint = xError = yError = rError = 0;
     counter = 0;
     speed = new ChassisSpeeds();
-
-    Constants.sendNumberToElastic("Drive kP", DrivetrainConfig.DRIVE_P, 2);
 
     addRequirements(drivetrain, vision);
   }
 
   @Override
   public void initialize() {
+    if (!vision.hasTarget())
+      controller.setRumble(RumbleType.kBothRumble, 0.5);
+
     // pidConstants = DrivetrainConfig.DRIVE_PID;
 
     // testPID = (PIDController) SmartDashboard.getData("Drivetrain Drive PID");
@@ -63,13 +74,14 @@ public class DriveVision extends Command {
     // yPID.setTolerance(DrivetrainConfig.DRIVE_POSITION_TOLERANCE,
     // DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE);
 
-    kP = SmartDashboard.getNumber("Drive kP", 0);
+    driveP = DrivetrainConfig.DRIVE_P;
+    turnP = DrivetrainConfig.TURN_P;
 
     drivetrain.resetPose(new Pose2d());
     id = vision.getTargetID();
     getTargetSetpoint();
 
-    System.out.println("drive started");
+    System.out.println("joint started");
   }
 
   @Override
@@ -87,23 +99,27 @@ public class DriveVision extends Command {
 
     xError = xSetpoint - robotPose.getX();
     yError = ySetpoint - robotPose.getY();
+    rError = rSetpoint - robotPose.getRotation().getDegrees();
 
-    drivetrain.driveField(xError * kP, yError * kP, 0);
+    drivetrain.driveField(xError * driveP, yError * driveP, Units.degreesToRadians(rError) * turnP);
   }
 
   @Override
   public void end(boolean interrupted) {
     drivetrain.driveField(0, 0, 0);
     drivetrain.getSwerve().lockPose();
-    System.out.println("drive finished");
+    controller.setRumble(RumbleType.kBothRumble, 0);
+    System.out.println("joint finished");
   }
 
   @Override
   public boolean isFinished() {
     return Math.abs(speed.vxMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE &&
-        Math.abs(speed.vyMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE
-        && ((Math.abs(xError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE
-            && Math.abs(yError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE)
+        Math.abs(speed.vyMetersPerSecond) < DrivetrainConfig.DRIVE_VELOCITY_TOLERANCE &&
+        Math.abs(speed.omegaRadiansPerSecond) < DrivetrainConfig.TURN_VELOCITY_TOLERANCE &&
+        ((Math.abs(xError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE
+            && Math.abs(yError) < DrivetrainConfig.DRIVE_POSITION_TOLERANCE
+            && Math.abs(rError) < DrivetrainConfig.TURN_POSITION_TOLERANCE)
             || !vision.hasTarget());
   }
 
@@ -113,11 +129,13 @@ public class DriveVision extends Command {
 
     xSetpoint = target.getX() + xOffset;
     ySetpoint = -1 * target.getY() + yOffset;
+    rSetpoint = target.getRotation().getDegrees() + rOffset;
 
     // System.out.println("target offset: " + target.getX() + " setpoint: "
     // + xPID.getSetpoint() + " error: " + (xPID.getSetpoint() - target.getX()));
 
     Constants.sendNumberToElastic("Drivetrain X Setpoint", xSetpoint, 3);
     Constants.sendNumberToElastic("Drivetrain Y Setpoint", ySetpoint, 3);
+    Constants.sendNumberToElastic("Drivetrain Turn Setpoint", rSetpoint, 3);
   }
 }

@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,7 +38,11 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
-    CameraServer.startAutomaticCapture();
+    CameraServer.startAutomaticCapture("Grabber Camera 0", 0).setVideoMode(PixelFormat.kMJPEG, 360, 240, 30);
+    // CameraServer.startAutomaticCapture("Grabber Camera 1",
+    // 1).setVideoMode(PixelFormat.kMJPEG, 360, 240, 10);
+    // CameraServer.startAutomaticCapture("Grabber Camera 1",
+    // 1).setVideoMode(PixelFormat.kMJPEG, 360, 240, 30);
   }
 
   /**
@@ -67,8 +72,15 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
   }
 
+  private int aNumber = 0;
+
   @Override
   public void disabledPeriodic() {
+    if (aNumber % 2000 == 0) {
+      System.out.println("<Robot>: Press the enable button... NOW!");
+      aNumber = 1;
+    }
+    aNumber++;
   }
 
   /**

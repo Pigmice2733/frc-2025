@@ -57,6 +57,14 @@ public class Controls {
     return -1 * joystickTurn * DrivetrainConfig.MAX_TURN_SPEED * (slowmode ? DrivetrainConfig.SLOWMODE_FACTOR : 1);
   }
 
+  /**
+   * Returns whether the right bumper is pressed, corresponding to the driving
+   * mode (robot-oriented versus field-oriented).
+   */
+  public boolean getRobotOrientedMode() {
+    return driver.rightBumper().getAsBoolean();
+  }
+
   public Command toggleSlowmode() {
     return new InstantCommand(() -> setSlowmode(!getSlowmode()));
   }

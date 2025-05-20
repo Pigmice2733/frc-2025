@@ -1,22 +1,26 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meter;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,46 +28,54 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import swervelib.SwerveDrive;
-import swervelib.SwerveModule;
-import swervelib.imu.SwerveIMU;
 import swervelib.parser.SwerveParser;
+import swervelib.telemetry.SwerveDriveTelemetry;
+import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class Drivetrain extends SubsystemBase {
   private SwerveDrive swerve;
-  private final SwerveIMU gyro;
-  private final SwerveDriveKinematics kinematics;
-  private final SwerveDriveOdometry odometry;
-  private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-  private SwerveModule[] modules = new SwerveModule[4];
-
-  private Pose2d robotPose, savePose;
+  private Pose2d robotPose;
   private final Field2d fieldWidget;
   private PIDConstants pidConstants;
+  private boolean redAlliance;
+  private PathConstraints constraints;
 
   public Drivetrain() {
+    // isRedAlliance();
+    Pose2d startingPose = redAlliance ? new Pose2d(new Translation2d(Meter.of(16),
+        Meter.of(4)),
+        Rotation2d.fromDegrees(180))
+        : new Pose2d(new Translation2d(Meter.of(1),
+            Meter.of(4)),
+            Rotation2d.fromDegrees(0));
+    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
+    // objects being created.
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
       swerve = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"))
-          .createSwerveDrive(DrivetrainConfig.MAX_DRIVE_SPEED);
+          .createSwerveDrive(DrivetrainConfig.MAX_DRIVE_SPEED, startingPose);
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-    modules = swerve.getModules();
-    modulePositions = swerve.getModulePositions();
-    kinematics = swerve.kinematics;
-    gyro = swerve.getGyro();
+    swerve.setHeadingCorrection(false);
+    swerve.setCosineCompensator(false);
+    swerve.setAngularVelocityCompensation(true, true, 0.1);
+    swerve.setModuleEncoderAutoSynchronize(false, 1);
+    swerve.getGyro().factoryDefault();
     // gyro.setInverted(true);
-    odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation3d().toRotation2d(), modulePositions);
-    resetPose(new Pose2d());
-    savePose = new Pose2d();
-
     setUpAuto();
+    RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
 
     fieldWidget = new Field2d();
     PathPlannerLogging.setLogActivePathCallback((pose) -> fieldWidget.getObject("target pose").setPoses(pose));
+    constraints = new PathConstraints(swerve.getMaximumChassisVelocity(), 4.0,
+        swerve.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
     Constants.sendNumberToElastic("Drivetrain P", 0, 3);
     Constants.sendNumberToElastic("Drivetrain I", 0, 3);
@@ -72,59 +84,80 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    updateVision();
+
     robotPose = getPose();
+    LimelightHelpers.SetRobotOrientation("", robotPose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
 
     updateEntries();
+  }
 
-    updateModulePositions();
-    odometry.update(gyro.getRotation3d().toRotation2d(), modulePositions);
+  private void updateVision() {
+    if (!LimelightHelpers.getTV("")) {
+      return;
+    }
+    PoseEstimate botPos = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    swerve.addVisionMeasurement(botPos.pose, botPos.timestampSeconds);
   }
 
   /**
    * Sets the configuration of the drivetrain for the AutoBuilder.
    */
   public void setUpAuto() {
-    RobotConfig config = null;
+    // Load the RobotConfig from the GUI settings. You should probably
+    // store this in your Constants file
+    RobotConfig config;
     try {
       config = RobotConfig.fromGUISettings();
+
+      final boolean enableFeedforward = true;
+      // Configure AutoBuilder last
+      AutoBuilder.configure(
+          this::getPose,
+          // Robot pose supplier
+          swerve::resetOdometry,
+          // Method to reset odometry (will be called if your auto has a starting pose)
+          swerve::getRobotVelocity,
+          // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+          (speedsRobotRelative, moduleFeedForwards) -> {
+            if (enableFeedforward) {
+              swerve.drive(
+                  speedsRobotRelative,
+                  swerve.kinematics.toSwerveModuleStates(speedsRobotRelative),
+                  moduleFeedForwards.linearForces());
+            } else {
+              swerve.setChassisSpeeds(speedsRobotRelative);
+            }
+          },
+          // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
+          // optionally outputs individual module feedforwards
+          new PPHolonomicDriveController(
+              // PPHolonomicController is the built in path following controller for holonomic
+              // drive trains
+              new PIDConstants(5.0, 0.0, 0.0),
+              // Translation PID constants
+              new PIDConstants(5.0, 0.0, 0.0)
+          // Rotation PID constants
+          ),
+          config,
+          // The robot configuration
+          this::isRedAlliance,
+          this
+      // Reference to this subsystem to set requirements
+      );
+
     } catch (Exception e) {
+      // Handle exception as needed
       e.printStackTrace();
     }
 
-    AutoBuilder.configure(() -> {
-      Pose2d pose = getPose();
-      return new Pose2d(pose.getX(), pose.getY(), new Rotation2d(pose.getRotation().getRadians()));
-    },
-        (pose) -> swerve.resetOdometry(pose),
-        swerve::getRobotVelocity,
-        (speed) -> drive(speed.vxMetersPerSecond, speed.vyMetersPerSecond, speed.omegaRadiansPerSecond),
-        new PPHolonomicDriveController(DrivetrainConfig.DRIVE_PID, DrivetrainConfig.TURN_PID),
-        config,
-        () -> (DriverStation.getAlliance().get() == Alliance.Red),
-        this);
-
-  }
-
-  /**
-   * Updates the stored values for module positions to the current positions of
-   * the modules.
-   */
-  private void updateModulePositions() {
-    modulePositions[0] = modules[0].getPosition();
-    modulePositions[1] = modules[1].getPosition();
-    modulePositions[2] = modules[2].getPosition();
-    modulePositions[3] = modules[3].getPosition();
+    PathfindingCommand.warmupCommand().schedule();
   }
 
   private void updateEntries() {
-    Constants.sendNumberToElastic("Robot X", robotPose.getX(), 2);
-    Constants.sendNumberToElastic("Robot Y", robotPose.getY(), 2);
+    Constants.sendNumberToElastic("Robot X", robotPose.getX(), 3);
+    Constants.sendNumberToElastic("Robot Y", robotPose.getY(), 3);
     Constants.sendNumberToElastic("Robot Angle", robotPose.getRotation().getDegrees(), 1);
-
-    Constants.sendNumberToElastic("Front Left Encoder Output", modules[0].getAbsolutePosition(), 1);
-    Constants.sendNumberToElastic("Front Right Encoder Output", modules[1].getAbsolutePosition(), 1);
-    Constants.sendNumberToElastic("Back Left Encoder Output", modules[2].getAbsolutePosition(), 1);
-    Constants.sendNumberToElastic("Back Right Encoder Output", modules[3].getAbsolutePosition(), 1);
 
     Constants.sendNumberToElastic("Drivetrain Linear Speed",
         Math.hypot(swerve.getFieldVelocity().vxMetersPerSecond, swerve.getFieldVelocity().vyMetersPerSecond), 3);
@@ -152,34 +185,35 @@ public class Drivetrain extends SubsystemBase {
     swerve.resetOdometry(pose);
   }
 
-  /** Saves the current pose to memory. */
-  public void savePose() {
-    savePose = getPose();
-  }
-
-  /** Returns the pose saved in memory. */
-  public Pose2d getSavedPose() {
-    return savePose;
-  }
-
-  /** Resets the drivetrain's odometry to the pose saved in memory. */
-  public void setSavedPose() {
-    resetPose(savePose);
-  }
-
   /**
    * Drives the robot in field-oriented mode by creating a ChassisSpeeds object.
    * Positive X is away from the alliance wall; positive Y is left from the
    * driver's perspective.
    */
-  public void drive(double driveSpeedX, double driveSpeedY, double turnSpeed) {
+  public void driveField(double driveSpeedX, double driveSpeedY, double turnSpeed) {
     // System.out.println("Driving. x speed " + driveSpeedX + ", y speed " +
     // driveSpeedY + ", turn speed " + turnSpeed);
     swerve.driveFieldOriented(new ChassisSpeeds(driveSpeedX, driveSpeedY, turnSpeed));
   }
 
+  /**
+   * Drives the robot in robot-oriented mode by creating a ChassisSpeeds object.
+   * Positive X is robot's forward; positive Y is robot's left.
+   */
+  public void driveRobot(double driveSpeedX, double driveSpeedY, double turnSpeed) {
+    swerve.drive(new ChassisSpeeds(driveSpeedX, driveSpeedY, turnSpeed));
+  }
+
   public Command reset() {
     return new InstantCommand(() -> resetPose(new Pose2d()), this);
+  }
+
+  public Command driveToPose(Pose2d pose) {
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    return AutoBuilder.pathfindToPose(
+        pose,
+        constraints,
+        edu.wpi.first.units.Units.MetersPerSecond.of(0)); // Goal end velocity in meters/sec
   }
 
   /**
@@ -188,11 +222,11 @@ public class Drivetrain extends SubsystemBase {
    * driver's perspective.
    */
   public Command driveCommand(double driveSpeedX, double driveSpeedY, double turnSpeed) {
-    return Commands.run(() -> drive(driveSpeedX, driveSpeedY, turnSpeed), this);
+    return Commands.run(() -> driveField(driveSpeedX, driveSpeedY, turnSpeed), this);
   }
 
   public Command stop() {
-    return Commands.runOnce(() -> drive(0, 0, 0), this);
+    return Commands.runOnce(() -> driveField(0, 0, 0), this);
   }
 
   public PIDConstants getPidConstants() {
@@ -208,5 +242,29 @@ public class Drivetrain extends SubsystemBase {
         driveCommand(DrivetrainConfig.MAX_DRIVE_SPEED, 0, 0),
         Commands.waitUntil(() -> (robotPose.getX() > 2)),
         stop());
+  }
+
+  public boolean isRedAlliance() {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    redAlliance = alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+    return redAlliance;
+  }
+
+  public void zeroGyro() {
+    swerve.zeroGyro();
+  }
+
+  public void zeroGyroWithAlliance() {
+    if (isRedAlliance()) {
+      zeroGyro();
+      // Rotate the pose 180 degrees
+      swerve.resetOdometry(getPose().rotateAround(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+    } else {
+      zeroGyro();
+    }
+  }
+
+  public PathConstraints getConstraints() {
+    return constraints;
   }
 }

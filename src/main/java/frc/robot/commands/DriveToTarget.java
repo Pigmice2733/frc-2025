@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -9,8 +8,6 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 
 public class DriveToTarget extends SequentialCommandGroup {
-  private Pose2d initialPose;
-
   /**
    * Drives the robot to the given position with respect to its nearest target.
    * 
@@ -27,10 +24,8 @@ public class DriveToTarget extends SequentialCommandGroup {
           if (!vision.hasTarget())
             ctlr.setRumble(RumbleType.kBothRumble, 0.5);
         }),
-        Commands.runOnce(() -> initialPose = drivetrain.getPose()),
-        new TurnVision(drivetrain, vision, rOffset),
-        new DriveVision(drivetrain, vision, xOffset, yOffset),
-        Commands.runOnce(() -> drivetrain.resetPose(initialPose)));
+        new TurnVision(drivetrain, vision, rOffset).withTimeout(2),
+        new DriveVision(drivetrain, vision, xOffset, yOffset));
     addRequirements(drivetrain, vision);
   }
 }

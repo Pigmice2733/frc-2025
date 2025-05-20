@@ -12,6 +12,8 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -23,7 +25,8 @@ public class Shooter extends SubsystemBase {
   private SparkMax pivot, leftFlywheel, rightFlywheel, indexerMotor;
   private PIDController pivotController;
   private double targetPivotPosition, targetFlywheelSpeed, pivotSpeed;
-  // private DigitalInput beamBreak;
+  private DigitalInput upperAlgaeLimitSwitch, lowerAlgaeLimitSwitch;
+  private double shooterHighSpeed;
 
   public Shooter() {
     pivot = new SparkMax(CANConfig.SHOOTER_PIVOT, MotorType.kBrushless);
@@ -35,6 +38,7 @@ public class Shooter extends SubsystemBase {
     pivotConfig.encoder.positionConversionFactor(ShooterConfig.PIVOT_CONVERSION);
     pivot.configure(pivotConfig,
         ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    pivot.getEncoder().setPosition(ShooterConfig.PIVOT_START_ANGLE);
     SparkMaxConfig flywheelConfig = new SparkMaxConfig();
     flywheelConfig.inverted(true).idleMode(IdleMode.kCoast);
     flywheelConfig.closedLoop.p(0.003).d(0.001).velocityFF(0.0006);
@@ -48,15 +52,20 @@ public class Shooter extends SubsystemBase {
 
     pivotController = ShooterConfig.PIVOT_PID;
     pivotController.setTolerance(ShooterConfig.PIVOT_TOLERANCE);
-    targetPivotPosition = 0.0;
+    targetPivotPosition = ShooterConfig.PIVOT_START_ANGLE;
     targetFlywheelSpeed = 0.0;
-    // beamBreak = new
-    // DigitalInput(Constants.SensorConfig.CORAL_BEAM_BREAK_CHANNEL);
-
+    upperAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_UPPER_ALGAE_LIMIT_CHANNEL);
+    lowerAlgaeLimitSwitch = new DigitalInput(Constants.SensorConfig.SHOOTER_LOWER_ALGAE_LIMIT_CHANNEL);
+    shooterHighSpeed = ShooterConfig.FLYWHEEL_HIGH_SPEED;
     // Constants.sendNumberToElastic("Shooter Flywheel Speed", 0, 1);
-    // Constants.sendNumberToElastic("Flywheels P", 0, 0);
-    // Constants.sendNumberToElastic("Flywheels I", 0, 0);
-    // Constants.sendNumberToElastic("Flywheels D", 0, 0);
+    Constants.sendNumberToElastic("Flywheels P", pivotController.getP(), 0);
+    Constants.sendNumberToElastic("Flywheels I", pivotController.getI(), 0);
+    Constants.sendNumberToElastic("Flywheels D", pivotController.getD(), 0);
+
+    Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
+    Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
+    Constants.sendNumberToElastic("Shooter High Speed", shooterHighSpeed, 2);
+
   }
 
   @Override
@@ -71,18 +80,21 @@ public class Shooter extends SubsystemBase {
   }
 
   private void updateEntries() {
+    shooterHighSpeed = SmartDashboard.getNumber("Shooter High Speed", shooterHighSpeed);
     Constants.sendNumberToElastic("Shooter Pivot Speed", pivot.get(), 2);
     Constants.sendNumberToElastic("Shooter Pivot Position", pivot.getEncoder().getPosition(), 2);
-    Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
+
     Constants.sendNumberToElastic("Shooter Left Flywheel Speed", leftFlywheel.getEncoder().getVelocity(), 2);
     Constants.sendNumberToElastic("Shooter Right Flywheel Speed", rightFlywheel.getEncoder().getVelocity(), 2);
-    Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
     Constants.sendNumberToElastic("Shooter Indexer Speed", indexerMotor.get(), 2);
 
     Constants.sendBooleanToElastic("Has Algae", hasAlgae());
+    Constants.sendBooleanToElastic("Shooter Upper Limit Switch", isUpperAlgaeLimitSwitchPressed());
+    Constants.sendBooleanToElastic("Shooter Lower Limit Switch", isLowerAlgaeLimitSwitchPressed());
+    Constants.sendBooleanToElastic("Shooter Flywheels At Speed", flywheelsAtSpeed());
+    Constants.sendNumberToElastic("Shooter Pivot Target", targetPivotPosition, 2);
+    Constants.sendNumberToElastic("Shooter Flywheel Target Speed", targetFlywheelSpeed, 2);
 
-    // setTargetFlywheelSpeed(SmartDashboard.getNumber("Shooter Flywheel Speed",
-    // 0));
     // flywheelController.setP(SmartDashboard.getNumber("Flywheels P", 0));
     // flywheelController.setI(SmartDashboard.getNumber("Flywheels I", 0));
     // flywheelController.setD(SmartDashboard.getNumber("Flywheels D", 0));
@@ -98,6 +110,12 @@ public class Shooter extends SubsystemBase {
       pivotController.setSetpoint(ShooterConfig.PIVOT_UPPER_LIMIT);
     } else {
       pivotController.setSetpoint(targetPivotPosition);
+    }
+  }
+
+  public void stowPivotIfNoAlgae() {
+    if (!hasAlgae()) {
+      setPivotPositionSetpoint(ShooterConfig.PIVOT_STOW_ANGLE);
     }
   }
 
@@ -130,6 +148,10 @@ public class Shooter extends SubsystemBase {
     pivot.set(speed);
   }
 
+  public double getShooterHighSpeed() {
+    return shooterHighSpeed;
+  }
+
   public void setTargetFlywheelSpeed(double targetSpeed) {
     targetFlywheelSpeed = targetSpeed;
     leftFlywheel.getClosedLoopController().setReference(targetFlywheelSpeed, ControlType.kVelocity);
@@ -144,15 +166,28 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean flywheelsAtSpeed() {
-    if (targetFlywheelSpeed > 0) {
+    if (targetFlywheelSpeed > 10) {
       return leftFlywheel.getEncoder().getVelocity() > (targetFlywheelSpeed - ShooterConfig.FLYWHEEL_TOLERANCE);
-    } else {
+    } else if (targetFlywheelSpeed < -10) {
       return leftFlywheel.getEncoder().getVelocity() < (targetFlywheelSpeed + ShooterConfig.FLYWHEEL_TOLERANCE);
     }
+    return false;
   }
 
   public boolean hasAlgae() {
-    return false;// !beamBreak.get();
+    return isUpperAlgaeLimitSwitchPressed() || isLowerAlgaeLimitSwitchPressed();
+  }
+
+  public boolean isAlgaeCentered() {
+    return isUpperAlgaeLimitSwitchPressed() && isLowerAlgaeLimitSwitchPressed();
+  }
+
+  public boolean isUpperAlgaeLimitSwitchPressed() {
+    return !upperAlgaeLimitSwitch.get();
+  }
+
+  public boolean isLowerAlgaeLimitSwitchPressed() {
+    return !lowerAlgaeLimitSwitch.get();
   }
 
   public Command stopMotors() {

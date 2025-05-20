@@ -6,27 +6,41 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 
 public class TurnUntilTargetId extends Command {
-  int target;
-  double speed;
-  Vision vision;
-  Drivetrain drivetrain;
+  private int target;
+  private double speed;
+  private Vision vsn;
+  private Drivetrain dvt;
 
+  /**
+   * Turns at the given constant speed until the camera sees the given target ID.
+   * 
+   * @param target     ID of the desired target
+   * @param speed      constant speed for turning (positive is CCW)
+   * @param vision     vision subsystem
+   * @param drivetrain drivetrain subsystem
+   */
   public TurnUntilTargetId(int target, double speed, Vision vision, Drivetrain drivetrain) {
     this.target = target;
-    this.vision = vision;
     this.speed = speed;
-    this.drivetrain = drivetrain;
+    vsn = vision;
+    dvt = drivetrain;
+
     addRequirements(vision, drivetrain);
   }
 
   @Override
   public void execute() {
-    drivetrain.drive(0, 0, Units.degreesToRadians(speed));
+    dvt.driveField(0, 0, Units.degreesToRadians(speed));
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    dvt.driveField(0, 0, 0);
   }
 
   @Override
   public boolean isFinished() {
-    return vision.getTargetID() == target;
+    return vsn.getTargetID() == target;
   }
 
 }
